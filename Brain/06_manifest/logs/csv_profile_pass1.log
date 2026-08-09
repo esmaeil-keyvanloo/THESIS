@@ -1,0 +1,168 @@
+==============================================================================
+Enchimentos_com_Recolhas[RioMaior].csv
+==============================================================================
+
+rows (excl. header) : 264,817   malformed: 0
+distinct containers : 816
+reading date range  : 2020-01-02 05:52:11.000  ->  2024-04-29 21:29:07.315
+distinct idrecolha  : 9,984
+distinct Rota       : 92  ['CE01', 'CE02', 'CE04', 'CE05', 'CE06', 'CE07', 'CE08', 'CE09B']
+coords out of Rio Maior box : 0
+
+-- column fill rate --
+   idcontentor                         264,817  100.00%
+   Matricula do contentor              264,817  100.00%
+   Tipo de contentor                   264,817  100.00%
+   Volume do tipo de contentor         264,817  100.00%
+   description                         264,817  100.00%
+   Distrito                            264,817  100.00%
+   Concelho                            264,817  100.00%
+   Freguesia                           264,817  100.00%
+   Localidade                          250,411   94.56%
+   Latitude                            264,817  100.00%
+   Longitude                           264,817  100.00%
+   Data da leitura                     264,817  100.00%
+   Enchimento                          264,817  100.00%
+   idrecolha                            60,916   23.00%
+   Rota                                 22,674    8.56%
+   Data de ínicio                       60,916   23.00%
+   Data de fim                          60,916   23.00%
+   Km totais                            60,916   23.00%
+   Peso total                           60,916   23.00%
+
+-- Tipo de contentor --
+   OVO                     208,086
+   VRL                      16,672
+   TITAN                    13,020
+   OVO S                    12,397
+   E BLUE BEE               11,012
+   AMBI                      1,523
+   MOXEA                     1,483
+   TITAN K                     460
+   METALICO-Não USAR           164
+
+-- description (waste fraction) --
+   Mistura de embalagens                       101,291
+   Embalagens de papel e cartão                 96,055
+   Embalagens de Vidro                          67,471
+
+-- Volume --
+   2500                    252,158
+   5000                      8,936
+   3000                      3,723
+
+-- Freguesia --
+   Rio Maior                         171,208
+   União das freguesias de São João da Ribeira e Ribeira de São João     16,803
+   Alcobertas                         16,748
+   União das freguesias de Marmeleira e Assentiz     14,181
+   Asseiceira                         10,167
+   União das freguesias de Azambujeira e Malaqueijo      8,444
+   Arrouquelas                         7,770
+   União das freguesias de Outeiro da Cortiçada e Arruda dos Pisões      7,262
+   Fráguas                             7,165
+   São Sebastião                       5,069
+
+-- Enchimento --
+            0    144,804
+          100     38,535
+           25     28,164
+           50     26,862
+           75     26,203
+           -1        249
+   min 0 | p25 0 | median 0 | p75 50 | p95 100 | max 100
+   distinct values: 5
+   values > 100  : 0
+
+-- idrecolha --
+   populated          : 60,916
+   equal to Enchimento: 0 (0.0%)
+
+containers with >=1 dated reading: 816
+
+==============================================================================
+Enchimentos_de_Sensores[RioMaior].csv
+==============================================================================
+
+rows (excl. header) : 1,048,575   malformed: 0
+distinct containers : 344
+reading date range  : 2020-01-01 00:05:50.227  ->  2024-04-30 13:01:38.553
+distinct idrecolha  : 85
+distinct Rota       : 0  []
+coords out of Rio Maior box : 0
+
+-- column fill rate --
+   idcontentor                       1,048,575  100.00%
+   Matricula do contentor            1,048,575  100.00%
+   Tipo de contentor                 1,048,575  100.00%
+   Volume do tipo de contentor       1,048,575  100.00%
+   description                       1,048,575  100.00%
+   Distrito                          1,048,575  100.00%
+   Concelho                          1,048,575  100.00%
+   Freguesia                         1,048,575  100.00%
+   Localidade                          963,278   91.87%
+   Latitude                          1,048,575  100.00%
+   Longitude                         1,048,575  100.00%
+   Data da leitura                   1,048,575  100.00%
+   Enchimento                        1,048,575  100.00%
+   idrecolha                         1,048,575  100.00%
+   Rota                                      0    0.00%
+   Data de ínicio                            0    0.00%
+   Data de fim                               0    0.00%
+   Km totais                                 0    0.00%
+   Peso total                                0    0.00%
+
+-- Tipo de contentor --
+   OVO                     771,571
+   AMBI                    106,562
+   VRL                      60,190
+   OVO S                    37,947
+   E BLUE BEE               30,921
+   TITAN                    29,565
+   MOXEA                    11,819
+
+-- description (waste fraction) --
+   Mistura de embalagens                       519,405
+   Embalagens de papel e cartão                509,091
+   Embalagens de Vidro                          20,079
+
+-- Volume --
+   2500                  1,005,835
+   5000                     37,352
+   3000                      5,388
+
+-- Freguesia --
+   Rio Maior                         641,943
+   União das freguesias de São João da Ribeira e Ribeira de São João     95,809
+   Alcobertas                         83,133
+   União das freguesias de Marmeleira e Assentiz     63,741
+   União das freguesias de Azambujeira e Malaqueijo     36,243
+   União das freguesias de Outeiro da Cortiçada e Arruda dos Pisões     36,079
+   Asseiceira                         28,868
+   Arrouquelas                        21,961
+   Fráguas                            20,871
+   São Sebastião                      19,927
+
+-- Enchimento --
+           82     94,444
+           38     66,334
+            9     42,026
+         -116     37,052
+           37     27,359
+           29     24,093
+           30     22,562
+           35     22,041
+           32     20,004
+           33     19,947
+           45     19,822
+           12     18,303
+   min 0 | p25 20 | median 37 | p75 64 | p95 82 | max 84
+   distinct values: 85
+   values > 100  : 0
+
+-- idrecolha --
+   populated          : 1,048,575
+   equal to Enchimento: 951,743 (90.8%)
+
+containers with >=1 dated reading: 344
+

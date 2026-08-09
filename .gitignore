@@ -1,0 +1,24 @@
+# --- oversize: exceeds GitHub 100 MB hard limit (preserved as Brain/03_db/parquet/raw_sensors.parquet)
+DATA/XLS/Enchimentos_de_Sensores\[RioMaior\].csv
+
+# --- regenerable artefacts (Brain/05_tools scripts rebuild these)
+Brain/03_db/duckdb/
+Brain/04_index/lancedb/
+Brain/04_index/bm25/
+
+# --- dependencies
+node_modules/
+
+# --- Office lock/temp files
+~$*
+~WRL*.tmp
+*.tmp
+
+# --- Python
+__pycache__/
+*.pyc
+
+# --- OS noise
+Thumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,442 @@
+model "RioMaior_Deterministic_PMedian_Simple"
+
+uses "mmxprs", "mmive"
+
+! ============================================================
+! PhD THESIS MODEL - RIO MAIOR WASTE COLLECTION OPTIMIZATION
+! Model   : Deterministic P-Median
+! Objective: Minimize total transportation cost (distance * waste)
+! Scale   : 10 population centers | 8 container sites | p = 3
+! Waste   : Paper, Plastic, Glass
+! Data    : Fully embedded (no external CSV files)
+! ============================================================
+
+parameters
+  N_POP   = 10   ! Number of population centers
+  N_SITES = 8    ! Number of candidate container sites
+  P       = 3    ! Maximum sites to select (p-median parameter)
+end-parameters
+
+declarations
+  POP_RANGE  = 1..N_POP
+  SITE_RANGE = 1..N_SITES
+
+  WASTE_CAT : set of string
+  BIN_TYPE  : set of string
+
+  PopX, PopY   : array(POP_RANGE)  of real
+  SiteX, SiteY : array(SITE_RANGE) of real
+  PopSize      : array(POP_RANGE)  of integer
+
+  BinCapacity   : array(BIN_TYPE)            of integer
+  BinCompatible : array(BIN_TYPE, WASTE_CAT) of boolean
+
+  BaseWasteRate : array(WASTE_CAT) of real
+
+  Distance    : array(POP_RANGE, SITE_RANGE) of real
+  WasteAmount : array(POP_RANGE, WASTE_CAT)  of real
+
+  X : array(POP_RANGE, SITE_RANGE, WASTE_CAT) of mpvar
+  Y : array(SITE_RANGE, WASTE_CAT, BIN_TYPE)  of mpvar
+  Z : array(SITE_RANGE)                        of mpvar
+
+  TotalCost : linctr
+
+  total_pop      : integer
+  selected_count : integer
+  avg_dist       : real
+  site_label     : string
+
+  plt_pop      : integer
+  plt_sites    : integer
+  plt_selected : integer
+  plt_paper    : integer
+  plt_plastic  : integer
+  plt_glass    : integer
+  plt_system   : integer
+end-declarations
+
+! ============================================================
+! SECTION 1 : SETS
+! ============================================================
+WASTE_CAT := {"Paper", "Plastic", "Glass"}
+BIN_TYPE  := {"AMBI", "EBLUE", "METALICO"}
+
+! ============================================================
+! SECTION 2 : CONTAINER SPECIFICATIONS
+! ============================================================
+BinCapacity("AMBI") := 2500
+BinCompatible("AMBI", "Paper")   := true
+BinCompatible("AMBI", "Plastic") := true
+BinCompatible("AMBI", "Glass")   := true
+
+BinCapacity("EBLUE") := 3000
+BinCompatible("EBLUE", "Paper")   := true
+BinCompatible("EBLUE", "Plastic") := true
+BinCompatible("EBLUE", "Glass")   := false
+
+BinCapacity("METALICO") := 3000
+BinCompatible("METALICO", "Paper")   := false
+BinCompatible("METALICO", "Plastic") := false
+BinCompatible("METALICO", "Glass")   := true
+
+! ============================================================
+! SECTION 3 : BASE WASTE GENERATION RATES (kg/person/week)
+! ============================================================
+BaseWasteRate("Paper")   := 0.25
+BaseWasteRate("Plastic") := 0.18
+BaseWasteRate("Glass")   := 0.22
+
+! ============================================================
+! SECTION 4 : EMBEDDED DATA - POPULATION CENTERS
+! FIX: each assignment on its own line (no semicolon chaining)
+! ============================================================
+PopSize(1)  := 320
+PopSize(2)  := 185
+PopSize(3)  := 410
+PopSize(4)  := 270
+PopSize(5)  := 155
+PopSize(6)  := 390
+PopSize(7)  := 230
+PopSize(8)  := 295
+PopSize(9)  := 175
+PopSize(10) := 340
+
+PopX(1)  := 100.0
+PopX(2)  := 250.0
+PopX(3)  := 400.0
+PopX(4)  := 150.0
+PopX(5)  := 310.0
+PopX(6)  := 470.0
+PopX(7)  := 200.0
+PopX(8)  := 360.0
+PopX(9)  := 530.0
+PopX(10) := 280.0
+
+PopY(1)  := 500.0
+PopY(2)  := 480.0
+PopY(3)  := 510.0
+PopY(4)  := 350.0
+PopY(5)  := 340.0
+PopY(6)  := 360.0
+PopY(7)  := 200.0
+PopY(8)  := 190.0
+PopY(9)  := 210.0
+PopY(10) := 130.0
+
+! ============================================================
+! SECTION 5 : EMBEDDED DATA - CANDIDATE CONTAINER SITES
+! FIX: each assignment on its own line (no semicolon chaining)
+! ============================================================
+SiteX(1) := 120.0
+SiteX(2) := 280.0
+SiteX(3) := 440.0
+SiteX(4) := 160.0
+SiteX(5) := 320.0
+SiteX(6) := 490.0
+SiteX(7) := 220.0
+SiteX(8) := 380.0
+
+SiteY(1) := 490.0
+SiteY(2) := 460.0
+SiteY(3) := 500.0
+SiteY(4) := 345.0
+SiteY(5) := 330.0
+SiteY(6) := 355.0
+SiteY(7) := 195.0
+SiteY(8) := 185.0
+
+! ============================================================
+! SECTION 6 : DERIVED DATA COMPUTATION
+! ============================================================
+forall(i in POP_RANGE, j in SITE_RANGE) do
+  Distance(i, j) := sqrt((PopX(i) - SiteX(j))^2 + (PopY(i) - SiteY(j))^2)
+end-do
+
+forall(i in POP_RANGE, w in WASTE_CAT) do
+  WasteAmount(i, w) := 0.35 * PopSize(i) * BaseWasteRate(w) +
+                       0.15 * BaseWasteRate(w) * 10 +
+                       0.08 * BaseWasteRate(w) * 5
+  if WasteAmount(i, w) < 0 then
+    WasteAmount(i, w) := 0
+  end-if
+end-do
+
+total_pop := sum(i in POP_RANGE) PopSize(i)
+
+! ============================================================
+! SECTION 7 : PRINT PROBLEM SUMMARY
+! FIX: "="*70 is not valid in Mosel - use literal separator strings
+! ============================================================
+writeln
+writeln("======================================================================")
+writeln("  RIO MAIOR - DETERMINISTIC P-MEDIAN MODEL")
+writeln("======================================================================")
+writeln("  Population centers  : ", N_POP)
+writeln("  Candidate sites     : ", N_SITES)
+writeln("  Sites to select (p) : ", P)
+writeln("  Waste types         : Paper, Plastic, Glass")
+writeln("  Total population    : ", total_pop, " residents")
+writeln("======================================================================")
+writeln
+
+writeln("Population centers:")
+forall(i in POP_RANGE) do
+  writeln("  PC", i, "  pop=", PopSize(i),
+          "  coord=(", strfmt(PopX(i),6,1), ", ", strfmt(PopY(i),6,1), ")")
+end-do
+
+writeln
+writeln("Candidate container sites:")
+forall(j in SITE_RANGE) do
+  writeln("  Site ", j, "  coord=(", strfmt(SiteX(j),6,1),
+          ", ", strfmt(SiteY(j),6,1), ")")
+end-do
+
+writeln
+writeln("Waste amounts [kg/week] (first 3 centers):")
+forall(i in 1..3) do
+  writeln("  PC", i,
+          " -> Paper=",   strfmt(WasteAmount(i,"Paper"),6,2),
+          "  Plastic=", strfmt(WasteAmount(i,"Plastic"),6,2),
+          "  Glass=",   strfmt(WasteAmount(i,"Glass"),6,2))
+end-do
+writeln("  ...")
+writeln
+
+! ============================================================
+! SECTION 8 : VARIABLE DECLARATIONS (binary)
+! ============================================================
+forall(i in POP_RANGE, j in SITE_RANGE, w in WASTE_CAT)
+  X(i, j, w) is_binary
+
+forall(j in SITE_RANGE, w in WASTE_CAT, t in BIN_TYPE)
+  Y(j, w, t) is_binary
+
+forall(j in SITE_RANGE)
+  Z(j) is_binary
+
+writeln("Variable counts:")
+writeln("  X (assignment) : ", N_POP * N_SITES * 3)
+writeln("  Y (container)  : ", N_SITES * 3 * 3)
+writeln("  Z (site open)  : ", N_SITES)
+writeln("  TOTAL          : ", N_POP*N_SITES*3 + N_SITES*3*3 + N_SITES)
+writeln
+
+! ============================================================
+! SECTION 9 : OBJECTIVE FUNCTION
+! ============================================================
+TotalCost := sum(i in POP_RANGE, j in SITE_RANGE, w in WASTE_CAT) Distance(i,j) * WasteAmount(i,w) * X(i,j,w) / 1000.0
+
+! ============================================================
+! SECTION 10 : CONSTRAINTS
+! ============================================================
+
+! C1 - Full coverage
+forall(i in POP_RANGE, w in WASTE_CAT) do
+  sum(j in SITE_RANGE) X(i, j, w) = 1
+end-do
+
+! C2 - P-median: open at most P sites
+sum(j in SITE_RANGE) Z(j) <= P
+
+! C3 - Linking Z -> Y
+forall(j in SITE_RANGE) do
+  sum(w in WASTE_CAT, t in BIN_TYPE) Y(j, w, t) <= 3 * Z(j)
+end-do
+
+! C4 - Assignment only to open sites with compatible container
+forall(i in POP_RANGE, j in SITE_RANGE, w in WASTE_CAT) do
+  X(i, j, w) <= sum(t in BIN_TYPE | BinCompatible(t, w)) Y(j, w, t)
+end-do
+
+! C5 - Capacity
+forall(j in SITE_RANGE, w in WASTE_CAT) do
+  sum(i in POP_RANGE) WasteAmount(i, w) * X(i, j, w) <=
+    sum(t in BIN_TYPE | BinCompatible(t, w)) BinCapacity(t) * Y(j, w, t)
+end-do
+
+! C6 - Container uniqueness per (site, waste)
+forall(j in SITE_RANGE, w in WASTE_CAT) do
+  sum(t in BIN_TYPE) Y(j, w, t) <= 1
+end-do
+
+! ============================================================
+! SECTION 11 : SOLVE
+! ============================================================
+writeln("======================================================================")
+writeln("  SOLVING DETERMINISTIC P-MEDIAN MODEL ...")
+writeln("======================================================================")
+writeln
+
+setparam("XPRS_MIPRELSTOP", 0.005)
+setparam("XPRS_MAXTIME", 120)
+setparam("XPRS_VERBOSE", false)
+
+minimize(TotalCost)
+
+! ============================================================
+! SECTION 12 : RESULTS
+! ============================================================
+if getprobstat = XPRS_OPT or getprobstat = XPRS_UNF then
+
+  writeln
+  writeln("======================================================================")
+  writeln("  OPTIMIZATION RESULTS")
+  writeln("======================================================================")
+
+  if getprobstat = XPRS_OPT then
+    writeln("  STATUS  : OPTIMAL SOLUTION FOUND")
+  else
+    writeln("  STATUS  : FEASIBLE SOLUTION (time limit reached)")
+  end-if
+
+  writeln("  OBJ VAL : ", strfmt(getobjval, 10, 4),
+          "  (distance x waste / 1000)")
+  writeln
+
+  ! Selected sites
+  selected_count := 0
+  writeln("--- SELECTED CONTAINER SITES ---")
+  forall(j in SITE_RANGE) do
+    if getsol(Z(j)) > 0.5 then
+      selected_count := selected_count + 1
+      writeln("  [OPEN] Site ", j,
+              "  coord=(", strfmt(SiteX(j),6,1), ", ", strfmt(SiteY(j),6,1), ")")
+      forall(w in WASTE_CAT, t in BIN_TYPE) do
+        if getsol(Y(j, w, t)) > 0.5 then
+          writeln("         Container: ", w,
+                  " | Type: ", t,
+                  " | Capacity: ", BinCapacity(t), " L")
+        end-if
+      end-do
+    end-if
+  end-do
+  writeln("  Total selected: ", selected_count, " / ", P, " allowed")
+  writeln
+
+  ! Assignment summary
+  writeln("--- POPULATION CENTER ASSIGNMENTS ---")
+  forall(i in POP_RANGE) do
+    write("  PC", i, " (pop=", PopSize(i), ") -> ")
+    forall(w in WASTE_CAT) do
+      forall(j in SITE_RANGE) do
+        if getsol(X(i, j, w)) > 0.5 then
+          write(w, ":Site", j, "  ")
+        end-if
+      end-do
+    end-do
+    writeln
+  end-do
+  writeln
+
+  ! Performance metrics
+  avg_dist := 0.0
+  forall(i in POP_RANGE, j in SITE_RANGE, w in WASTE_CAT) do
+    if getsol(X(i, j, w)) > 0.5 then
+      avg_dist := avg_dist + Distance(i, j)
+    end-if
+  end-do
+  avg_dist := avg_dist / (N_POP * 3)
+
+  writeln("--- PERFORMANCE METRICS ---")
+  writeln("  Average service distance : ", strfmt(avg_dist, 8, 2), " m")
+  writeln("  Total population served  : ", total_pop, " residents")
+  writeln("  Cost per resident        : ", strfmt(getobjval / total_pop, 8, 6))
+  writeln
+
+  ! ============================================================
+  ! SECTION 13 : IVE VISUALIZATION
+  ! ============================================================
+  writeln("--- GENERATING IVE VISUALIZATIONS ---")
+
+  ! Plot 1 - Population centers (blue)
+  plt_pop := IVEaddplot("Population Centers", IVE_BLUE)
+  forall(i in POP_RANGE) do
+    IVEdrawpoint(plt_pop, PopX(i), PopY(i))
+    IVEdrawlabel(plt_pop, PopX(i), PopY(i),
+                 "PC" + string(i) + " (" + string(PopSize(i)) + ")")
+  end-do
+
+  ! Plot 2 - All candidate sites (red)
+  plt_sites := IVEaddplot("Candidate Sites", IVE_RED)
+  forall(j in SITE_RANGE) do
+    IVEdrawpoint(plt_sites, SiteX(j), SiteY(j))
+    IVEdrawlabel(plt_sites, SiteX(j), SiteY(j), "S" + string(j))
+  end-do
+
+  ! Plot 3 - Selected optimal sites (green)
+  plt_selected := IVEaddplot("Optimal Sites", IVE_GREEN)
+  forall(j in SITE_RANGE) do
+    if getsol(Z(j)) > 0.5 then
+      IVEdrawpoint(plt_selected, SiteX(j), SiteY(j))
+      site_label := "SITE " + string(j) + "\n"
+      forall(w in WASTE_CAT, t in BIN_TYPE) do
+        if getsol(Y(j, w, t)) > 0.5 then
+          site_label := site_label + w + "/" + t + "\n"
+        end-if
+      end-do
+      IVEdrawlabel(plt_selected, SiteX(j), SiteY(j), site_label)
+    end-if
+  end-do
+
+  ! Plot 4 - Paper collection network (yellow)
+  plt_paper := IVEaddplot("Paper Network", IVE_YELLOW)
+  forall(i in POP_RANGE, j in SITE_RANGE) do
+    if getsol(X(i, j, "Paper")) > 0.5 then
+      IVEdrawline(plt_paper, PopX(i), PopY(i), SiteX(j), SiteY(j))
+    end-if
+  end-do
+
+  ! Plot 5 - Plastic collection network (magenta)
+  plt_plastic := IVEaddplot("Plastic Network", IVE_MAGENTA)
+  forall(i in POP_RANGE, j in SITE_RANGE) do
+    if getsol(X(i, j, "Plastic")) > 0.5 then
+      IVEdrawline(plt_plastic, PopX(i), PopY(i), SiteX(j), SiteY(j))
+    end-if
+  end-do
+
+  ! Plot 6 - Glass collection network (cyan)
+  plt_glass := IVEaddplot("Glass Network", IVE_CYAN)
+  forall(i in POP_RANGE, j in SITE_RANGE) do
+    if getsol(X(i, j, "Glass")) > 0.5 then
+      IVEdrawline(plt_glass, PopX(i), PopY(i), SiteX(j), SiteY(j))
+    end-if
+  end-do
+
+  ! Plot 7 - Integrated system overview (black)
+  plt_system := IVEaddplot("Integrated System", IVE_BLACK)
+  forall(i in POP_RANGE) do
+    IVEdrawpoint(plt_system, PopX(i), PopY(i))
+  end-do
+  forall(j in SITE_RANGE) do
+    if getsol(Z(j)) > 0.5 then
+      IVEdrawpoint(plt_system, SiteX(j), SiteY(j))
+    end-if
+  end-do
+  forall(i in POP_RANGE, j in SITE_RANGE, w in WASTE_CAT) do
+    if getsol(X(i, j, w)) > 0.5 then
+      IVEdrawline(plt_system, PopX(i), PopY(i), SiteX(j), SiteY(j))
+    end-if
+  end-do
+
+  writeln("  7 plots generated successfully.")
+  writeln
+
+  writeln("======================================================================")
+  writeln("  DETERMINISTIC P-MEDIAN MODEL - EXECUTION COMPLETE")
+  writeln("======================================================================")
+  writeln("  Research : PhD Thesis - Rio Maior Waste Collection")
+  writeln("  Model    : Deterministic P-Median (no fixed costs)")
+  writeln("  N=", N_POP, "  |  M=", N_SITES, "  |  p=", P)
+  writeln("======================================================================")
+
+else
+  writeln
+  writeln("!!! OPTIMIZATION FAILED - Status code: ", getprobstat)
+  writeln("Possible causes:")
+  writeln("  - Container capacities too small for total waste demand")
+  writeln("  - Check that p=", P, " sites can serve all population centers")
+end-if
+
+end-model
