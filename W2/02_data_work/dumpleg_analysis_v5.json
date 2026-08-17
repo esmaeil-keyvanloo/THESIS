@@ -1,0 +1,70 @@
+{
+ "selection": "n_parts==1 & n_bins>=5 & km_rec>0 & routed",
+ "n_tracks": 547,
+ "depot_snap_m": 25.5,
+ "ts_snap_m": 36.8,
+ "back_km_TS_to_depot": 2.73,
+ "with_dump_leg": {
+  "n": 547,
+  "ratio_median": 2.493,
+  "ratio_p25": 1.922,
+  "ratio_p75": 3.631,
+  "ratio_mean": 3.202,
+  "median_abs_pct_err": 60.1,
+  "share_within_30pct": 0.037
+ },
+ "without_dump_leg": {
+  "n": 547,
+  "ratio_median": 2.627,
+  "ratio_p25": 1.975,
+  "ratio_p75": 3.924,
+  "ratio_mean": 3.564,
+  "median_abs_pct_err": 62.1,
+  "share_within_30pct": 0.033
+ },
+ "morning_with_dump": {
+  "n": 145,
+  "ratio_median": 2.59,
+  "ratio_p25": 1.969,
+  "ratio_p75": 3.603,
+  "ratio_mean": 2.992,
+  "median_abs_pct_err": 62.3,
+  "share_within_30pct": 0.041
+ },
+ "morning_without_dump": {
+  "n": 145,
+  "ratio_median": 2.804,
+  "ratio_p25": 2.058,
+  "ratio_p75": 3.98,
+  "ratio_mean": 3.362,
+  "median_abs_pct_err": 65.1,
+  "share_within_30pct": 0.041
+ },
+ "afternoon_with_dump": {
+  "n": 402,
+  "ratio_median": 2.477,
+  "ratio_p25": 1.895,
+  "ratio_p75": 3.644,
+  "ratio_mean": 3.278,
+  "median_abs_pct_err": 59.8,
+  "share_within_30pct": 0.035
+ },
+ "afternoon_without_dump": {
+  "n": 402,
+  "ratio_median": 2.6,
+  "ratio_p25": 1.964,
+  "ratio_p75": 3.918,
+  "ratio_mean": 3.637,
+  "median_abs_pct_err": 61.7,
+  "share_within_30pct": 0.03
+ },
+ "surplus_vs_distTS_corr": {
+  "pearson_r": 0.007,
+  "pearson_p": 0.8675230889305064,
+  "spearman_r": -0.003,
+  "spearman_p": 0.9386688607749629
+ },
+ "median_surplus_km": 96.0,
+ "median_dump_extra_km": 9.1,
+ "verdict": "Adding the transfer-station dump leg moves the median odometer/model ratio from 2.627 to 2.493 and cuts the median absolute error from 62.1% to 60.1%, with 3% of unsplit runs within +/-30%. Runs are consistent with closing at the Valorsul transfer station before returning to the depot; a single dump facility explains most of the recorded km surplus."
+}

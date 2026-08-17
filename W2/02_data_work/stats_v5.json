@@ -1,0 +1,186 @@
+{
+ "generated": "2026-08-17",
+ "inputs": [
+  "trips_v5.json",
+  "trips_routed_v5.json",
+  "depot_legs_v5.json",
+  "raw_collections.parquet"
+ ],
+ "fraction_by_weekday_multibin": {
+  "counts": {
+   "Packaging": {
+    "Mon": 393,
+    "Tue": 503,
+    "Wed": 311,
+    "Thu": 382,
+    "Fri": 416,
+    "Sat": 207,
+    "Sun": 0
+   },
+   "Paper/card": {
+    "Mon": 496,
+    "Tue": 445,
+    "Wed": 351,
+    "Thu": 229,
+    "Fri": 454,
+    "Sat": 104,
+    "Sun": 0
+   },
+   "Glass": {
+    "Mon": 54,
+    "Tue": 44,
+    "Wed": 73,
+    "Thu": 70,
+    "Fri": 74,
+    "Sat": 7,
+    "Sun": 0
+   }
+  },
+  "pct": {
+   "Packaging": {
+    "Mon": 17.8,
+    "Tue": 22.7,
+    "Wed": 14.1,
+    "Thu": 17.3,
+    "Fri": 18.8,
+    "Sat": 9.4,
+    "Sun": 0.0
+   },
+   "Paper/card": {
+    "Mon": 23.9,
+    "Tue": 21.4,
+    "Wed": 16.9,
+    "Thu": 11.0,
+    "Fri": 21.8,
+    "Sat": 5.0,
+    "Sun": 0.0
+   },
+   "Glass": {
+    "Mon": 16.8,
+    "Tue": 13.7,
+    "Wed": 22.7,
+    "Thu": 21.7,
+    "Fri": 23.0,
+    "Sat": 2.2,
+    "Sun": 0.0
+   }
+  }
+ },
+ "runs_per_month_multibin": {
+  "Packaging": {
+   "months_active": 52,
+   "runs_total": 2212,
+   "runs_per_month_mean": 42.54,
+   "runs_per_month_median": 43.0
+  },
+  "Paper/card": {
+   "months_active": 52,
+   "runs_total": 2079,
+   "runs_per_month_mean": 39.98,
+   "runs_per_month_median": 39.0
+  },
+  "Glass": {
+   "months_active": 52,
+   "runs_total": 322,
+   "runs_per_month_mean": 6.19,
+   "runs_per_month_median": 6.0
+  }
+ },
+ "glass_day_overlap": {
+  "glass_days": 262,
+  "glass_days_shared_with_pkg_or_paper": 243,
+  "share_glass_days_shared": 0.927
+ },
+ "purity": {
+  "all_stops": {
+   "matched": 74978,
+   "checked": 164050,
+   "purity_pct": 45.7
+  },
+  "stamped_only": {
+   "matched": 60899,
+   "checked": 60916,
+   "purity_pct": 99.97
+  },
+  "inferred_only": {
+   "matched": 14079,
+   "checked": 103134,
+   "purity_pct": 13.65
+  },
+  "containers_with_multiple_fractions": 0
+ },
+ "km_audit": {
+  "selection": "n_parts==1 & n_bins>=5 & km_rec>0 & routed; model = routed km + pre_km + toTS_km + back_km",
+  "overall": {
+   "n": 547,
+   "ratio_median": 2.494,
+   "ratio_p25": 1.921,
+   "ratio_p75": 3.629,
+   "ratio_mean": 3.202,
+   "share_within_30pct": 0.037
+  },
+  "by_fraction": {
+   "Glass": {
+    "n": 154,
+    "ratio_median": 2.581,
+    "ratio_p25": 2.023,
+    "ratio_p75": 3.535,
+    "ratio_mean": 3.216,
+    "share_within_30pct": 0.006
+   },
+   "Packaging": {
+    "n": 250,
+    "ratio_median": 2.541,
+    "ratio_p25": 1.922,
+    "ratio_p75": 3.585,
+    "ratio_mean": 3.356,
+    "share_within_30pct": 0.024
+   },
+   "Paper/card": {
+    "n": 143,
+    "ratio_median": 2.362,
+    "ratio_p25": 1.797,
+    "ratio_p75": 3.789,
+    "ratio_mean": 2.918,
+    "share_within_30pct": 0.091
+   }
+  },
+  "prior_v5_dumpleg_analysis": {
+   "ratio_median": 2.493,
+   "share_within_30pct": 0.037
+  }
+ },
+ "totals": {
+  "all": {
+   "tracks": 11495,
+   "stamped_stops": 60916,
+   "inferred_stops": 103134,
+   "multibin_tracks": 4613
+  },
+  "by_fraction": {
+   "Glass": {
+    "tracks": 597,
+    "stamped_stops": 3888,
+    "inferred_stops": 6469,
+    "multibin_tracks": 322
+   },
+   "Packaging": {
+    "tracks": 6147,
+    "stamped_stops": 30361,
+    "inferred_stops": 47893,
+    "multibin_tracks": 2212
+   },
+   "Paper/card": {
+    "tracks": 4751,
+    "stamped_stops": 26667,
+    "inferred_stops": 48772,
+    "multibin_tracks": 2079
+   }
+  }
+ },
+ "findings": [
+  "Glass runs on the same working days as the other fractions but far less often: about 6 multi-bin glass runs per month versus 42 for packaging and 40 for paper/card (roughly a 1:7 rhythm), concentrated midweek (Wed-Fri = 67% of glass runs, Saturday only 2%, never Sunday), and 93% of glass run days coincide with a packaging or paper run day - so glass has no dedicated collection days, just a sparser schedule.",
+  "Purity holds where it was claimed: 99.97% of stamped stops (60,899 of 60,916) sit on a trip of the matching fraction. But inferred stops match the trip fraction only 13.7%, because the loose-reading assignment is fraction-blind - inferred stops are sensor readings taken during any nearby run window, not verified collections, and should either be filtered by fraction or re-assigned with a fraction constraint before being used as collection events.",
+  "The ~3x km finding survives the v5 rebuild with glass included: on 547 unsplit runs with >=5 bins, recorded odometer km are a median 2.49x the modelled route (routed stops + depot and transfer-station legs), with only 3.7% of runs within +/-30%; the ratio is consistent across fractions (glass 2.58, packaging 2.54, paper/card 2.36), so the km surplus is systemic rather than fraction-specific."
+ ]
+}

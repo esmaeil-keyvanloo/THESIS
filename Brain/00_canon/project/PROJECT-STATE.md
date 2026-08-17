@@ -17,6 +17,14 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
+### S8 — 2026-08-17 latest (glass rebuild, heat calendar, boundaries; same chat)
+- **Glass correction**: earlier trips.json had silently dropped ALL glass runs; raw holds 556 glass identifiers (281 multi-bin). Full v5 pipeline rebuilt: 11,495 tracks (6,147 packaging / 4,751 paper / 597 glass), re-segmented, re-assigned (103,134 inferred stops), re-routed (8,242 tracks, 0 fallbacks).
+- **Trip facts confirmed on full set**: trips are material-pure (99.97%); glass has no dedicated days (93% of glass days coincide with other fractions, ~6 multi-bin glass runs/month, Wed–Fri); ~3× km finding holds incl. glass (median 2.49×, consistent across fractions).
+- **Caveat (stats agent)**: inferred stops are fraction-blind — only 13.7% match trip fraction (co-located ecoponto bins). They are path observations, NOT collection events; never count them as emptyings.
+- **Explorer v5**: heat calendar (day background = kg collected, global scale, tooltip kg; month headers with tonnes), fraction strips per day (P/C/G), Glass button + green trips, CAOP boundaries layer (muni + 10 freguesias). Heaviest day: 2020-08-06, 58,020 kg.
+- Excel rebuilt glass-inclusive: 223,688 rows in trip blocks / 41,129 not assignable / all 264,817 accounted.
+- Files: trips_v5*.json, reading_assignments_v5.parquet, boundaries.json, daily_kg.json, stats_v5.json, dumpleg_analysis_v5.json.
+
 ### S7 — 2026-08-17 later (loose-reading assignment, waste-facility map, dump-leg verdict; same chat)
 - **144,263 unstamped readings resolved**: 107,821 (74.7%) assigned to tracks by time+proximity (≤60 km/h feasibility, nearest-feasible, 1.5× ambiguity rule); 34,956 ambiguous (flagged, not forced); 1,486 infeasible/no-trip. `trips_v4.json` has them as "I" stops; Excel rebuilt: 228,375 rows in trip blocks / 36,442 not assignable with reasons.
 - **Waste-facility inventory** (`facilities_v2.json`): only 2 licensed tipping points in the municipality — Valorsul transfer station (39.3196,−8.9241) + Ecocentro (39.3174,−8.9108); recyclables flow onward (Valorsul's haul, not municipal): TS → CTRO sorting Cadaval; undifferentiated → S. João da Talha incinerator / Mato da Cruz landfill. 39 regional sites mapped.

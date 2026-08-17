@@ -45,6 +45,7 @@ Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.
 | Trip analytics: vehicle-track segmentation, road-routed Trip Explorer v3, depot/disposal ID, hotspot categories, temporal tables | ✅ delivered 2026-08-17 |
 | Trip-sorted driver workbook — 3 tiers, 75% of loose readings assigned (`W2/03_outputs/tables/Driver_Trips_Sorted.xlsx`) | ✅ delivered 2026-08-17 |
 | Fleet story: waste-facility map, dump-leg km audit (recorded km ≈ 3× logged-stop route), Explorer v4 | ✅ delivered 2026-08-17 |
+| Glass-inclusive rebuild (597 glass tracks recovered), Explorer v5: heat calendar, fraction strips, CAOP boundaries | ✅ delivered 2026-08-17 |
 | Demand model rebuild (sensor fill rates) | ⏭ next — critical path |
 | Container ID reconciliation (D6), BGRI fix (D7) | ⏭ next |
 | Real p-median instance (OSM network distances) | pending demand rebuild |
