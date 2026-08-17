@@ -17,7 +17,11 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
-### S8 — 2026-08-17 latest (glass rebuild, heat calendar, boundaries; same chat)
+### S9 — 2026-08-17 latest (Explorer v6: basemaps + smooth routes; same chat)
+- Basemap switcher: Street (OSM) / Satellite (Esri) / Satellite hybrid (labels) / Topography (OpenTopoMap) / Light (CARTO) — top-left control, no API keys.
+- Routes re-exported at 8 m simplify tolerance as encoded polylines (`route_export_fine.py` → trips_routed_v5_fine.json 7.2 MB, depot_legs_v5_fine.json 3.6 MB — smaller than the old 60–100 m files); lines now hug the carriageway on satellite. Template v6 decodes polylines client-side.
+
+### S8 — 2026-08-17 (glass rebuild, heat calendar, boundaries; same chat)
 - **Glass correction**: earlier trips.json had silently dropped ALL glass runs; raw holds 556 glass identifiers (281 multi-bin). Full v5 pipeline rebuilt: 11,495 tracks (6,147 packaging / 4,751 paper / 597 glass), re-segmented, re-assigned (103,134 inferred stops), re-routed (8,242 tracks, 0 fallbacks).
 - **Trip facts confirmed on full set**: trips are material-pure (99.97%); glass has no dedicated days (93% of glass days coincide with other fractions, ~6 multi-bin glass runs/month, Wed–Fri); ~3× km finding holds incl. glass (median 2.49×, consistent across fractions).
 - **Caveat (stats agent)**: inferred stops are fraction-blind — only 13.7% match trip fraction (co-located ecoponto bins). They are path observations, NOT collection events; never count them as emptyings.
