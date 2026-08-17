@@ -1,0 +1,103 @@
+{
+ "fraction_schedule": {
+  "weekday_crosstab": [
+   {
+    "wd": "Mon",
+    "Packaging": 305,
+    "Paper_card": 405,
+    "Glass": 0
+   },
+   {
+    "wd": "Tue",
+    "Packaging": 395,
+    "Paper_card": 319,
+    "Glass": 0
+   },
+   {
+    "wd": "Wed",
+    "Packaging": 231,
+    "Paper_card": 340,
+    "Glass": 0
+   },
+   {
+    "wd": "Thu",
+    "Packaging": 320,
+    "Paper_card": 201,
+    "Glass": 0
+   },
+   {
+    "wd": "Fri",
+    "Packaging": 333,
+    "Paper_card": 369,
+    "Glass": 0
+   },
+   {
+    "wd": "Sat",
+    "Packaging": 141,
+    "Paper_card": 71,
+    "Glass": 0
+   },
+   {
+    "wd": "Sun",
+    "Packaging": 0,
+    "Paper_card": 0,
+    "Glass": 0
+   }
+  ],
+  "month_note": "Multi-bin trips run year-round for both fractions; monthly totals range 256-320 trips (Glass never appears as a multi-bin trip in trips.json). No seasonal on/off pattern: packaging and paper/card are each collected in every month of the year.",
+  "purity_note": "Trips are fraction-pure: 59630/59646 stops (99.97%) match the trip's declared fraction; only 16 stops in 7 trips mix codes. Packaging and paper/card run on the SAME days, not alternating: of 1200 days with multi-bin trips, 818 days (68.2%) have both fractions, 226 packaging-only, 156 paper/card-only."
+ },
+ "two_bin_logic": {
+  "n_short_trips": 7599,
+  "medians_2bin": {
+   "dur_h": 7.41,
+   "km": 122.0
+  },
+  "medians_15plus": {
+   "dur_h": 8.09,
+   "km": 175.0
+  },
+  "conclusion": "Trips logging <=2 bins but lasting >=5 h have median 7.41 h / 122.0 km, nearly identical to trips with >=15 logged bins (8.09 h / 175.0 km), so the trip identifier spans a full shift and bin recording is partial - only some services were logged."
+ },
+ "unnecessary": {
+  "driver": {
+   "n_events_with_prereading": 59616,
+   "n_le50": 15123,
+   "pct_le50": 25.4,
+   "by_year": [
+    {
+     "y": 2020,
+     "pct": 41.9
+    },
+    {
+     "y": 2021,
+     "pct": 27.6
+    },
+    {
+     "y": 2022,
+     "pct": 20.5
+    },
+    {
+     "y": 2023,
+     "pct": 14.9
+    },
+    {
+     "y": 2024,
+     "pct": 8.1
+    }
+   ]
+  },
+  "sensor": {
+   "n": 12623,
+   "n_le50pct_ceiling": 2980,
+   "pct": 23.6
+  }
+ },
+ "category_rule": "Applied in order: U (insufficient) = <5 collection events. H (high need) = share of pre-emptying driver readings >=75 is >=80%, OR sensor fill rate >=13 units/day (median of positive day-over-day deltas of daily-median valid readings; ~13/day fills the ~84-unit ceiling in under a week). L (low need) = share of pre-emptying readings <=25 is >=25%, OR rarely collected (<0.5 events/month over the bin's own observation span). M (moderate) = rest. Thresholds are anchored at the empirical upper quartile/decile because the driver scale is skewed high (median bin: 67% of emptyings read >=75; median sensor fill rate 10 units/day), so the naive 40%/fast-fill rule would label 73% of bins high. pfull/plow are computed over events with a valid pre-emptying reading (previous non-event reading of the same container <=15 min before the collection-event row, value >=0).",
+ "category_counts": {
+  "high": 233,
+  "moderate": 315,
+  "low": 221,
+  "insufficient": 47
+ }
+}

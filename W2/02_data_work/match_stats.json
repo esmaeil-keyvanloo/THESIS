@@ -1,0 +1,502 @@
+{
+ "driver_rows_on_instrumented": 127928,
+ "gap_distribution_min": [
+  {
+   "q": "p10",
+   "v": 30.0
+  },
+  {
+   "q": "p25",
+   "v": 91.0
+  },
+  {
+   "q": "p50",
+   "v": 347.0
+  },
+  {
+   "q": "p75",
+   "v": 1280.0
+  },
+  {
+   "q": "p90",
+   "v": 247130.0
+  },
+  {
+   "q": "p95",
+   "v": 486331.0
+  }
+ ],
+ "window_sensitivity": [
+  {
+   "window_min": 15,
+   "matched": 6097,
+   "pct_of_driver_rows": 4.8,
+   "acceptable_pct_of_matched": 50.9,
+   "mean_absdiff_norm": 38.6
+  },
+  {
+   "window_min": 30,
+   "matched": 11995,
+   "pct_of_driver_rows": 9.4,
+   "acceptable_pct_of_matched": 49.5,
+   "mean_absdiff_norm": 40.0
+  },
+  {
+   "window_min": 60,
+   "matched": 20862,
+   "pct_of_driver_rows": 16.3,
+   "acceptable_pct_of_matched": 50.2,
+   "mean_absdiff_norm": 39.4
+  },
+  {
+   "window_min": 180,
+   "matched": 43477,
+   "pct_of_driver_rows": 34.0,
+   "acceptable_pct_of_matched": 48.9,
+   "mean_absdiff_norm": 40.1
+  },
+  {
+   "window_min": 360,
+   "matched": 60584,
+   "pct_of_driver_rows": 47.4,
+   "acceptable_pct_of_matched": 48.9,
+   "mean_absdiff_norm": 39.9
+  },
+  {
+   "window_min": 720,
+   "matched": 83127,
+   "pct_of_driver_rows": 65.0,
+   "acceptable_pct_of_matched": 49.1,
+   "mean_absdiff_norm": 39.9
+  },
+  {
+   "window_min": 1440,
+   "matched": 90310,
+   "pct_of_driver_rows": 70.6,
+   "acceptable_pct_of_matched": 48.9,
+   "mean_absdiff_norm": 40.2
+  }
+ ],
+ "primary_window_min": 180,
+ "matched_pairs": 43477,
+ "ceiling": {
+  "matched_d100": 10153,
+  "d100_with_sensor_82_84": 1758,
+  "pct_of_d100": 17.3,
+  "d100_with_sensor_ge_75norm": 3901
+ },
+ "driver_minus1": {
+  "rows_on_instrumented": 146,
+  "with_valid_sensor_within_window": 84,
+  "pct": 57.5,
+  "sensor_value_dist_p25_50_75": [
+   11.890243902439025,
+   23.031148986188658,
+   85.80296796943873
+  ],
+  "share_event_rows": 0.0
+ },
+ "diff_categories": {
+  "compared_pairs": 28683,
+  "small_le_half_step": 8039,
+  "small_pct": 28.0,
+  "moderate_le_one_step": 4912,
+  "moderate_pct": 17.1,
+  "large_gt_one_step": 15732,
+  "large_pct": 54.8,
+  "acceptable_le_25": 12951,
+  "acceptable_pct": 45.2
+ },
+ "diff_by_driver_value": [
+  {
+   "d_fill": 0,
+   "n": 6790,
+   "mean_absdiff": 40.1,
+   "acceptable_pct": 45.6
+  },
+  {
+   "d_fill": 25,
+   "n": 2281,
+   "mean_absdiff": 25.5,
+   "acceptable_pct": 75.0
+  },
+  {
+   "d_fill": 50,
+   "n": 3438,
+   "mean_absdiff": 25.1,
+   "acceptable_pct": 51.5
+  },
+  {
+   "d_fill": 75,
+   "n": 6021,
+   "mean_absdiff": 38.0,
+   "acceptable_pct": 41.1
+  },
+  {
+   "d_fill": 100,
+   "n": 10153,
+   "mean_absdiff": 51.5,
+   "acceptable_pct": 38.4
+  }
+ ],
+ "qc_flag_counts": [
+  {
+   "qc_flag": "NO_SENSOR_MATCH",
+   "n": 62309
+  },
+  {
+   "qc_flag": "EVENT_ZERO_POST_EMPTYING",
+   "n": 36790
+  },
+  {
+   "qc_flag": "LARGE_DISAGREEMENT",
+   "n": 15732
+  },
+  {
+   "qc_flag": "GOOD_AGREEMENT",
+   "n": 6281
+  },
+  {
+   "qc_flag": "MODERATE_AGREEMENT",
+   "n": 4912
+  },
+  {
+   "qc_flag": "CEILING_CASE",
+   "n": 1758
+  },
+  {
+   "qc_flag": "DRIVER_MISSING_SENSOR_AVAILABLE",
+   "n": 84
+  },
+  {
+   "qc_flag": "DRIVER_MISSING_NO_MATCH",
+   "n": 62
+  }
+ ],
+ "selected_fill_available": 75260,
+ "negatives": {
+  "total": 96832,
+  "by_value_top": [
+   {
+    "fill": -116,
+    "n": 37052
+   },
+   {
+    "fill": -3,
+    "n": 11748
+   },
+   {
+    "fill": -1,
+    "n": 10114
+   },
+   {
+    "fill": -4,
+    "n": 8422
+   },
+   {
+    "fill": -2,
+    "n": 5804
+   },
+   {
+    "fill": -89,
+    "n": 3353
+   },
+   {
+    "fill": -6,
+    "n": 3226
+   },
+   {
+    "fill": -5,
+    "n": 3015
+   }
+  ],
+  "by_cluster": [
+   {
+    "c": "small_-1..-9",
+    "n": 45788,
+    "pct": 47.3
+   },
+   {
+    "c": "large_-89..-116",
+    "n": 51044,
+    "pct": 52.7
+   }
+  ],
+  "by_month": [
+   {
+    "ym": "2020-01",
+    "n": 3728
+   },
+   {
+    "ym": "2020-02",
+    "n": 3845
+   },
+   {
+    "ym": "2020-03",
+    "n": 4231
+   },
+   {
+    "ym": "2020-04",
+    "n": 4053
+   },
+   {
+    "ym": "2020-05",
+    "n": 3515
+   },
+   {
+    "ym": "2020-06",
+    "n": 3676
+   },
+   {
+    "ym": "2020-07",
+    "n": 3689
+   },
+   {
+    "ym": "2020-08",
+    "n": 3312
+   },
+   {
+    "ym": "2020-09",
+    "n": 3301
+   },
+   {
+    "ym": "2020-10",
+    "n": 3091
+   },
+   {
+    "ym": "2020-11",
+    "n": 1754
+   },
+   {
+    "ym": "2020-12",
+    "n": 1404
+   },
+   {
+    "ym": "2021-01",
+    "n": 1496
+   },
+   {
+    "ym": "2021-02",
+    "n": 1451
+   },
+   {
+    "ym": "2021-03",
+    "n": 1107
+   },
+   {
+    "ym": "2021-04",
+    "n": 1117
+   },
+   {
+    "ym": "2021-05",
+    "n": 1210
+   },
+   {
+    "ym": "2021-06",
+    "n": 1196
+   },
+   {
+    "ym": "2021-07",
+    "n": 1162
+   },
+   {
+    "ym": "2021-08",
+    "n": 1579
+   },
+   {
+    "ym": "2021-09",
+    "n": 1186
+   },
+   {
+    "ym": "2021-10",
+    "n": 1108
+   },
+   {
+    "ym": "2021-11",
+    "n": 1069
+   },
+   {
+    "ym": "2021-12",
+    "n": 1071
+   },
+   {
+    "ym": "2022-01",
+    "n": 1045
+   },
+   {
+    "ym": "2022-02",
+    "n": 931
+   },
+   {
+    "ym": "2022-03",
+    "n": 991
+   },
+   {
+    "ym": "2022-04",
+    "n": 1116
+   },
+   {
+    "ym": "2022-05",
+    "n": 1119
+   },
+   {
+    "ym": "2022-06",
+    "n": 1114
+   },
+   {
+    "ym": "2022-07",
+    "n": 1051
+   },
+   {
+    "ym": "2022-08",
+    "n": 1110
+   },
+   {
+    "ym": "2022-09",
+    "n": 1026
+   },
+   {
+    "ym": "2022-10",
+    "n": 1038
+   },
+   {
+    "ym": "2022-11",
+    "n": 1043
+   },
+   {
+    "ym": "2022-12",
+    "n": 1173
+   },
+   {
+    "ym": "2023-01",
+    "n": 1653
+   },
+   {
+    "ym": "2023-02",
+    "n": 1205
+   },
+   {
+    "ym": "2023-03",
+    "n": 1128
+   },
+   {
+    "ym": "2023-04",
+    "n": 1322
+   },
+   {
+    "ym": "2023-05",
+    "n": 1284
+   },
+   {
+    "ym": "2023-06",
+    "n": 2356
+   },
+   {
+    "ym": "2023-07",
+    "n": 2673
+   },
+   {
+    "ym": "2023-08",
+    "n": 1573
+   },
+   {
+    "ym": "2023-09",
+    "n": 3636
+   },
+   {
+    "ym": "2023-10",
+    "n": 3267
+   },
+   {
+    "ym": "2023-11",
+    "n": 2078
+   },
+   {
+    "ym": "2023-12",
+    "n": 1291
+   },
+   {
+    "ym": "2024-01",
+    "n": 1442
+   },
+   {
+    "ym": "2024-02",
+    "n": 1659
+   },
+   {
+    "ym": "2024-03",
+    "n": 1694
+   },
+   {
+    "ym": "2024-04",
+    "n": 1463
+   }
+  ],
+  "container_concentration": 28.8,
+  "containers_with_negatives": 329,
+  "by_fraction": [
+   {
+    "fraction": "Embalagens de Vidro",
+    "neg_pct": 0.9
+   },
+   {
+    "fraction": "Embalagens de papel e cartão",
+    "neg_pct": 9.8
+   },
+   {
+    "fraction": "Mistura de embalagens",
+    "neg_pct": 9.0
+   }
+  ],
+  "by_ctype": [
+   {
+    "ctype": "OVO",
+    "neg_pct": 9.7,
+    "n": 771571
+   },
+   {
+    "ctype": "AMBI",
+    "neg_pct": 3.2,
+    "n": 106562
+   },
+   {
+    "ctype": "VRL",
+    "neg_pct": 9.5,
+    "n": 60190
+   },
+   {
+    "ctype": "OVO S",
+    "neg_pct": 3.3,
+    "n": 37947
+   },
+   {
+    "ctype": "E BLUE BEE",
+    "neg_pct": 23.6,
+    "n": 30921
+   },
+   {
+    "ctype": "TITAN",
+    "neg_pct": 6.5,
+    "n": 29565
+   },
+   {
+    "ctype": "MOXEA",
+    "neg_pct": 21.6,
+    "n": 11819
+   }
+  ],
+  "episodes": {
+   "n_episodes": 29885,
+   "len_p50_p90_max": [
+    [
+     1.0,
+     4.0
+    ],
+    1226
+   ],
+   "episodes_gt_1day_pct": 17.8
+  },
+  "level_shift_after_episode": 28.5,
+  "baseline_adjacent_change": 9.6
+ }
+}

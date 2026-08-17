@@ -1,0 +1,516 @@
+{
+ "collections": {
+  "rows": 264817,
+  "containers_by_cid": 816,
+  "containers_by_plate": 816,
+  "date_min": "2020-01-02 05:52:11",
+  "date_max": "2024-04-29 21:29:07.315000",
+  "inside_municipality": 816,
+  "inside_10km_mask": 816
+ },
+ "sensors": {
+  "rows": 1048575,
+  "containers_by_cid": 344,
+  "containers_by_plate": 344,
+  "date_min": "2020-01-01 00:05:50.227000",
+  "date_max": "2024-04-30 13:01:38.553000",
+  "inside_municipality": 344,
+  "inside_10km_mask": 344
+ },
+ "overlap": {
+  "cid_both": 344,
+  "cid_driver_only": 472,
+  "cid_sensor_only": 0,
+  "plate_both": 344,
+  "plate_driver_only": 472,
+  "plate_sensor_only": 0
+ },
+ "coord_agreement": {
+  "n_shared": 344,
+  "median_dist_m": 0.0,
+  "p90_dist_m": 0.0,
+  "max_dist_m": 0.0,
+  "within_10m": 344,
+  "within_100m": 344,
+  "over_500m": 0,
+  "fraction_match": 344,
+  "type_match": 344,
+  "vol_match": 344
+ },
+ "fill": {
+  "collections_values": [
+   {
+    "fill": -1,
+    "n": 249
+   },
+   {
+    "fill": 0,
+    "n": 144804
+   },
+   {
+    "fill": 25,
+    "n": 28164
+   },
+   {
+    "fill": 50,
+    "n": 26862
+   },
+   {
+    "fill": 75,
+    "n": 26203
+   },
+   {
+    "fill": 100,
+    "n": 38535
+   }
+  ],
+  "sensors_hist": [
+   {
+    "bucket": "0",
+    "n": 127813
+   },
+   {
+    "bucket": "10",
+    "n": 103851
+   },
+   {
+    "bucket": "20",
+    "n": 108208
+   },
+   {
+    "bucket": "30",
+    "n": 217910
+   },
+   {
+    "bucket": "40",
+    "n": 71272
+   },
+   {
+    "bucket": "50",
+    "n": 58379
+   },
+   {
+    "bucket": "60",
+    "n": 72975
+   },
+   {
+    "bucket": "70",
+    "n": 66082
+   },
+   {
+    "bucket": "80",
+    "n": 125253
+   },
+   {
+    "bucket": "neg",
+    "n": 96832
+   }
+  ],
+  "sensors_per_container_max": [
+   {
+    "max_fill": 82,
+    "n": 314
+   },
+   {
+    "max_fill": 83,
+    "n": 10
+   },
+   {
+    "max_fill": 84,
+    "n": 20
+   }
+  ]
+ },
+ "fractions": [
+  {
+   "fraction": "Embalagens de papel e cartão",
+   "n_driver": 280,
+   "n_sensor": 173
+  },
+  {
+   "fraction": "Mistura de embalagens",
+   "n_driver": 278,
+   "n_sensor": 169
+  },
+  {
+   "fraction": "Embalagens de Vidro",
+   "n_driver": 258,
+   "n_sensor": 2
+  }
+ ],
+ "freguesias": [
+  {
+   "freguesia": "Rio Maior",
+   "n_driver": 467,
+   "n_sensor": 194
+  },
+  {
+   "freguesia": "Alcobertas",
+   "n_driver": 69,
+   "n_sensor": 34
+  },
+  {
+   "freguesia": "União das freguesias de São João da Ribeira e Ribeira de São João",
+   "n_driver": 59,
+   "n_sensor": 31
+  },
+  {
+   "freguesia": "União das freguesias de Marmeleira e Assentiz",
+   "n_driver": 51,
+   "n_sensor": 22
+  },
+  {
+   "freguesia": "Asseiceira",
+   "n_driver": 36,
+   "n_sensor": 11
+  },
+  {
+   "freguesia": "União das freguesias de Azambujeira e Malaqueijo",
+   "n_driver": 34,
+   "n_sensor": 14
+  },
+  {
+   "freguesia": "União das freguesias de Outeiro da Cortiçada e Arruda dos Pisões",
+   "n_driver": 29,
+   "n_sensor": 13
+  },
+  {
+   "freguesia": "Arrouquelas",
+   "n_driver": 27,
+   "n_sensor": 7
+  },
+  {
+   "freguesia": "Fráguas",
+   "n_driver": 25,
+   "n_sensor": 10
+  },
+  {
+   "freguesia": "São Sebastião",
+   "n_driver": 19,
+   "n_sensor": 8
+  }
+ ],
+ "routes": {
+  "rows_with_rota": 22674,
+  "distinct_rota": 92,
+  "rows_with_peso": 60912,
+  "top_rotas": [
+   {
+    "rota": "CE13",
+    "n": 2883,
+    "n_containers": 77
+   },
+   {
+    "rota": "CP13",
+    "n": 2663,
+    "n_containers": 80
+   },
+   {
+    "rota": "CE44",
+    "n": 1631,
+    "n_containers": 55
+   },
+   {
+    "rota": "CP44",
+    "n": 1278,
+    "n_containers": 55
+   },
+   {
+    "rota": "CE06",
+    "n": 1190,
+    "n_containers": 52
+   },
+   {
+    "rota": "CP06",
+    "n": 1040,
+    "n_containers": 61
+   },
+   {
+    "rota": "CE11",
+    "n": 1039,
+    "n_containers": 22
+   },
+   {
+    "rota": "CP07",
+    "n": 1016,
+    "n_containers": 7
+   },
+   {
+    "rota": "CP11",
+    "n": 703,
+    "n_containers": 26
+   },
+   {
+    "rota": "CP35",
+    "n": 526,
+    "n_containers": 5
+   }
+  ]
+ },
+ "gdb464": {
+  "in_collections": 464,
+  "in_sensors": 193
+ },
+ "monthly": [
+  {
+   "ym": "2020-01",
+   "driver_rows": 5897.0,
+   "sensor_rows": 6489.0
+  },
+  {
+   "ym": "2020-02",
+   "driver_rows": 5518.0,
+   "sensor_rows": 7049.0
+  },
+  {
+   "ym": "2020-03",
+   "driver_rows": 5260.0,
+   "sensor_rows": 7852.0
+  },
+  {
+   "ym": "2020-04",
+   "driver_rows": 5760.0,
+   "sensor_rows": 7579.0
+  },
+  {
+   "ym": "2020-05",
+   "driver_rows": 5934.0,
+   "sensor_rows": 6942.0
+  },
+  {
+   "ym": "2020-06",
+   "driver_rows": 5724.0,
+   "sensor_rows": 7411.0
+  },
+  {
+   "ym": "2020-07",
+   "driver_rows": 6087.0,
+   "sensor_rows": 7339.0
+  },
+  {
+   "ym": "2020-08",
+   "driver_rows": 6184.0,
+   "sensor_rows": 6826.0
+  },
+  {
+   "ym": "2020-09",
+   "driver_rows": 6391.0,
+   "sensor_rows": 6930.0
+  },
+  {
+   "ym": "2020-10",
+   "driver_rows": 6089.0,
+   "sensor_rows": 9854.0
+  },
+  {
+   "ym": "2020-11",
+   "driver_rows": 5702.0,
+   "sensor_rows": 16129.0
+  },
+  {
+   "ym": "2020-12",
+   "driver_rows": 6434.0,
+   "sensor_rows": 17667.0
+  },
+  {
+   "ym": "2021-01",
+   "driver_rows": 5301.0,
+   "sensor_rows": 16680.0
+  },
+  {
+   "ym": "2021-02",
+   "driver_rows": 4876.0,
+   "sensor_rows": 15649.0
+  },
+  {
+   "ym": "2021-03",
+   "driver_rows": 4733.0,
+   "sensor_rows": 14932.0
+  },
+  {
+   "ym": "2021-04",
+   "driver_rows": 4727.0,
+   "sensor_rows": 13205.0
+  },
+  {
+   "ym": "2021-05",
+   "driver_rows": 4914.0,
+   "sensor_rows": 13792.0
+  },
+  {
+   "ym": "2021-06",
+   "driver_rows": 5156.0,
+   "sensor_rows": 13551.0
+  },
+  {
+   "ym": "2021-07",
+   "driver_rows": 5470.0,
+   "sensor_rows": 14209.0
+  },
+  {
+   "ym": "2021-08",
+   "driver_rows": 6497.0,
+   "sensor_rows": 14143.0
+  },
+  {
+   "ym": "2021-09",
+   "driver_rows": 5258.0,
+   "sensor_rows": 13524.0
+  },
+  {
+   "ym": "2021-10",
+   "driver_rows": 4869.0,
+   "sensor_rows": 13719.0
+  },
+  {
+   "ym": "2021-11",
+   "driver_rows": 4957.0,
+   "sensor_rows": 12802.0
+  },
+  {
+   "ym": "2021-12",
+   "driver_rows": 5000.0,
+   "sensor_rows": 13224.0
+  },
+  {
+   "ym": "2022-01",
+   "driver_rows": 4888.0,
+   "sensor_rows": 13478.0
+  },
+  {
+   "ym": "2022-02",
+   "driver_rows": 4855.0,
+   "sensor_rows": 11872.0
+  },
+  {
+   "ym": "2022-03",
+   "driver_rows": 4735.0,
+   "sensor_rows": 13122.0
+  },
+  {
+   "ym": "2022-04",
+   "driver_rows": 5351.0,
+   "sensor_rows": 13201.0
+  },
+  {
+   "ym": "2022-05",
+   "driver_rows": 5055.0,
+   "sensor_rows": 13962.0
+  },
+  {
+   "ym": "2022-06",
+   "driver_rows": 4890.0,
+   "sensor_rows": 13449.0
+  },
+  {
+   "ym": "2022-07",
+   "driver_rows": 5307.0,
+   "sensor_rows": 14398.0
+  },
+  {
+   "ym": "2022-08",
+   "driver_rows": 5383.0,
+   "sensor_rows": 14590.0
+  },
+  {
+   "ym": "2022-09",
+   "driver_rows": 5142.0,
+   "sensor_rows": 13638.0
+  },
+  {
+   "ym": "2022-10",
+   "driver_rows": 4599.0,
+   "sensor_rows": 13288.0
+  },
+  {
+   "ym": "2022-11",
+   "driver_rows": 4562.0,
+   "sensor_rows": 12021.0
+  },
+  {
+   "ym": "2022-12",
+   "driver_rows": 4919.0,
+   "sensor_rows": 12792.0
+  },
+  {
+   "ym": "2023-01",
+   "driver_rows": 4853.0,
+   "sensor_rows": 13336.0
+  },
+  {
+   "ym": "2023-02",
+   "driver_rows": 4442.0,
+   "sensor_rows": 12855.0
+  },
+  {
+   "ym": "2023-03",
+   "driver_rows": 4589.0,
+   "sensor_rows": 14501.0
+  },
+  {
+   "ym": "2023-04",
+   "driver_rows": 4428.0,
+   "sensor_rows": 14638.0
+  },
+  {
+   "ym": "2023-05",
+   "driver_rows": 5050.0,
+   "sensor_rows": 15865.0
+  },
+  {
+   "ym": "2023-06",
+   "driver_rows": 4835.0,
+   "sensor_rows": 26166.0
+  },
+  {
+   "ym": "2023-07",
+   "driver_rows": 5060.0,
+   "sensor_rows": 37139.0
+  },
+  {
+   "ym": "2023-08",
+   "driver_rows": 5425.0,
+   "sensor_rows": 37554.0
+  },
+  {
+   "ym": "2023-09",
+   "driver_rows": 5130.0,
+   "sensor_rows": 41397.0
+  },
+  {
+   "ym": "2023-10",
+   "driver_rows": 4346.0,
+   "sensor_rows": 48990.0
+  },
+  {
+   "ym": "2023-11",
+   "driver_rows": 4185.0,
+   "sensor_rows": 52613.0
+  },
+  {
+   "ym": "2023-12",
+   "driver_rows": 4256.0,
+   "sensor_rows": 58108.0
+  },
+  {
+   "ym": "2024-01",
+   "driver_rows": 4636.0,
+   "sensor_rows": 58551.0
+  },
+  {
+   "ym": "2024-02",
+   "driver_rows": 3546.0,
+   "sensor_rows": 56979.0
+  },
+  {
+   "ym": "2024-03",
+   "driver_rows": 3191.0,
+   "sensor_rows": 62270.0
+  },
+  {
+   "ym": "2024-04",
+   "driver_rows": 4421.0,
+   "sensor_rows": 60305.0
+  }
+ ]
+}

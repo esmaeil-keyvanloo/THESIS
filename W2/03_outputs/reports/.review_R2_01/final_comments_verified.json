@@ -1,0 +1,305 @@
+{
+  "file": "C:\\Users\\esmae\\Desktop\\phd Esmaeil\\THESIS CLAUDE\\W2\\03_outputs\\reports\\R2-01_Driver_Sensor_Reconciliation_Codex_Final_Review.docx",
+  "comment_count": 13,
+  "comments": [
+    {
+      "id": "0",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please restructure this section under four short subheadings: What matches; What differs; What remains uncertain; and What can safely be analysed next. Keep it concise, but define unfamiliar terms and state the main validation question clearly.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "Executive summary"
+            },
+            {
+              "where": "end",
+              "text": "Executive summary"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Exact agreement supports, but does not prove, a shared master registry. Please frame this as an inference and state that the evidence is consistent with both exports drawing from a common container registry.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The two CSV files describe the same physical container network from two instruments: the driver’s eye and the mounted sensor. Reconciling them container by container gives a clean result. The 344 sens"
+            },
+            {
+              "where": "end",
+              "text": "The two CSV files describe the same physical container network from two instruments: the driver’s eye and the mounted sensor. Reconciling them container by container gives a clean result. The 344 sens"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please provide the formula, denominator, and treatment of each sensor active period for 2.55 readings per day per container. A simple total rows divided by 344 containers and the full study period gives about 1.93, so 2.55 is not currently reproducible from the report or analysis script.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            },
+            {
+              "where": "end",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "The zeros require reinterpretation. All 60,916 Driver rows with idrecolha record zero, and 60,417 have a preceding reading for the same container within 15 minutes; 59,507 of those preceding readings are nonzero. A substantial share of zeros are therefore post-emptying confirmations rather than containers found empty. Any statistic on fill at collection must use the pre-emptying reading of each pair. Please quantify paired and standalone zeros and revise this sentence and Table 4 accordingly.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            },
+            {
+              "where": "end",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "The field inspection of 1 October 2025 offers a direct explanation that is not tested here: containers occur in three-fraction clusters and typically only one unit per cluster is instrumented, with priority to the faster-filling packaging stream. The observed 173 paper, 169 packaging, and 2 glass split is consistent with that policy. Please test the cluster-level selection pattern and the CSV row ordering before attributing the imbalance to truncation.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "Glass drops from a third of the census to two instrumented containers. The truncation defect D1 removed whole containers, so the sensor file cannot say whether glass was ever instrumented at scale. Un"
+            },
+            {
+              "where": "end",
+              "text": "Glass drops from a third of the census to two instrumented containers. The truncation defect D1 removed whole containers, so the sensor file cannot say whether glass was ever instrumented at scale. Un"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please verify and document the run-level interpretation with distributions of distance, weight, and containers serviced per idrecolha, and state where weighing occurs. This is necessary before allocating run weight to containers and before comparing the raw fields with the much larger aggregate distance figures reported elsewhere.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "On 23% of driver rows; weight repeats per container within a run (mean 2,806 kg, median 2,360) — route totals, not per-container weights."
+            },
+            {
+              "where": "end",
+              "text": "On 23% of driver rows; weight repeats per container within a run (mean 2,806 kg, median 2,360) — route totals, not per-container weights."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "The nominal coverage period is not necessarily the effective analysis period. Sensor negatives are strongly time-dependent and 2024 contains only four months. Please report an effective analysis window for each source and avoid annual comparisons that treat partial 2024 as a complete year.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "2020-01-02 to 2024-04-29"
+            },
+            {
+              "where": "end",
+              "text": "2020-01-02 to 2024-04-29"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "This statement is incorrect: start and end timestamps are populated on 60,916 Driver rows, while Rota is populated on only 22,674 rows; 38,242 timestamped rows have no route code. Please correct the relationship and report the distributions of start hour, day of week, and run duration because these fields provide direct evidence for routing shift constraints.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "Populated only alongside Rota."
+            },
+            {
+              "where": "end",
+              "text": "Populated only alongside Rota."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please test the stream-specific route interpretation directly. In the raw data, 91 of 92 coded routes contain one waste fraction; the remaining route or malformed prefix should be identified and explained. This matters because allocating trip weight is less problematic within a single bulk-density stream than across mixed fractions.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "CE = packaging, CP = paper; paired numbering (CE13/CP13). No glass circuits."
+            },
+            {
+              "where": "end",
+              "text": "CE = packaging, CP = paper; paired numbering (CE13/CP13). No glass circuits."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "The section assesses fitness by variable but not the sample used by the existing regression. This report establishes populations of 816, 464, and 344 containers, while R1-01 reports N = 452. Please identify exactly what the 452 observations represent and document their selection and exclusion rules.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "3. Fitness for the next analyses"
+            },
+            {
+              "where": "end",
+              "text": "3. Fitness for the next analyses"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please relate this result explicitly to defect D6 in R1-01. Clarify whether D6 is fully resolved, reclassified as an expected coverage difference, or only partly closed; then update the defect register and explain any remaining implication for the optimisation instance.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The reconciliation removes a risk the audit had left open: the two files might have described different networks, mismatched positions, or duplicate registries. They do not. One registry, exact coordi"
+            },
+            {
+              "where": "end",
+              "text": "The reconciliation removes a risk the audit had left open: the two files might have described different networks, mismatched positions, or duplicate registries. They do not. One registry, exact coordi"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "The temporal denominator must be calendar time within each container active period, not merely days on which a reading or collection is recorded. Please define installation or observation start and end dates per container, handle inactive gaps, and show how this denominator changes the resulting daily demand estimates.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "Run demand estimation on the 344 — with fill treated as a monotone index, negatives filtered by failure mode, and the 82–84 ceiling handled as censoring until the unit interview."
+            },
+            {
+              "where": "end",
+              "text": "Run demand estimation on the 344 — with fill treated as a monotone index, negatives filtered by failure mode, and the 82–84 ceiling handled as censoring until the unit interview."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "author": "Codex",
+      "date": "2026-08-14T15:19:04Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Beyond the arithmetic discrepancy between 1.93 and 2.55, the higher value may have been calculated over container-specific active periods rather than the full study window. If so, those active periods are essential inputs to the demand calculation and must be reported per container rather than assumed uniform.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "Jan 2020 – Apr 2024 in both; sensor cadence 2.55/day/container."
+            },
+            {
+              "where": "end",
+              "text": "Jan 2020 – Apr 2024 in both; sensor cadence 2.55/day/container."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

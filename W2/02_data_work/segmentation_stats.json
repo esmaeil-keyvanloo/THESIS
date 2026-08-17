@@ -1,0 +1,32 @@
+{
+ "segments_checked": 49662,
+ "implied_speed_kmh": {
+  "p50": 16.4,
+  "p75": 30.9,
+  "p90": 48.4,
+  "p95": 73.5,
+  "p97": 133.2,
+  "p99": 467.4
+ },
+ "share_over_threshold_pct": {
+  "40": 15.37,
+  "60": 6.62,
+  "80": 4.53,
+  "100": 3.57,
+  "150": 2.81
+ },
+ "chosen_vmax_kmh": 60.0,
+ "identifiers_multibin": 3430,
+ "identifiers_split": 1137,
+ "tracks_per_identifier": {
+  "1": 2293,
+  "2": 935,
+  "3": 191,
+  "4": 9,
+  "26": 1,
+  "30": 1
+ },
+ "violating_segments_before": 3288,
+ "violating_segments_after": 0,
+ "tracks_multibin_after": 4423
+}

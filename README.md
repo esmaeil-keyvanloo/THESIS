@@ -16,8 +16,10 @@ comparison.
 | Folder | Role | Rule |
 |---|---|---|
 | `DATA/` | Original data & documents — **frozen source of truth** | Never edited; SHA-256 manifest in `Brain/06_manifest/` |
+| `GIS_DATA/` | Open spatial data library for Rio Maior (admin, OSM, census, land use, elevation, hydro, hazards, utilities) — see `GIS_DATA/README.md` for sources & licenses | Clipped to study area +10 km, EPSG:3763; large national files re-downloadable from documented URLs |
 | `Brain/` | Persistent knowledge base: canon (scope, constraints, data dictionary, decisions), Markdown-converted sources, notes, DuckDB/GeoPackage numeric layer, hybrid semantic index, tooling | Append-only, verified; every claim cites a source |
 | `W1/` | Working round 1: plans, scripts, models, outputs, logs | Disposable; verified results promoted to `Brain/` |
+| `W2/` | Working round 2: driver–sensor reconciliation (scripts, reconciled layer, maps, report R2-01) | Same rule |
 | `.claude/skills/` | Project skills (e.g. `human-writing` — de-AI style linter for deliverables) | |
 
 Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.md)
@@ -30,7 +32,7 @@ Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.
 - **Operational parameters (public sources)** — `Brain/02_notes/literature/valorsul-operations-lopes-2014.md` (Valorsul CTRO depot, fleet, 82 circuits, shift times)
 - **Maps** — `W1/04_outputs/maps/` (container network, population, sensor coverage)
 
-## Status (2026-08-10)
+## Status (2026-08-17)
 
 | Stage | State |
 |---|---|
@@ -38,6 +40,10 @@ Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.
 | CSV semantics interview + defect register | ✅ recorded in canon |
 | Operational data (depot, fleet, policy) | ✅ documented from public sources |
 | Methodology audit report R1-01 | ✅ delivered |
+| GIS data library (`GIS_DATA/`, 6 GB, 52 styled layers in QGIS project) | ✅ built 2026-08-13 |
+| Driver–sensor reconciliation (816 vs 344, report R2-01 Rev C, event-level QC dataset) | ✅ delivered 2026-08-14 |
+| Trip analytics: vehicle-track segmentation, road-routed Trip Explorer v3, depot/disposal ID, hotspot categories, temporal tables | ✅ delivered 2026-08-17 |
+| Trip-sorted driver workbook (`W2/03_outputs/tables/Driver_Trips_Sorted.xlsx`) | ✅ delivered 2026-08-17 |
 | Demand model rebuild (sensor fill rates) | ⏭ next — critical path |
 | Container ID reconciliation (D6), BGRI fix (D7) | ⏭ next |
 | Real p-median instance (OSM network distances) | pending demand rebuild |
@@ -49,6 +55,10 @@ Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.
   preserved as `Brain/03_db/parquet/raw_sensors.parquet` (zstd, 7.6 MB);
   regenerate the CSV-equivalent tables from there or place the original file
   back under `DATA/XLS/` locally.
+- `GIS_DATA/` contents are **not in the repository** (multi-GB open datasets incl.
+  user-downloaded 50 cm LiDAR): every layer is re-downloadable via the URLs in
+  `GIS_DATA/README.md`, which is versioned. `W2/02_data_work/trips_routed*.json`
+  regenerate via `W2/01_scripts/route_trips_v3.py`.
 - `Brain/03_db/duckdb/rio.duckdb` and `Brain/04_index/` are **regenerable**:
   `python Brain/05_tools/db/build_db.py` and
   `python Brain/05_tools/ingest/build_index.py`.

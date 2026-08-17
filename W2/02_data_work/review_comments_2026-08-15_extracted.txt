@@ -1,0 +1,616 @@
+--- #6 [esi esi Keyvanloo]
+AT: strict subset of the 816
+SAYS: it supports that inference without proving it
+
+--- #8 [esi esi Keyvanloo]
+AT: Drivers record a four-point visual
+SAYS: Please clarify the driver scale. The raw field contains five coded values (0, 25, 50, 75 and 100), even if many zero records represent post-emptying confirmations rather than pre-collection fill observations.
+
+--- #10 [esi esi Keyvanloo]
+AT: fill
+SAYS: Please define how the pre-collection fill level will be identified. Container mass should be estimated from the last validated sensor observation before the collection event, subject to an explicitly defined matching time window and data-quality criteria, rather than from arbitrary sensor readings around the collection timestamp.
+
+--- #9 [esi esi Keyvanloo]
+AT: every one of the 60,916 collection-event rows carries  fill  = 0
+SAYS: The timing pattern strongly suggests that these zeros represent post-emptying confirmations rather than containers observed empty before collection.
+
+--- #11 [esi esi Keyvanloo]
+AT: within 15 minutes of a nonzero reading
+SAYS: The timing pattern strongly suggests that these zeros represent post-emptying confirmations rather than containers observed empty before collection.
+
+--- #14 [esi esi Keyvanloo]
+AT: The
+SAYS: Please separate calibration from validation. The trip-level weighbridge data used to estimate or calibrate density/mass-allocation parameters should not all be reused for validation; performance should also be evaluated on independent trips or held-out periods.
+
+--- #15 [esi esi Keyvanloo]
+AT: uniform 82–84 ceiling
+SAYS: The uniform 82-84 upper ceiling across container geometries indicates that the sensor field cannot yet be interpreted confidently as an unrestricted 0-100% physical fill measure. Its calibration and reference range remain unresolved (D3). it  is  maybe for limitation of blind zone sensor
+
+--- #16 [esi esi Keyvanloo]
+AT: defect
+SAYS: D5 - Container-level weight attribution Defect: Peso total is recorded at trip level and cannot be directly attributed to individual containers. Consequence: Container-level mass should not be estimated by equally dividing trip weight among serviced containers. Instead, estimate mass from pre-collection fill level, container volume and waste-fraction-specific bulk density, then calibrate the estimates against the observed trip total using mass balance.
+
+--- #17 [esi esi Keyvanloo]
+AT: )
+SAYS: D8 - Repeated trip-level weight and distance Defect:  Peso total and Km total may be repeated across several container records within the same  idrecolha . Consequence:  Row-wise summation can overestimate collected mass and travelled distance. Operational indicators must therefore be calculated from one record per trip, counting weight and distance only once for each  idrecolha .
+
+--- #18 [esi esi Keyvanloo]
+AT: T
+SAYS: Please define a formal treatment for negative fill-level values in both the sensor and driver datasets. Negative values should not be removed automatically. First determine whether they represent sensor error/status codes, data-entry problems, calibration artefacts, or valid changes associated with collection events. Where possible, use technical documentation and cross-checks between sensor and driver records to classify them. Values confirmed as invalid should be excluded before modelling, while valid observations should be retained. All exclusion rules and counts should be documented  clearly. ,,,   Please distinguish negative raw fill readings from negative changes in fill level (ΔFill). A negative raw reading may be invalid, whereas a large negative ΔFill may represent a genuine collection event.
+
+--- #19 [esi esi Keyvanloo]
+AT: 344 is a floor
+SAYS: If the export was truncated at the Excel row limit, the 344 observed sensor containers represent a lower bound on the number present in the complete source dataset.
+
+--- #20 [esi esi Keyvanloo]
+AT: glass
+SAYS: Please assess whether sensor deployment is representative across waste fractions, container types and spatial areas. Uneven sensor coverage may introduce selection bias into demand modelling, particularly if instrumented containers systematically differ from non-instrumented containers.
+
+--- #21 [esi esi Keyvanloo]
+AT: now has a tested candidate explanation in site-level policy
+SAYS: The severe under-representation of glass now has a plausible deployment-based explanation, although this should be confirmed against the formal sensor-deployment policy.
+
+--- #22 [esi esi Keyvanloo]
+AT: old regression sample of 452 bins cannot be reproduced
+SAYS: The previous regression results should therefore not be treated as reproducible empirical findings until the 452-observation construction is reconstructed and documented.
+
+--- #23 [esi esi Keyvanloo]
+AT: now
+SAYS: Please add a separate temporal and operational exploratory-analysis section before the regression methodology. Examine how collected weight, travelled distance and fill level vary at daily, weekly, monthly, seasonal and annual scales. The analysis should identify recurring patterns, seasonality, unusual periods and long-term trends, with separate results by waste fraction where possible.   و   داخل   این   بخش   شاخص‌ها : kg/trip  km/trip  kg/km  containers/trip  number of collections  average/median fill at collection  inter-collection interval  daily / weekly / monthly / seasonal / annual totals  نمودارهای   پیشنهادی Line chart: kg over time  Line chart: km over time  Line chart: fill level over time  Boxplot: monthly/seasonal fill  Heatmap: weekday × month  Scatterplot: kg vs km  Separate profiles for paper, packaging, glass  یک   کامنت   تکمیلی   خیلی   مهم : Please calculate weight and distance trends only after reducing the collection data to one record per trip. Peso total and Km total should not be summed directly across container-level rows.
+
+--- #24 [esi esi Keyvanloo]
+AT: d
+SAYS: Please clarify the distinction between the underlying data structure and the current regression specification. The original sensor and collection data are longitudinal/panel data because each container is observed repeatedly over time. However, the current regression aggregates these repeated observations into one value per container, producing a cross-sectional model. This aggregation may remove important daily, weekly, seasonal and annual variation. The rebuilt demand model should therefore retain the container × time structure.
+
+--- #26 [esi esi Keyvanloo]
+AT: What can safely be analysed next
+SAYS: What can be analysed next with the current evidence
+
+--- #27 [esi esi Keyvanloo]
+AT: Fill-rate estimation
+SAYS: Fill-rate estimation on the instrumented set using elapsed calendar time between validated observations and collection events within each container's active period.
+
+--- #28 [esi esi Keyvanloo]
+AT: glass demand from driver quartiles
+SAYS: Please avoid describing driver quartiles as sufficient for estimating glass demand. They can support relative fill-level or collection-frequency analysis, but conversion to container-level demand requires time intervals, container capacity and an independently justified mass/volume relationship.
+
+--- #29 [esi esi Keyvanloo]
+AT: siting on all 816 locations
+SAYS: Spatial analysis can use the full set of georeferenced driver-recorded containers, but existing containers, distinct  ecoponto  sites and candidate optimisation locations should be defined separately before siting analysis.
+
+--- #30 [esi esi Keyvanloo]
+AT: two-shift structure recovered from 60,916 collection timestamps as  routing constraints
+SAYS: The collection timestamps can be used to identify and quantify apparent operating-time clusters. These should be treated as empirical temporal patterns rather than formal shift constraints until confirmed against operating rules or staff schedules.
+
+--- #31 [esi esi Keyvanloo]
+AT: routing constraints
+SAYS: The collection timestamps reveal apparent operating-time clusters that can be quantified and analysed. These should not yet be imposed as formal routing constraints until they are confirmed against actual operating schedules or organisational rules.
+
+--- #32 [esi esi Keyvanloo]
+AT: Weight allocation to containers must wait until the run-level recording gaps described in section 3 
+SAYS: Trip-level weights should not be allocated to individual containers until the run-level records are reconciled and a defensible calibration/allocation method is established.
+
+--- #33 [esi esi Keyvanloo]
+AT: kg/km
+SAYS: Please include kg/km as a trip-level operational-efficiency indicator and examine its variation by waste fraction, month, season, circuit and year. It should not be interpreted as container-level demand.
+
+--- #36 [esi esi Keyvanloo]
+AT: event
+SAYS: Collection/run identifier
+
+--- #35 [esi esi Keyvanloo]
+AT: Collection- event  id
+SAYS: Collection/run identifier
+
+--- #37 [esi esi Keyvanloo]
+AT: Driver file: 9,984 events on 60,916 rows
+SAYS: Please clarify the interpretation of  idrecolha  in both datasets. In the driver file, 9,984 distinct  idrecolha  values occur across 60,916 rows, and all of these rows have  Enchimento  = 0 . This pattern is strongly consistent with post-emptying confirmation records rather than pre-collection fill observations, although the operational workflow should be verified where possible. In the sensor file,  idrecolha  duplicates the  Enchimento  value in 90.8% of rows and should therefore not be used as a reliable collection identifier. Sensor collection events should instead be reconstructed or matched using timestamps, driver records and validated large negative changes in fill level ( ΔFill ).
+
+--- #38 [esi esi Keyvanloo]
+AT: every such row
+SAYS: every such row carries fill = 0, strongly consistent with a post-emptying confirmation record
+
+--- #39 [esi esi Keyvanloo]
+AT: duplicates
+SAYS: Sensor file:  idrecolha  duplicates the  Enchimento  field in 90.8% of rows (D2) and is therefore not reliable as a collection identifier in the sensor dataset.
+
+--- #40 [esi esi Keyvanloo]
+AT: Start times reveal
+SAYS: Start times reveal two apparent operating-time clusters (Figure 7)
+
+--- #42 [esi esi Keyvanloo]
+AT: Peso
+SAYS: Please audit Km total and Peso total separately before using them analytically. Km total appears to behave as a run-level variable and, where repeated across multiple records within the same  idrecolha , should be counted only once per run. Row-wise summation would otherwise overestimate travelled distance. Peso total, however, is not always constant within the same  idrecolha  and its recording mechanism should therefore be clarified before it is treated as a run total. Please investigate whether the variation reflects cumulative weighing, multiple weighing events, data-entry structure, partial unloading, or another operational mechanism. The recorded weight should not be divided equally among containers. Once the recording structure is understood, container-level mass should be estimated from validated pre-collection fill level, container volume and waste-fraction-specific bulk density, and then calibrated against the appropriate observed run-level weight using a mass-balance procedure.
+
+--- #41 [esi esi Keyvanloo]
+AT: Km  totais  /  Peso  total
+SAYS: Please clarify that both Peso total and Km total are trip-level variables rather than individual-container measurements. Check whether the same trip-level values are repeated across multiple container records belonging to the same  idrecolha . If so, each value must be counted only once per trip; summing the records row by row would substantially overestimate collected mass and travelled distance. Km total should therefore be used only for trip-level operational and routing analysis. For Peso total, please do not divide the trip weight equally among all serviced containers, because this would artificially reduce between-container variability and assign similar weights to containers with very different fill levels. Instead, estimate an initial mass for each container using its pre-collection fill level, container volume and waste-fraction-specific bulk density. Then use the observed trip-level Peso total as a mass-balance constraint to calibrate the individual container estimates proportionally. Where sensor fill data are unavailable, calibrated driver fill observations may be used as a secondary source. Please document the full estimation and calibration procedure explicitly. رو
+
+--- #43 [esi esi Keyvanloo]
+AT: Km is constant within a run; weight is NOT always constant
+SAYS: Operational distance and weight records
+
+--- #44 [esi esi Keyvanloo]
+AT: run
+SAYS: Km is constant within a collection/run identifier; weight is not always constant within the same identifier.
+
+--- #45 [esi esi Keyvanloo]
+AT: median recorded
+SAYS: Please clarify what  idrecolha  represents operationally. If the median  idrecolha  contains only one container, it may represent an individual collection event or record group rather than a complete vehicle trip. This distinction must be verified before calculating indicators such as kg/trip, km/trip, containers/trip, using Peso total for mass-balance calibration, or defining routing-related variables. Until this is confirmed, it would be safer to refer to  idrecolha  as a collection/run identifier rather than a trip identifier.
+
+--- #46 [esi esi Keyvanloo]
+AT: Excel limit
+SAYS: 1,048,575 (reaches the Excel row limit - possible truncation, D1)
+
+--- #47 [esi esi Keyvanloo]
+AT: truncated
+SAYS: 1,048,575 (reaches the Excel row limit - possible truncation, D1
+
+--- #48 [esi esi Keyvanloo]
+AT: Quartiles
+SAYS: Five coded fill levels {0,25,50,75,100}
+
+--- #49 [esi esi Keyvanloo]
+AT: Invalid fills
+SAYS: Negative / anomalous fill values
+
+--- #50 [esi esi Keyvanloo]
+AT: Figure 1 — Monthly record volume by source. The sensor series’ growth is confounded with truncation 
+SAYS: Please avoid interpreting the increase in monthly sensor records as evidence of sensor-fleet expansion. Because the sensor export reaches the Excel row limit, the observed trend may also reflect changes in recording frequency, active-container coverage, export ordering or truncation. Please distinguish, where possible, between (1) the number of active sensor containers per month and (2) the number of readings per active container per month before interpreting the increase in record volume.
+
+--- #52 [esi esi Keyvanloo]
+AT: Reconciliation
+SAYS: Please consider splitting Table 3 into two separate tables for clarity. The first table should report container coverage across the driver and sensor datasets (total, instrumented, driver-only and sensor-only), while the second should report reconciliation checks for the 344 shared containers (coordinate offset and mismatches in type, volume and waste fraction). This separation would distinguish dataset coverage from matching quality and make the results easier to interpret.  Table 3A - Container coverage Container group Containers Share Driver census (total) 816 100% Instrumented in both files 344 42.2% Driver-only 472 57.8% Sensor-only 0 0% Table 3B - Reconciliation checks Reconciliation check Result Coordinate offset for shared containers 0.0 m for all 344 Type mismatches 0 Volume mismatches 0 Waste-fraction mismatches 0
+
+--- #54 [esi esi Keyvanloo]
+AT: Joining on  idcontentor  left nothing ambiguous.
+SAYS: Please use slightly more cautious academic wording here. The join produced a clear and internally consistent match for the shared containers, but “left nothing ambiguous” is too absolute.
+
+--- #56 [esi esi Keyvanloo]
+AT: export-provenance question
+SAYS: Please replace this internal working-language expression with a formal statement indicating that the provenance of the two exports should be confirmed directly with the operator.
+
+--- #55 [esi esi Keyvanloo]
+AT: Joining on  idcontentor  left nothing ambiguous.  Every sensor container exists in the driver census
+SAYS: Please write the text in a simpler and more understandable way  this section
+
+--- #57 [esi esi Keyvanloo]
+AT: Population
+SAYS: Container group
+
+--- #58 [esi esi Keyvanloo]
+AT: Its boundary layer differs from CAOP 2025 by several kilometres and is retired
+SAYS: Please replace “is retired” with more formal academic wording. Clarify that the outdated boundary should not be used for current spatial analysis, while the 464 container points may still be retained as a dated network snapshot if their reference date is documented.
+
+--- #59 [esi esi Keyvanloo]
+AT: driver
+SAYS: Please mark the boundary of the municipality of Rio  Maior  in red on the map. Also mark the boundaries of the neighbouring municipalities in green or blue, so that the reader can clearly distinguish the inside of Rio  Maior  from the surrounding outside areas.
+
+--- #60 [esi esi Keyvanloo]
+AT: census
+SAYS: Please clarify in the caption that the figure shows the 344 sensor-equipped containers as a subset of the 816 driver-recorded containers, and identify the municipal boundary source as CAOP 2025 (DGT).
+
+--- #62 [esi esi Keyvanloo]
+AT: Defect
+SAYS: Please write the text in a simpler and more understandable way  this section
+
+--- #63 [esi esi Keyvanloo]
+AT: restated
+SAYS: R1-01 identified D6 because the driver file contains 816 containers, while the sensor file contains only 344. The present reconciliation shows that this difference is not caused by mismatched container identities or locations, because the shared containers agree in identifier, coordinates, type, volume and waste fraction. The remaining issue is therefore sensor coverage: only part of the driver-recorded network appears to be instrumented. The reason for this reduced coverage has not yet been fully confirmed and may be related to sensor-deployment policy. In addition, because the sensor export reaches the Excel row limit, it is still uncertain whether 344 represents the complete instrumented fleet. D6 should therefore be updated as: identity and geometry reconciled; coverage difference identified; deployment basis pending confirmation; complete instrumented-fleet size pending verification from a full source export.
+
+--- #64 [esi esi Keyvanloo]
+AT: true fleet size pending the untruncated re-export
+SAYS: The true number of instrumented containers remains uncertain pending verification from a complete source export.
+
+--- #66 [esi esi Keyvanloo]
+AT: 85 values
+SAYS: Observed range 0-84
+
+--- #67 [esi esi Keyvanloo]
+AT: Ceiling
+SAYS: Please avoid treating the 82-84 ceiling as confirmed censoring until the sensor calibration and measurement reference are clarified. For now, describe it as an unresolved upper-bound effect and test censoring or rescaling only as sensitivity scenarios if technically justified.
+
+--- #68 [esi esi Keyvanloo]
+AT: Zeros
+SAYS: Please reconcile the zero-count classification. The reported 60,273 paired zeros plus 81,703 standalone zeros sum to 141,976, which is 2,828 fewer than the stated total of 144,804 zero records. Please identify and classify the remaining zero observations before using these categories analytically.
+
+--- #69 [esi esi Keyvanloo]
+AT: standalone zeros are the only candidates for "found empty".
+SAYS: Standalone zeros are the main candidates for genuinely empty-container observations, but their interpretation should still be validated before they are treated as confirmed pre-collection empties.
+
+--- #70 [esi esi Keyvanloo]
+AT: 9.2% in
+SAYS: Please revise the description of negative sensor values. The raw sensor field contains a broad sequence of negative values from approximately -1 to -116, rather than only two clearly separated clusters. Please analyse their frequency distribution by exact value, time period, container and waste fraction before defining any failure-mode categories or filtering rules.
+
+--- #71 [esi esi Keyvanloo]
+AT: two clusters
+SAYS: 9.2% negative readings, spanning approximately -1 to - 116     in  sensor data
+
+--- #72 [esi esi Keyvanloo]
+AT: Cadence
+SAYS: Please clarify the sensor cadence in the table. Rather than referring only to "three denominators", describe the sensor data as repeated observations within each container's active period. Fill-rate estimation should use the actual elapsed calendar time between validated observations or collection events within each container's active window, rather than the number of collection days only.
+
+--- #73 [esi esi Keyvanloo]
+AT: Three denominators
+SAYS: Repeated observations within each container's active period
+
+--- #74 [esi esi Keyvanloo]
+AT: Figure 3 — Fill-value distributions. The driver scale is discrete by design; the sensor scale stops 
+SAYS: Please revise the figure labels. The driver variable contains five coded fill levels (0, 25, 50, 75 and 100), not a four-point scale plus zero. For the sensor, describe 82-84 as an observed upper range rather than a confirmed physical ceiling until the calibration issue is resolved. Negative sensor values should be shown separately and treated as anomalous/QC values rather than valid fill measurements. Please also provide a separate frequency plot or table for the negative sensor readings from approximately -1 to -116.
+
+--- #75 [esi esi Keyvanloo]
+AT: Figure 4 — Anatomy of the driver zeros. The red bar is workflow output, not observed emptiness.
+SAYS: Please clarify the hierarchy of the zero categories. The 144,804 zero records are partitioned into 63,101 records with another reading within 15 minutes and 81,703 standalone zeros. Of the 63,101 paired records, 60,273 have a preceding nonzero reading and are strongly consistent with post-emptying confirmations. The remaining 2,828 paired zero records should be classified separately rather than grouped with the post-emptying cases. Please also revise the figure caption to use more cautious wording, since the timing pattern strongly supports, but does not formally prove, the post-emptying interpretation. Suggested caption: “Figure 4 - Classification of driver zero-fill records. A large subset of zero records occurs shortly after a nonzero reading for the same container and is therefore strongly consistent with post-emptying confirmation events rather than pre-collection empty-container observations.”
+
+--- #77 [esi esi Keyvanloo]
+AT: containers
+SAYS: Please add a sensor-coverage (%) column and define the formula below the table: Sensor coverage (%) = (Sensor containers in the fraction / Driver containers in the same fraction) × 100. Report approximately 61.8% for paper/cardboard, 60.8% for packaging, 0.8% for glass, and 42.2% overall.
+
+--- #78 [esi esi Keyvanloo]
+AT: Grouping the 816 containers
+SAYS: Please define how a “site” is constructed from the coordinates. Clarify whether containers must have exactly identical latitude/longitude values or whether a spatial-distance tolerance is used to group nearby containers into the same site.
+
+--- #79 [esi esi Keyvanloo]
+AT: 214 of them
+SAYS: Please define precisely what is meant by a “classic three-fraction  ecoponto ”. Clarify whether these 214 sites contain exactly one container for each of the three waste fractions, or whether they are defined simply by the presence of all three fractions regardless of the number of containers.
+
+--- #80 [esi esi Keyvanloo]
+AT: Of the 253
+SAYS: Please clarify the site-level interpretation and also report the spatial distribution of these sites. In particular, distinguish how many of the 270 sites, and how many of the 30 sites without sensors, are located inside the urban area of Rio  Maior  and how many are located elsewhere within the municipality. Use a clearly documented urban-area boundary rather than the municipal CAOP boundary for this comparison.
+
+--- #81 [esi esi Keyvanloo]
+AT: The 173/169/2 split matches
+SAYS: Please use more cautious wording here. The 173/169/2 distribution strongly suggests fraction-selective instrumentation, but it does not by itself prove the operator’s deployment policy or show that policy explains the pattern better than truncation unless this is formally tested or confirmed by the operator.
+
+--- #82 [esi esi Keyvanloo]
+AT: Figure 5 — Containers by waste fraction,  ecoponto  colours (map W2-M2). At shared sites the symbols
+SAYS: Please clarify the visual meaning of the map symbols. The current colours represent waste fraction for all driver-recorded containers, not sensor-equipped containers. Since the driver dataset contains 258 glass containers but only 2 sensor-equipped glass containers, the numerous green symbols may incorrectly suggest extensive glass sensor coverage. Please distinguish sensor-equipped and non-instrumented containers visually, for example using different symbol shapes, outlines or a separate sensor overlay. Please improve the spatial interpretation of the map. Distinguish the urban area of Rio  Maior  from the remainder of the municipality and report how many container sites and sensor-equipped sites fall inside the urban area versus elsewhere in the municipality. Also avoid relying on symbol counts at shared sites because overlapping containers make direct visual counting unreliable. Please revise the site-policy annotation. Define precisely what is meant by a “classic 3-fraction  ecoponto ” and replace the statement that glass exclusion “reads as policy” with more cautious wording. The observed pattern is consistent with fraction-selective instrumentation, but the deployment policy should be confirmed with the operator. Please separate the current combined presentation into two maps and two tables. The first map and table should focus only on waste-fraction distribution, while the second map and table should focus only on sensor coverage. This separation will make it easier to compare the three waste fractions and clearly distinguish container type from sensor status. In the sensor-coverage table, report the number of sites with exactly one sensor, two or more sensors, no sensors, and single-container sites. In the waste-fraction table, include the sensor-coverage percentage for each fraction and define the calculation formula below the table.
+
+--- #85 [esi esi Keyvanloo]
+AT: Cadence
+SAYS: Please use a more formal academic title. For example: “Sensor recording cadence and active-period definitions” or “Sensor temporal coverage and active-period definition for demand estimation”. The phrase “three honest denominators” is too informal for a thesis.
+
+--- #86 [esi esi Keyvanloo]
+AT: 2.55
+SAYS: Please simplify and restructure this subsection. Explain the three reported rates separately and clarify that they use different denominators and therefore represent different aspects of sensor recording activity. The 1.93 value uses the full study window for all 344 containers, the 2.55 value includes only container-days with at least one recorded observation, and the 1.58 value is the median of container-specific rates within each container’s own active window. These values should not be treated as interchangeable estimates of the same cadence. Please also state clearly which measure is descriptive and which temporal definition will actually be used for subsequent demand estimation in Rio  Maior . For the demand model, elapsed calendar time within each container’s validated active period should be used rather than only days containing readings.
+
+--- #87 [esi esi Keyvanloo]
+AT: an active window is 98% of days
+SAYS: Please define “coverage” explicitly. Clarify whether the reported 98% refers to the proportion of calendar days within each container’s active window that contain at least one recorded observation or at least one valid observation after sensor-quality screening. If invalid or negative readings are currently counted, please distinguish recording coverage from valid-measurement coverage.
+
+--- #88 [esi esi Keyvanloo]
+AT: Figure
+SAYS: Please revise Figure 6 so that the distinction between descriptive recording cadence and the temporal basis used for demand estimation is explicit. The left panel should show the distribution of container-specific active periods, with the dashed reference line labelled explicitly as 365 days. Please define the active window as the period from the first to the last valid observation for each container and clarify whether these limits are determined before or after sensor-quality screening. The right panel should present 1.93, 2.55 and 1.58 only as descriptive cadence measures with their respective denominators clearly stated. These three values should not be interpreted as alternative demand denominators. For the subsequent Rio  Maior  demand model, demand-rate estimation should be based on elapsed calendar time within each container’s validated active window.
+
+--- #89 [esi esi Keyvanloo]
+AT: Active windows
+SAYS: Please make the distribution in the left panel easier to interpret by reporting the number and percentage of containers in meaningful active-period intervals, for example &lt;1 year, 1-2 years, 2-3 years, 3-4 years and approximately the full study period. The current histogram shows the general distribution, but the exact number of containers in each interval cannot be read directly from the figure. A small accompanying table would improve reproducibility and interpretation.
+
+--- #90 [esi esi Keyvanloo]
+AT: denominators
+SAYS: Figure 6 - Distribution of container-specific active periods and descriptive sensor recording cadence under three temporal definitions.
+
+--- #92 [esi esi Keyvanloo]
+AT: Daily demand
+SAYS: Please make the demand-denominator rule fully explicit and operational. Daily demand should be normalized by elapsed calendar time within each container’s validated active window, rather than by the full study period or only by days with recorded observations. Internal gaps should be excluded from the denominator only when they are identified as genuine sensor-outage periods using a clearly defined and reproducible rule. Please report the final outage threshold, its justification, and how outage periods are identified before applying this correction to the Rio  Maior  demand estimates.
+
+--- #93 [esi esi Keyvanloo]
+AT: Using the full span deflates
+SAYS: Please show explicitly how the factor of approximately 28 is obtained. Based on the shortest active window of 56 days and the full study span of 1,582 days, the ratio is 1,582/56 ≈ 28.3. This will make the magnitude of the denominator bias transparent to the reader.
+
+--- #94 [esi esi Keyvanloo]
+AT: filled
+SAYS: Please consider stating the denominator explicitly as: Effective exposure time = calendar days within the validated active window - confirmed sensor-outage days.
+
+--- #96 [esi esi Keyvanloo]
+AT: Collection runs
+SAYS: Collection identifiers and operational totals: what the data can and cannot support
+
+--- #97 [esi esi Keyvanloo]
+AT: 9,984 runs
+SAYS: Please avoid calling all 9,984  idrecolha  values confirmed vehicle runs at this stage. The dataset should first be audited to determine whether each identifier represents a complete trip, an individual collection event, or another operational grouping. This can be assessed by examining the number of containers per identifier, timestamp continuity, route-code consistency, spatial sequence, and the behaviour of Km  totais  and Peso total. Operator confirmation should then be used to validate the interpretation.
+
+--- #98 [esi esi Keyvanloo]
+AT: 04–06 h and 14–15 h — two shifts
+SAYS: Please separate direct observations from interpretation. The hourly and weekday distributions can be derived directly from the recorded timestamps. The observed concentration periods around 04:00–06:00 and 14:00–15:00 may indicate two operational periods, but they do not by themselves confirm a formal two-shift structure. Likewise, the Monday-to-Saturday pattern should be reported as an observed temporal distribution. Please confirm the formal shift schedule and working-time constraints with the operator before using them as routing-model constraints.
+
+--- #99 [esi esi Keyvanloo]
+AT: Monday-to-Saturday
+SAYS: The timestamped driver records show concentration periods around 04:00–06:00 and 14:00–15:00, with collection activity concentrated from Monday to Saturday. These patterns are consistent with two operational periods, although the formal shift structure and working-time constraints should be confirmed with the operator before being imposed in the routing model.
+
+--- #100 [esi esi Keyvanloo]
+AT: Direct evidence for routing shift constraints.
+SAYS: Please use more cautious wording here. The bimodal start-time pattern is consistent with two operational shifts, but it does not by itself establish formal routing shift constraints. Please confirm the actual shift schedule and working-time rules with the operator before using them as constraints in the routing model.
+
+--- #101 [esi esi Keyvanloo]
+AT: Kilometres
+SAYS: Please investigate whether the temporal and spatial information in the driver dataset is sufficient to reconstruct the recorded servicing sequence within each  idrecolha . Container coordinates and servicing timestamps can be ordered to form an approximate visit sequence and compared with the recorded Km  totais . If the reconstructed network distance is consistent with Km  totais , this would provide additional evidence that the identifier corresponds to a vehicle run. However, exact route recovery should not be claimed without GPS traces or equivalent operational evidence.
+
+--- #102 [esi esi Keyvanloo]
+AT: Weights
+SAYS: Please perform a dedicated audit of Peso total before using it for container-level demand estimation or trip-level calibration. Within each  idrecolha , examine whether the recorded weight is constant, cumulative, intermittently updated, or otherwise variable over time. The recording pattern should be analysed together with timestamps, number of serviced containers and route information. Until the mechanism is understood, Peso total should not be interpreted automatically as either a complete-trip total or an individual-container weight.
+
+--- #103 [esi esi Keyvanloo]
+AT: Table 6
+SAYS: Please distinguish clearly between what is directly observed in the data and what is inferred about operational meaning. The current dataset provides timestamps, container coordinates,  idrecolha , route codes, kilometres and weights, but the semantics of  idrecolha  and the recording mechanism of Peso total still require validation. A dedicated audit should therefore precede any route reconstruction, container-level weight allocation or mass-balance calibration.
+
+--- #104 [esi esi Keyvanloo]
+AT: Figure
+SAYS: Collection start-time distribution (60,916 timestamped rows)
+
+--- #105 [esi esi Keyvanloo]
+AT: Collection
+SAYS: In  picture .   morning concentration 04–06 h afternoon concentration 14–15 h
+
+--- #106 [esi esi Keyvanloo]
+AT: Collection  start times. The two shifts bound feasible route durations in the optimisation
+SAYS: Distribution of recorded collection start times. Two clear concentration periods are observed around 04:00–06:00 and 14:00–15:00. These patterns may indicate two operational periods, but the formal shift structure and associated working-time constraints should be confirmed with the operator before being imposed in the optimisation model.
+
+--- #108 [esi esi Keyvanloo]
+AT: Route
+SAYS:   Please  consider a more formal and neutral title, such as “3.4 Route-code consistency and identified exceptions”. 
+
+--- #109 [esi esi Keyvanloo]
+AT: claim checks out at 91 of 92
+SAYS: Please clarify that 91 of the 92 observed route codes are single-fraction codes and that CE46 is the only identified mixed-fraction exception. Avoid the informal phrase “the review’s claim checks out”.
+
+--- #110 [esi esi Keyvanloo]
+AT: apparently circuits shared with or named after the  Óbidos  system
+SAYS: Please use cautious wording for the “ Óbidos ” codes. The data show that they form a distinct naming family, but do not establish whether they are shared circuits, external routes or simply a different naming convention. Please confirm their operational meaning with the operator.
+
+--- #111 [esi esi Keyvanloo]
+AT: Within-stream purity means run weights, once allocable, stay inside one bulk-density class.
+SAYS: Please make this conclusion conditional. If route codes are confirmed to represent fraction-specific collection circuits and the associated weights are valid run-level totals, most coded runs can be assigned to a single waste-fraction bulk-density class.
+
+--- #112 [esi esi Keyvanloo]
+AT: No glass circuit appears anywhere in the coded rows.
+SAYS: Please clarify that no glass-specific route code is observed among the coded driver records only. Because route-code coverage is partial, this should not be interpreted as evidence that glass collection routes are absent from the complete operational system.
+
+--- #114 [esi esi Keyvanloo]
+AT: the 2020 problem
+SAYS: Please consider a more formal and neutral title, such as “Effective observation windows and early-period sensor quality”. The phrase “the 2020 problem” is informal and implies a conclusion before the early-period data have been fully diagnosed.
+
+--- #115 [esi esi Keyvanloo]
+AT: 36.6% of 2020 rows, 6–9% through 2021–2023, 2.6% in partial 2024
+SAYS: Please report the annual number of negative readings together with the total number of sensor observations and the corresponding percentage for each year. This will make the temporal change in sensor-data quality directly reproducible.
+
+--- #116 [esi esi Keyvanloo]
+AT: Early 2020 looks like a commissioning period
+SAYS: Please treat the commissioning-period explanation as a hypothesis rather than a confirmed finding. The high incidence of negative readings in early 2020 indicates a distinct sensor-quality issue, but the data alone do not establish its cause. Please examine the pattern by date, container and sensor and confirm the interpretation with the operator or sensor supplier where possible.
+
+--- #117 [esi esi Keyvanloo]
+AT: should be screened, or modelled separately, rather than averaged in
+SAYS: Please avoid deciding in advance to exclude or separately model the early-2020 observations. Their treatment should follow the sensor-QC analysis. Depending on the identified cause, affected observations may be retained, corrected, excluded, or treated as a separate period, with the decision rule documented explicitly.
+
+--- #118 [esi esi Keyvanloo]
+AT: stops in April in both files; no annual statistic in this project may treat it as a complete year.
+SAYS: Please state explicitly that 2024 contains only a partial January-April observation period. Comparisons with complete years should therefore use comparable months or exposure-normalised rates rather than direct annual totals.
+
+--- #119 [esi esi Keyvanloo]
+AT: Figure
+SAYS: Please revise Figure 8 to improve clarity and reproducibility. Label 2024 explicitly as “Jan-Apr 2024” because it represents only a partial year, and correct the overlapping annotation around the 2.6% label. Please also report, either in the figure or accompanying text, the number of negative readings and the total number of observations for each year in addition to the percentages. The figure clearly shows a substantial decline in the proportion of negative sensor readings over time, but this pattern should not be interpreted as evidence of a commissioning period unless confirmed by the operator or sensor supplier.
+
+--- #120 [esi esi Keyvanloo]
+AT: year
+SAYS: Figure 8 - Annual proportion of negative sensor readings. The share decreases from 36.6% in 2020 to 6.3% in 2023 and 2.6% during the partial January-April 2024 observation period.
+
+--- #122 [esi esi Keyvanloo]
+AT: of 452 cann
+SAYS: Please consider a slightly more formal title, such as “The regression sample of N = 452 is not reproducible from the currently available data”.
+
+--- #123 [esi esi Keyvanloo]
+AT: No selection rule on the files
+SAYS: Please document the reconstruction attempts explicitly. Report the starting container population, each filtering or join step tested, and the resulting sample size so that the failure to reproduce N = 452 is itself reproducible.
+
+--- #124 [esi esi Keyvanloo]
+AT: 801
+SAYS: Please use neutral wording here until the semantics of  idrecolha  and Peso total are fully validated. For example, state that 801 of the 816 containers appear in at least one record with a non-missing weight value, rather than referring to a confirmed “weighted collection event”.
+
+--- #125 [esi esi Keyvanloo]
+AT: the 816 containers have at least one weighted collection
+SAYS: Please document the reconstruction attempts explicitly, including the starting dataset, each filtering or spatial-join step tested, and the resulting sample size. This will make the failure to reproduce N = 452 itself reproducible.
+
+--- #126 [esi esi Keyvanloo]
+AT: The likeliest origin is the 464-bin snapshot
+SAYS: Please present this only as a hypothesis. The available data do not establish that the 452 observations originated from the 464-bin geodatabase snapshot minus 12 exclusions. Unless the missing intermediate file or documented exclusion rules are recovered, the provenance of N = 452 remains unresolved.
+
+--- #127 [esi esi Keyvanloo]
+AT: Until that file is recovered or the sample is rebuilt from the canonical 816 with explicit rules, th
+SAYS: Please make the reproducibility implication explicit: the previous regression should not be treated as a fully reproducible empirical result until the composition of the analytical sample, inclusion/exclusion criteria and intermediate dataset are documented. Rebuilding the sample from the canonical container inventory with a transparent filtering log would provide the preferred solution.
+
+--- #130 [esi esi Keyvanloo]
+AT: : for each of the 127,928 driver rows on instrumented containers
+SAYS: Please clarify whether all 127,928 driver rows represent collection events. If many rows are ordinary fill observations, first identify the collection-event subset and perform the event-level comparison on that subset only. Otherwise, consider renaming this section as a record-level comparison.
+
+--- #131 [esi esi Keyvanloo]
+AT: nearest valid sensor reading (0–100) on either side of the driver timestamp
+SAYS: Please reconsider the symmetric before/after matching rule. For confirmed collection events, use the last valid sensor reading before the reconstructed collection time as the primary comparison value. The first valid post-collection reading can then be used as a consistency check for the expected drop after emptying.
+
+--- #132 [esi esi Keyvanloo]
+AT: The primary window is ±3 hours — close to the median gap
+SAYS: Please correct this justification. A median gap of 347 minutes is approximately 5.8 hours, so ±3 h is not close to the median. The primary tolerance should instead be justified by operational relevance and sensitivity analysis.
+
+--- #133 [esi esi Keyvanloo]
+AT: the choice is safe: the acceptable-agreement share barely moves (48.9–50.9%) from ±15 minutes to ±24
+SAYS: Please qualify this conclusion. Although the agreement rate remains approximately 49–51%, matched coverage changes substantially from 4.8% to 70.6%, so the composition of the matched sample may also change. Stability of the agreement percentage alone does not demonstrate that the results are fully insensitive to the matching window.
+
+--- #134 [esi esi Keyvanloo]
+AT: Figure
+SAYS: Please consider recalculating Figure 9 after defining the collection-event matching rule. If the primary analysis uses the last valid pre-collection sensor reading, the sensitivity analysis should use one-sided maximum pre-collection gaps rather than symmetric ± windows.
+
+--- #136 [esi esi Keyvanloo]
+AT: Agreement
+SAYS: Please reconsider whether this entire agreement analysis should be retained in its current form before refining the individual thresholds and interpretations. The results depend on two still-unresolved methodological choices: the symmetric ±3 h matching rule and the provisional normalization of each sensor’s 82–84 ceiling to 100. In addition, Table 8 is based on non-event rows although the section is framed as an event-level comparison. Please first decide on the final matching strategy, separate event and non-event observations, and validate or sensitivity-test the sensor normalization. The agreement analysis, Table 8 and Figure 10 should then be recalculated and interpreted using the finalized methodology. If these methodological issues cannot be resolved, consider presenting this section only as a preliminary exploratory comparison rather than as evidence for the final modelling design.
+
+--- #137 [esi esi Keyvanloo]
+AT: sensor value is normalized by its container’s own ceiling (82–84 mapped to 100)
+SAYS: Please treat the 82–84 to 100 rescaling as a provisional sensitivity assumption rather than a validated calibration. Because the physical meaning of the observed sensor ceiling remains unresolved, please compare the agreement results with and without this normalization before using the normalized values in the final analysis.
+
+--- #138 [esi esi Keyvanloo]
+AT: two instruments would round to the same category
+SAYS: Please clarify the threshold rationale mathematically. A difference of 12.5 represents half of the 25-point spacing of the driver scale, while 25 represents one full scale step. Avoid implying that every difference ≤12.5 necessarily produces the same rounded category at all category boundaries.
+
+--- #139 [esi esi Keyvanloo]
+AT: Compared pairs (±3 h, valid driver reading, non-event rows)
+SAYS: Please clarify the meaning of “non-event rows” and explain whether driver values of 0 in this subset represent ordinary visual observations, post-emptying states, or another operational condition. Event and non-event observations should be analysed separately.
+
+--- #140 [esi esi Keyvanloo]
+AT: Event-level agreement
+SAYS: Please revise the terminology. Table 8 is explicitly based on non-event driver rows, so “event-level agreement” is misleading. Consider using “Record-level agreement between matched driver and sensor fill observations” unless the analysis is restricted to confirmed collection events.
+
+--- #141 [esi esi Keyvanloo]
+AT: rate is stable across every matching window, so it is not a  matching artifact
+SAYS: Please qualify this conclusion. Stability of the agreement percentage across tolerance windows is useful evidence, but it does not fully exclude matching bias because the size and composition of the matched sample change substantially as the window widens.
+
+--- #142 [esi esi Keyvanloo]
+AT: Agreement is worst exactly where the driver scale is most used — the extremes
+SAYS: Please revise this interpretation. Figure 10 shows the lowest agreement at driver values 75 and 100, while agreement at 0 is higher. The conclusion should therefore refer specifically to poorer agreement at the upper end of the driver scale rather than at both extremes.
+
+--- #143 [esi esi Keyvanloo]
+AT: Figure 10 — Agreement categories and acceptable share by driver value.
+SAYS: Please revise Figure 10 after the final matching and sensor-normalization rules are established. Define “acceptable agreement” directly in the caption and report the number of matched pairs within each driver-value category. Please also consider presenting the results both with and without the provisional 82–84 to 100 sensor normalization.
+
+--- #145 [esi esi Keyvanloo]
+AT: Ceiling
+SAYS: Please retain this section as an exploratory ceiling analysis, but avoid interpreting the 82–84 range as a confirmed saturation limit until the sensor ceiling is validated. Report the results both in raw and normalized form and define all “near-full” thresholds explicitly.
+
+--- #146 [esi esi Keyvanloo]
+AT: sensor sat at its raw ceiling of 82–84 in 1,758
+SAYS: Please clarify how the raw ceiling range of 82–84 is defined for each container and whether the ceiling is container-specific or a common empirical range observed across sensors.
+
+--- #147 [esi esi Keyvanloo]
+AT: at 75 or more after normalization in 3,901 (38.4%).
+SAYS: Please make clear that the 38.4% result depends on the provisional sensor normalization. This value should be reported alongside the corresponding result using raw sensor readings so that the effect of the normalization assumption is transparent.
+
+--- #148 [esi esi Keyvanloo]
+AT: most driver "full" calls do not find the sensor anywhere near its ceiling
+SAYS: Please use more neutral wording and define “near the ceiling” explicitly. The statement should be based on a stated numerical threshold rather than an informal interpretation.
+
+--- #149 [esi esi Keyvanloo]
+AT: the ceiling behaves like a saturation limit, not like the sensor’s expression of 100%.
+SAYS: Please treat this as a hypothesis rather than a confirmed interpretation. The observed 82–84 ceiling may be consistent with a saturation or calibration limit, but its physical meaning remains unresolved and should be confirmed with the sensor supplier or operator before being used as a calibration assumption.
+
+--- #151 [esi esi Keyvanloo]
+AT: 4.4 Driver −1: missing, not a state
+SAYS: Driver value −1 as a missing-data code
+
+--- #152 [esi esi Keyvanloo]
+AT: code that
+SAYS: A code that co-occurs with a wide range of sensor-observed fill levels ... is more consistent with a missing or failed manual entry than with a physical fill state.
+
+--- #153 [esi esi Keyvanloo]
+AT: treat −1 as missing
+SAYS: Driver value −1 as a missing-data code
+
+--- #154 [esi esi Keyvanloo]
+AT: where a matched sensor
+SAYS: Please avoid referring to the matched sensor values as “true fill levels”. Given the unresolved sensor-calibration issues, it would be more precise to state that driver value −1 co-occurs with a wide range of sensor-observed fill levels and is therefore more consistent with a missing or failed manual entry than with a physical fill state. ..   Please make the treatment rule conditional on the final matching and sensor-QC procedure. A driver value of −1 may be treated as missing, but any substitution using sensor data should only occur when a valid sensor observation is available within the finalized temporal matching rule. ..   Because the 57.5% matching rate is based on the current ±3 h rule, please confirm this result after the matching methodology in Section 4.1 is finalized.
+
+--- #156 [esi esi Keyvanloo]
+AT: integrated event-level
+SAYS: Please reconsider the term “event-level dataset”. The file contains all 127,928 driver observations on instrumented containers, including non-event rows. Unless the dataset is restricted to confirmed collection events, “integrated record-level dataset” would be more precise.
+
+--- #157 [esi esi Keyvanloo]
+AT: sensor value is used when it is
+SAYS: Please reconsider using agreement with the driver as a criterion for selecting the sensor value. This may introduce circularity and selection bias, because sensor observations are preferentially retained when they agree with the driver. Sensor validity should primarily be determined by the independent sensor-QC protocol, while driver-sensor agreement should be retained as a separate diagnostic variable.
+
+--- #158 [esi esi Keyvanloo]
+AT: 15,732 rows (12.3%) are held out this way rather than auto-accepted
+SAYS: Please clarify that the 15,732 rows are held out specifically because of large driver-sensor disagreement. Other QC categories, particularly EVENT_ZERO_POST_EMPTYING, also have no selected fill value, so this number should not be interpreted as the total number of excluded rows.
+
+--- #159 [esi esi Keyvanloo]
+AT: A selected value
+SAYS: Please reconcile the selected-value totals. The stated 75,260 selected rows equal NO_SENSOR_MATCH + GOOD_AGREEMENT + MODERATE_AGREEMENT + CEILING_CASE, but Table 9 also reports 84 DRIVER_MISSING_SENSOR_AVAILABLE rows for which the sensor is selected. If those 84 rows receive a selected value, the total should be 75,344 unless they are already included in another category. Please clarify whether the QC categories are mutually exclusive and reconcile the totals.
+
+--- #160 [esi esi Keyvanloo]
+AT: QC
+SAYS: Please revise Table 9 to make the decision logic transparent and easier to understand. For each QC flag, add a short plain-language explanation of what the flag means, the exact condition that triggers it, the selected data source (driver, sensor, or none), and whether the row is included in or excluded from the final fill analysis. The current flag names are technically useful, but the table is difficult to interpret without repeatedly referring to the surrounding text.
+
+--- #161 [esi esi Keyvanloo]
+AT: EVENT_ZERO_POST_EMPTYING
+SAYS: Please define explicitly how EVENT_ZERO_POST_EMPTYING is identified. Because this category contains 36,790 rows, the rule should distinguish confirmed post-emptying zeros from ordinary zero fill observations or other recording states, and should specify the evidence used to classify a row as post-emptying.
+
+--- #163 [esi esi Keyvanloo]
+AT: split into two families
+SAYS: Please revise the claim that the negative readings form two distinct families. The raw data contain negative values across a broad range from approximately −1 to −116, including intermediate values. Please first report the full frequency distribution and demonstrate statistically or operationally that distinct groups exist before assigning separate interpretations to specific ranges.
+
+--- #164 [esi esi Keyvanloo]
+AT: transient small values −1…−9
+SAYS: Please avoid labelling these ranges as “transient values” and “fault codes” unless this interpretation is supported by sensor documentation, supplier information, or a clear empirical clustering analysis. At present, these labels appear to be inferred from the numerical values themselves.
+
+--- #165 [esi esi Keyvanloo]
+AT: episodes coincide with
+SAYS: Please use more cautious wording. A larger pre-to-post fill change around negative episodes suggests that substantial state changes may occur during these periods, but it does not establish that the change is usually an emptying event. Please cross-check negative episodes against validated driver collection records before making this interpretation.
+
+--- #166 [esi esi Keyvanloo]
+AT: episodes longer than 24 hours
+SAYS: Please justify the 24-hour threshold explicitly and distinguish a long negative episode from a confirmed sensor outage. Exposure time should only be reduced when the outage definition is reproducible and supported by the temporal pattern or operational evidence.
+
+--- #167 [esi esi Keyvanloo]
+AT: Figure
+SAYS: Please revise Figure 11 so that the negative-value groups are labelled neutrally until their technical meaning is independently validated. The current legend implies that −1…−9 are “transient” readings and −89…−116 are “fault codes”, which is not yet established from the raw data. Please also clarify that the right panel measures episode length by number of consecutive negative readings, not by elapsed time.
+
+--- #169 [esi esi Keyvanloo]
+AT: Sensor
+SAYS: Please make this conditional on completion of the final sensor-QC and active-window procedure. The sensor series should be considered fit for fill-rate estimation only after negative readings, outages, the 82–84 ceiling and early-2020 quality issues have been resolved or explicitly handled.
+
+--- #170 [esi esi Keyvanloo]
+AT: censoring-aware modelling
+SAYS: Please avoid describing the 82–84 ceiling as confirmed censoring until its technical meaning is validated. Consider using more neutral wording such as “modelling  that accounts  for the unresolved upper-bound effect”.
+
+--- #171 [esi esi Keyvanloo]
+AT: Driver quartile
+SAYS: Please replace “Driver quartile series” with a more accurate term such as “Driver coded fill-level series”. The values 0, 25, 50, 75 and 100 are coded fill levels, not statistical quartiles.
+
+--- #172 [esi esi Keyvanloo]
+AT: Network-wide relative
+SAYS: Please clarify how pre-emptying driver readings are identified and validated before using them for relative demand estimation. Confirmation zeros and ordinary zero observations should be distinguished explicitly.
+
+--- #173 [esi esi Keyvanloo]
+AT: Run records
+SAYS: Please avoid referring to all 9,984  idrecolha  values as confirmed run records until their operational meaning is validated. Consider using “collection identifiers” or “operational groups” provisionally.
+
+--- #174 [esi esi Keyvanloo]
+AT: Shift constraints
+SAYS: Please distinguish observed temporal patterns from formal operational constraints. Start-time and duration distributions can inform provisional operating windows, but formal shift constraints should be confirmed with the operator before being imposed in the optimisation model.
+
+--- #175 [esi esi Keyvanloo]
+AT: Rota
+SAYS: Please qualify “circuit reconstruction”. Because route-code coverage is only partial, the coded records may support reconstruction of selected fraction-specific operational sequences, but not complete network-wide circuits.
+
+--- #176 [esi esi Keyvanloo]
+AT: Table
+SAYS: Please revise Table 10 so that “fit for” does not imply unconditional validity. Where data quality or operational semantics remain unresolved, use terms such as “potentially suitable after validation” or state the required prerequisite explicitly. This will distinguish confirmed analytical uses from provisional ones.
+
+--- #177 [esi esi Keyvanloo]
+AT: Figure
+SAYS: Please consider applying the spatial analysis separately to the sensor and driver datasets before comparing their spatial patterns. For the sensor data, continuous fill or demand measures can be analysed using Global Moran’s I, Local Moran/LISA and  Getis -Ord Gi. For the driver data, the coded 0–25–50–75–100 scale should be treated as an ordinal or relative measure rather than as an equivalent continuous signal. The two spatial patterns can then be compared to assess whether high-demand or high-fill areas are consistently identified by both data  sources. * *
+
+--- #178 [esi esi Keyvanloo]
+AT: Figure
+SAYS: Please reconsider the role of Figure 13 in the main analysis. A combined map of all driver-zero observations may be difficult to interpret because driver value 0 can represent different operational states. Consider retaining the zero map only as a supporting data-quality figure. For the main spatial analysis, please derive and compare validated high-fill, near-full, pre-collection fill, demand-rate or overflow-risk indicators from both the driver and sensor datasets, while respecting their different measurement characteristics. These indicators should be mapped separately at both the individual-container and site/ ecoponto  levels. Container-level analysis can identify problematic individual bins, while site-level aggregation can reveal locations with consistently high combined demand or overflow risk. The spatial patterns derived from the driver and sensor data should then be compared, and any apparent clustering should be tested formally using appropriate spatial statistics rather than inferred from the maps alone.
+
+--- #179 [esi esi Keyvanloo]
+AT: decomposition
+SAYS: Please expand the exploratory analysis into a structured and reproducible framework covering temporal, operational, spatial, demographic and waste-fraction dimensions. For the temporal analysis, examine sensor fill, driver fill, transportation distance and recorded weight at daily, weekly, monthly, seasonal and annual scales, while keeping monthly and seasonal summaries as the main-text outputs and moving detailed daily and weekly diagnostics to the appendix. Annual comparisons should be interpreted cautiously because early 2020 contains substantial sensor-quality issues and 2024 is only a partial observation year. All temporal interpretations should remain descriptive unless independently validated; changes in fill level, distance or recorded weight should not be attributed directly to COVID-related effects, population growth, tourism, holidays, improved collection efficiency, changes in waste generation or management interventions without supporting evidence. Driver-sensor comparisons should focus on similarities or differences in temporal patterns rather than equality of absolute fill values because the two sources have different measurement characteristics. Transportation-distance and weight analyses should first be reconstructed at the valid run level, since Km  totais  may be repeated across rows and Peso total is not always constant within a collection identifier; subsequent distance-weight analysis should report Pearson and, where appropriate, Spearman correlations together with sample size, scatterplots and uncertainty measures, and should be interpreted only as an operational association until the meaning and weighing point of Peso total are confirmed. Please also extend the sensor analysis by waste fraction and sensor/container type. In Section 2.4, report separately the number of unique sensor-equipped containers and the number of observations for paper/cardboard, packaging and glass; in the temporal section, compare monthly and seasonal fill patterns by fraction; and in the sensor-QC section, compare negative-reading rates, valid-fill distributions and upper-bound behaviour across fractions and sensor models. Glass-specific sensor results should remain exploratory because only two glass containers are represented. Finally, extend the spatial analysis beyond descriptive maps by assessing the point pattern of container and sensor locations using Ripley’s K with simulation envelopes and, because the spatial intensity is strongly inhomogeneous, an inhomogeneous K-function or equivalent intensity-adjusted method. Clearly distinguish clustering of locations from clustering of high-fill or high-demand attributes, which should subsequently be examined using Global Moran’s I, Local Moran/LISA and/or  Getis -Ord Gi. Population trends, age structure and spatial population density should be incorporated as contextual variables for later demand and spatial modelling. Where possible, final demand and criticality indicators should be reported by waste fraction at both the individual-container and site/ ecoponto   levels. *
+
+--- #181 [esi esi Keyvanloo]
+AT: Conclusion
+SAYS: Please revise the conclusion to distinguish clearly between confirmed findings, data-supported interpretations, and issues that still require operator or supplier validation. Keep the common-registry interpretation inferential rather than definitive, identify explicitly what remains unresolved in D6, and describe the driver-zero categories and apparent shift structure cautiously unless their operational meanings have been independently confirmed. Please also state the remaining validation needs clearly: the physical meaning and calibration of the sensor readings, including the unresolved 82–84 upper-bound effect; the recording mechanism and weighing point associated with Peso total; and access to the complete, untruncated sensor export. The conclusion should emphasize that these unresolved issues do not invalidate the analytical pipeline, but instead clarify which variables are suitable for each subsequent analysis, what assumptions remain provisional, and what additional validation is required before final modelling and optimisation.
+
+--- #183 [esi esi Keyvanloo]
+AT: Recommendations
+SAYS: Please revise the Recommendations to distinguish between actions that can be adopted immediately and actions that remain conditional on unresolved validation issues. In particular, avoid treating the 82–84 sensor ceiling as confirmed censoring, the current integrated dataset as a finalized event-level bridge, the negative-reading subranges and 24-hour outage rule as fully validated, or the observed 04–06 h and 14–15 h start-time concentrations as formal routing shifts before operator confirmation. Recommendations related to demand estimation, source integration, negative-value treatment and routing constraints should therefore be stated as provisional or conditional on the final QC, matching and operator-validation procedures. The recommendations on rebuilding the regression sample, holding weight allocation, documenting exclusions and extending the operator/data request can be retained as firm next steps.
+
+--- #185 [esi esi Keyvanloo]
+AT: References
+SAYS: Please consider separating this section into “Data and reproducibility sources” and “References”. The current list mainly documents raw datasets, processing scripts, intermediate outputs, internal reports and field notes rather than conventional bibliographic references. For reproducibility, please map each major table/figure to the specific script and output file that generated it, avoid broad claims such as “every figure in this report” unless fully verified, and document version/date information for the source files and field-survey materials. Scientific literature cited in the methodology should be listed separately using the required reference style.
+
+--- #188 [esi esi Keyvanloo]
+AT: Appendix
+SAYS: Please strengthen Appendix A by documenting the computational environment as well as the scripts. For each workflow, identify the main input and output files, relevant software/package versions (e.g., Python,  DuckDB , matplotlib, QGIS and Node.js), and any parameters that materially affect the results. Also clarify that the current event-matching outputs reproduce the present matching specification and must be regenerated if the final matching methodology changes. This will make the appendix a complete reproducibility record rather than only a list of script locations.
+
+--- #190 [esi esi Keyvanloo]
+AT: comment
+SAYS: Please revise Appendix B so that each disposition reflects the actual level of certainty reached in the revised analysis. Several entries currently describe provisional interpretations as confirmed findings, particularly the post-emptying zero classification, glass instrumentation policy, route-code purity, driver −1 interpretation, integrated event-level dataset, negative-reading “two families”, and the ±3 h matching rule. Where the underlying methodology or operational meaning still requires QC, sensitivity analysis or operator confirmation, please use wording such as “supported”, “provisionally classified”, “revised”, or “pending validation” rather than “confirmed” or “explains”. The disposition table should distinguish clearly between issues fully resolved, issues partially resolved, and issues that remain open.
+

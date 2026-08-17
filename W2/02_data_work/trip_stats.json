@@ -1,0 +1,24 @@
+{
+ "collection_groups_total": 9984,
+ "groups_single_bin": 6554,
+ "trips_multi_bin": 3430,
+ "dates_with_activity": 1261,
+ "max_trips_one_day": 8,
+ "bins_per_trip_median": 4.0,
+ "bins_per_trip_p90": 46,
+ "duration_h_median": 7.6,
+ "km_recorded_median": 135.0,
+ "kg_median": 2300.0,
+ "kg_per_km_median": 16.8,
+ "straightline_vs_recorded_median_ratio": 0.13,
+ "by_fraction": {
+  "Packaging": {
+   "trips": 1725,
+   "median_bins": 2
+  },
+  "Paper/card": {
+   "trips": 1705,
+   "median_bins": 4
+  }
+ }
+}

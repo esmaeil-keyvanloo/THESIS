@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rio Maior — Collection Trip Explorer v2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--bg:#f9f9f7;--surf:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--mut:#898781;--grid:#e1e0d9;
+ --blue:#2a78d6;--orange:#eb6834;--aqua:#1baf7a;--yellow:#eda100;--crit:#d03b3b;--pack:#eda100;--paper:#2a78d6}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{padding:8px 14px;background:var(--surf);border-bottom:1px solid var(--grid);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{font-size:16px}
+header .sub{color:var(--mut);font-size:11.5px}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.tile{background:var(--bg);border:1px solid var(--grid);border-radius:8px;padding:3px 9px;text-align:center}
+.tile b{font-size:14px;display:block}
+.tile span{font-size:10px;color:var(--mut)}
+#main{flex:1;display:flex;min-height:0}
+#left{width:380px;min-width:320px;display:flex;flex-direction:column;border-right:1px solid var(--grid);background:var(--surf)}
+#controls{padding:7px 10px;border-bottom:1px solid var(--grid);display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11.5px}
+#controls select,#controls button{font:inherit;padding:3px 8px;border:1px solid var(--grid);border-radius:6px;background:var(--surf);cursor:pointer}
+#controls button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#controls .fbtn.on[data-f="Packaging"]{background:var(--pack);border-color:var(--pack);color:#fff}
+#controls .fbtn.on[data-f="Paper/card"]{background:var(--paper);border-color:var(--paper);color:#fff}
+#calwrap{flex:1;overflow-y:auto;padding:8px 10px}
+.month{margin-bottom:10px}
+.month h3{font-size:11px;color:var(--ink2);margin-bottom:3px}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.dow{font-size:8px;color:var(--mut);text-align:center}
+.day{aspect-ratio:1;border-radius:4px;background:var(--bg);border:1px solid var(--grid);font-size:8.5px;color:var(--mut);display:flex;align-items:center;justify-content:center;cursor:default}
+.day.has{cursor:pointer;font-weight:600}
+.day.pP{background:linear-gradient(135deg,var(--pack) 50%,var(--paper) 50%);color:#fff}
+.day.pO{background:var(--pack);color:#fff}
+.day.cO{background:var(--paper);color:#fff}
+.day.sel{outline:2.5px solid var(--crit);outline-offset:1px}
+#daypanel{max-height:32%;overflow-y:auto;border-top:1px solid var(--grid);padding:7px 10px}
+#daypanel h3{font-size:11.5px;margin-bottom:5px}
+.chip{display:flex;gap:7px;align-items:center;padding:4px 7px;margin-bottom:3px;border:1px solid var(--grid);border-radius:7px;cursor:pointer;font-size:11px;background:var(--bg)}
+.chip:hover{border-color:var(--ink2)}
+.chip.on{border-width:2px}
+.chip .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.chip .meta{color:var(--mut);font-size:10px;margin-left:auto}
+#map{flex:1}
+#sidebar{width:300px;background:var(--surf);border-left:1px solid var(--grid);overflow-y:auto;padding:8px 10px}
+#sidebar h3{font-size:12px;margin:6px 0}
+.tripcard{border:1px solid var(--grid);border-left-width:5px;border-radius:7px;padding:6px 8px;margin-bottom:7px;font-size:11px}
+.tripcard table{width:100%;border-collapse:collapse;font-size:10.5px;margin-top:3px}
+.tripcard td{padding:1px 0;color:var(--ink2)}
+.tripcard td:last-child{text-align:right;color:var(--ink);font-weight:600}
+.note{font-size:10px;color:var(--mut);margin-top:6px;line-height:1.4}
+.empty{color:var(--mut);font-size:11px}
+.lyr{display:flex;gap:6px;align-items:center;font-size:11px;padding:2px 0}
+.stopnum{background:#fff;border:2px solid #333;border-radius:50%;width:20px;height:20px;line-height:16px;text-align:center;font-size:10px;font-weight:700;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.facil{font-size:16px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.legend{background:var(--surf);border:1px solid var(--grid);border-radius:8px;padding:6px 9px;font-size:10.5px;line-height:1.6}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+#spark{width:100%;height:56px;margin-top:4px}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Rio Maior — Collection Trip Explorer <span style="color:var(--mut)">v3</span></h1>
+    <div class="sub">Trips follow the road network · jumps a truck could not drive (implied speed &gt; 60 km/h) are split into separate vehicle tracks (a, b, …) · <span style="color:var(--pack)">■</span> packaging · <span style="color:var(--paper)">■</span> paper/card · calendar day split-coloured when both ran</div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</header>
+<div id="main">
+  <div id="left">
+    <div id="controls">
+      <select id="year"></select>
+      <button data-f="Packaging" class="fbtn on">Packaging</button>
+      <button data-f="Paper/card" class="fbtn on">Paper/card</button>
+      <select id="colormode" title="Line colouring">
+        <option value="frac">Colour by fraction</option>
+        <option value="trip">Colour by trip</option>
+      </select>
+      <button id="clear">Clear</button>
+    </div>
+    <div id="calwrap"></div>
+    <div id="daypanel"><h3>Pick a day</h3><div class="empty">Days are coloured by which fractions ran (yellow = packaging, blue = paper, split = both). Click a day, then click trips to draw them. Numbers on the map show the service order from 1.</div></div>
+  </div>
+  <div id="map"></div>
+  <div id="sidebar">
+    <h3>Layers</h3>
+    <label class="lyr"><input type="checkbox" id="lyrFacil" checked> Depot &amp; disposal sites</label>
+    <label class="lyr"><input type="checkbox" id="lyrBins"> Bin need-categories (all 816)</label>
+    <div class="legend" id="binlegend" style="display:none">
+      <span class="sw" style="background:var(--crit)"></span>High need &nbsp;
+      <span class="sw" style="background:var(--yellow)"></span>Moderate &nbsp;
+      <span class="sw" style="background:var(--aqua)"></span>Low &nbsp;
+      <span class="sw" style="background:#c3c2b7"></span>Too little data
+      <div id="catcounts" style="color:var(--mut)"></div>
+    </div>
+    <h3>Monthly collected weight</h3>
+    <canvas id="spark"></canvas>
+    <div class="note" id="sparknote"></div>
+    <h3>Selected trips</h3>
+    <div id="cards"><div class="empty">Nothing selected.</div></div>
+    <div class="note" id="depotnote"></div>
+    <div class="note"><b>Reading a trip:</b> the line is the shortest road path visiting the recorded bins in order — the real driven route will differ where the crew took detours or served unrecorded bins (66% of identifiers record a single bin). "Recorded km" and load come from the vehicle identifier; when an identifier was split into tracks they are totals shared by all its tracks. A segment is only drawn when the truck could physically drive it (&le;60 km/h implied); faster jumps mean a second vehicle was recording under the same identifier, so those stops form their own track.</div>
+  </div>
+</div>
+<script>
+const TRIPS = /*__TRIPS__*/[];
+const ROUTES = /*__ROUTES__*/{};
+const BINS = /*__BINS__*/[];
+const FACIL = /*__FACIL__*/{};
+const TEMPO = /*__TEMPO__*/{};
+const FR = { "Packaging": "#eda100", "Paper/card": "#2a78d6", "Glass": "#2e8b57" };
+const PAL = ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300","#4a3aa7","#e34948"];
+const fmt = n => n == null ? "—" : n.toLocaleString("en-US");
+const state = { year: 2022, fr: new Set(["Packaging","Paper/card","Glass"]), selDay: null, sel: new Map(), colormode: "frac" };
+const byDate = {};
+TRIPS.forEach(t => { if (t.n_bins >= 2) (byDate[t.date] = byDate[t.date] || []).push(t); });
+
+const multi = TRIPS.filter(t => t.n_bins >= 2);
+const med = a => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
+document.getElementById("tiles").innerHTML = [
+  [fmt(multi.length), "vehicle tracks"], [fmt(Object.keys(byDate).length), "active days"],
+  [med(multi.map(t => t.n_bins)), "median bins"], [med(multi.filter(t => t.dur_h).map(t => t.dur_h)).toFixed(1) + " h", "median duration"],
+  [fmt(med(multi.filter(t => t.km_rec).map(t => t.km_rec))) + " km", "median recorded"],
+  [fmt(med(multi.filter(t => t.kg).map(t => t.kg))) + " kg", "median load"],
+].map(([v, l]) => `<div class="tile"><b>${v}</b><span>${l}</span></div>`).join("");
+
+const years = [...new Set(multi.map(t => t.date.slice(0, 4)))].sort();
+const ysel = document.getElementById("year");
+years.forEach(y => ysel.add(new Option(y, y)));
+ysel.value = years.includes("2022") ? "2022" : years[0];
+state.year = +ysel.value;
+ysel.onchange = () => { state.year = +ysel.value; calendar(); };
+
+const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function visible(t){ return state.fr.has(t.frac); }
+function calendar(){
+  const y = state.year, wrap = document.getElementById("calwrap");
+  wrap.innerHTML = "";
+  for (let m = 0; m < 12; m++){
+    const days = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    const pad = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7;
+    let html = `<div class="month"><h3>${MN[m]} ${y}</h3><div class="mgrid">`;
+    "MTWTFSS".split("").forEach(d => html += `<div class="dow">${d}</div>`);
+    for (let i = 0; i < pad; i++) html += "<div></div>";
+    for (let d = 1; d <= days; d++){
+      const key = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const list = (byDate[key] || []).filter(visible);
+      const hasP = list.some(t => t.frac === "Packaging"), hasC = list.some(t => t.frac === "Paper/card");
+      const cls = hasP && hasC ? "pP" : hasP ? "pO" : hasC ? "cO" : "";
+      html += `<div class="day ${list.length ? "has" : ""} ${cls} ${state.selDay === key ? "sel" : ""}" ${list.length ? `data-d="${key}" title="${list.length} trip(s)"` : ""}>${d}</div>`;
+    }
+    wrap.innerHTML += html + "</div></div>";
+  }
+  wrap.querySelectorAll(".day.has").forEach(el => el.onclick = () => { state.selDay = el.dataset.d; calendar(); daypanel(); });
+}
+
+function daypanel(){
+  const p = document.getElementById("daypanel"), key = state.selDay;
+  if (!key) return;
+  const list = (byDate[key] || []).filter(visible);
+  p.innerHTML = `<h3>${key} — ${list.length} trip(s)</h3>`;
+  list.forEach(t => {
+    const on = state.sel.has(t.id);
+    const div = document.createElement("div");
+    div.className = "chip" + (on ? " on" : "");
+    if (on) div.style.borderColor = state.sel.get(t.id).color;
+    div.innerHTML = `<span class="dot" style="background:${on ? state.sel.get(t.id).color : FR[t.frac]}"></span>
+      <span><b>${t.rota || t.frac}${t.part ? " · track " + t.part : ""}</b> ${t.start}–${t.end}</span>
+      <span class="meta">${t.n_bins} bins · ${t.km_rec ? t.km_rec + " km" : "—"} · ${t.kg ? fmt(t.kg) + " kg" : "—"}</span>`;
+    div.onclick = () => toggle(t);
+    p.appendChild(div);
+  });
+}
+
+const map = L.map("map").setView([39.34, -8.94], 12);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
+let colorIdx = 0;
+
+function toggle(t){
+  if (state.sel.has(t.id)){ state.sel.get(t.id).layer.remove(); state.sel.delete(t.id); }
+  else {
+    const color = state.colormode === "frac" ? FR[t.frac] : PAL[colorIdx++ % PAL.length];
+    const grp = L.layerGroup();
+    const routed = ROUTES[t.id];
+    if (routed && routed.path && routed.path.length > 1){
+      L.polyline(routed.path, { color, weight: 3.5, opacity: 0.9 }).addTo(grp);
+    } else if (t.stops.length > 1){
+      L.polyline(t.stops.map(s => [s[0], s[1]]), { color, weight: 2.5, dashArray: "6 5", opacity: 0.8 }).addTo(grp);
+    }
+    t.stops.forEach((s, i) => {
+      L.marker([s[0], s[1]], { icon: L.divIcon({ className: "", html: `<div class="stopnum" style="border-color:${color}">${i + 1}</div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) })
+        .bindPopup(`<b>Stop ${i + 1} of ${t.stops.length}</b><br>Bin ${s[2]} · ${s[3]}<br>${t.frac}`).addTo(grp);
+    });
+    grp.addTo(map);
+    state.sel.set(t.id, { t, color, layer: grp, routed_km: routed ? routed.km : null });
+    const all = [].concat(...[...state.sel.values()].map(x => x.t.stops.map(s => [s[0], s[1]])));
+    map.fitBounds(L.latLngBounds(all).pad(0.18));
+  }
+  daypanel(); cards();
+}
+
+function cards(){
+  const c = document.getElementById("cards");
+  if (!state.sel.size){ c.innerHTML = `<div class="empty">Nothing selected.</div>`; return; }
+  c.innerHTML = "";
+  state.sel.forEach(({ t, color, routed_km }) => {
+    const kgkm = (t.kg && t.km_rec) ? (t.kg / t.km_rec).toFixed(1) : "—";
+    const el = document.createElement("div");
+    el.className = "tripcard"; el.style.borderLeftColor = color;
+    el.innerHTML = `<b>${t.date}</b> · ${t.rota || t.frac}${t.part ? " · track " + t.part + " of " + t.n_parts : ""}
+      <table>
+        <tr><td>Time</td><td>${t.start}–${t.end}${t.dur_h ? " (" + t.dur_h + " h)" : ""}</td></tr>
+        <tr><td>Bins (numbered on map)</td><td>${t.n_bins}</td></tr>
+        <tr><td>Road route between bins</td><td>${routed_km ? routed_km + " km" : "n/a"}</td></tr>
+        <tr><td>Vehicle recorded${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.km_rec ? t.km_rec + " km" : "—"}</td></tr>
+        <tr><td>Load${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.kg ? fmt(t.kg) + " kg" : "—"}</td></tr>
+        <tr><td>kg per recorded km</td><td>${kgkm}</td></tr>
+      </table>`;
+    c.appendChild(el);
+  });
+}
+
+/* facilities layer */
+const facilLayer = L.layerGroup();
+(FACIL.web_facilities || []).concat(FACIL.osm_facilities || []).forEach(f => {
+  const icon = /transfer|aterro|landfill/i.test(f.name) ? "🏭" : /ecocentro|recycl/i.test(f.name) ? "♻️" : "🚚";
+  L.marker([f.lat, f.lon], { icon: L.divIcon({ className: "", html: `<div class="facil">${icon}</div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) })
+    .bindPopup(`<b>${f.name}</b><br>${f.fclass || f.confidence || ""}${f.source ? "<br><small>" + f.source + "</small>" : ""}`).addTo(facilLayer);
+});
+facilLayer.addTo(map);
+document.getElementById("lyrFacil").onchange = e => e.target.checked ? facilLayer.addTo(map) : facilLayer.remove();
+document.getElementById("depotnote").innerHTML = FACIL.synthesis ? "<b>Depot &amp; disposal:</b> " + FACIL.synthesis : "";
+
+/* bins categories layer */
+const CATC = { H: "#d03b3b", M: "#eda100", L: "#1baf7a", U: "#c3c2b7" };
+const binLayer = L.layerGroup();
+BINS.forEach(bn => {
+  L.circleMarker([bn.lat, bn.lon], { radius: bn.cat === "H" ? 6 : 4, color: "#fff", weight: 1, fillColor: CATC[bn.cat] || "#c3c2b7", fillOpacity: 0.85 })
+    .bindPopup(`<b>Bin ${bn.cid}</b> (${{ P: "Packaging", C: "Paper/card", G: "Glass" }[bn.frac] || ""})<br>Collections: ${bn.ev}<br>Arrived ≥75% full: ${(bn.pfull * 100).toFixed(0)}%<br>Arrived ≤25% full: ${(bn.plow * 100).toFixed(0)}%<br>Category: <b>${{ H: "High need", M: "Moderate", L: "Low need", U: "Too little data" }[bn.cat]}</b>`).addTo(binLayer);
+});
+document.getElementById("lyrBins").onchange = e => {
+  document.getElementById("binlegend").style.display = e.target.checked ? "" : "none";
+  e.target.checked ? binLayer.addTo(map) : binLayer.remove();
+};
+const cc = { H: 0, M: 0, L: 0, U: 0 }; BINS.forEach(bn => cc[bn.cat] = (cc[bn.cat] || 0) + 1);
+document.getElementById("catcounts").textContent = `high ${cc.H} · moderate ${cc.M} · low ${cc.L} · little data ${cc.U}`;
+
+/* monthly kg sparkline */
+(function(){
+  const cv = document.getElementById("spark"), m = TEMPO.months || [];
+  if (!m.length) return;
+  const kg = TEMPO.kg, ctx = cv.getContext("2d");
+  const Wc = cv.width = cv.offsetWidth * 2, Hc = cv.height = 112;
+  const mx = Math.max(...kg);
+  ctx.fillStyle = "#9ec5f4";
+  kg.forEach((v, i) => { const bw = Wc / kg.length; ctx.fillRect(i * bw + 1, Hc - v / mx * (Hc - 8), bw - 2, v / mx * (Hc - 8)); });
+  ctx.fillStyle = "#52514e"; ctx.font = "20px Segoe UI";
+  ctx.fillText(m[0].slice(0, 4), 4, 20); ctx.fillText(m[m.length - 1], Wc - 110, 20);
+  document.getElementById("sparknote").textContent = `Total collected weight per month, ${m[0]} to ${m[m.length - 1]} (2024 partial). Peak ${fmt(mx)} kg.`;
+})();
+
+document.querySelectorAll(".fbtn").forEach(bt => bt.onclick = () => {
+  bt.classList.toggle("on");
+  bt.classList.contains("on") ? state.fr.add(bt.dataset.f) : state.fr.delete(bt.dataset.f);
+  calendar(); daypanel();
+});
+document.getElementById("colormode").onchange = e => state.colormode = e.target.value;
+document.getElementById("clear").onclick = () => { state.sel.forEach(x => x.layer.remove()); state.sel.clear(); colorIdx = 0; daypanel(); cards(); };
+calendar();
+</script>
+</body>
+</html>

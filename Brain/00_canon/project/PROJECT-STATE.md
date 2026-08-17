@@ -1,0 +1,64 @@
+# PROJECT-STATE — live session-state file
+
+> **Rule for every chat:** read this file at start; update it at session close and after every major deliverable. Newest entries on top. Keep it tight — details live in the linked files, not here.
+> Last updated: **2026-08-13** (session S2).
+
+## 1. Data map — what each dataset is and what it is for
+
+| Data | Where | Purpose (question it answers) |
+|---|---|---|
+| Driver CSV (264,817 rows, 816 containers) | `DATA/XLS/Enchimentos_com_Recolhas…` → `Brain/03_db/parquet/raw_collections.parquet` | Network-wide relative demand; glass demand; driver-vs-sensor chapter; partial route codes (92, CE=packaging/CP=paper) |
+| Sensor CSV (1,048,575 rows, 344 containers, truncated D1) | `DATA/XLS/Enchimentos_de_Sensores…` → `raw_sensors.parquet` | Fill-rate (demand) estimation; cadence 2.55/day; unit unverified (D3, ceiling 82–84); excludes glass (2 units) |
+| Reconciled container layer (816 pts + per-container stats) | `W2/02_data_work/containers_reconciled.geojson` | **Canonical container dataset** — demand points and candidate sites for p-median |
+| Container registry snapshot (464 bins, 193 instrumented) | `DATA/GEO DATA/gis rio.gdb` | Cross-check only; encoding damaged; other gdb layers retired (border is km smaller than CAOP) |
+| GIS_DATA library (6 GB, 52 styled QGIS layers) | `GIS_DATA/` + `GIS_DATA/README.md` | Boundaries (CAOP 2025), BGRI 2021/2011 census, COS/CRUS land use, MDT 10 m + slope, flood/fire hazard, rivers, E-REDES grid, OSM roads — covariates, constraints, network |
+| QGIS project | `DATA/QGIS Layout template/QGIS Thesis.qgz` | All layers grouped MY DATA / DOWNLOADED; W2 layouts M1–M4 |
+| Knowledge base | `Brain/` (canon, sources, notes, DuckDB, index) | Provenance, defect register D1–D7, data dictionary |
+
+## 2. Chat log — sessions, main points, outputs
+
+### S6 — 2026-08-17 (spatio-temporal track segmentation, Explorer v3; same chat)
+- User flagged impossible trip lines (far-apart stops connected by time order). Verified: 6.6% of 49,662 consecutive segments implied >60 km/h (p99 = 467 km/h) → parallel vehicles under one identifier + sparse logging.
+- Built `segment_tracks.py`: greedy track assignment, VMAX 60 km/h implied (haversine ×1.3 detour, 2-min service time). 1,137 of 3,430 identifiers split (935→2 tracks, 191→3, 9→4, 2 pathological); **0 violating segments after**; 4,423 physically consistent vehicle tracks; re-routed on road graph (0 disconnected).
+- Explorer v3 delivered: tracks labelled a/b/c under their identifier, shared kg/km totals marked "whole identifier". Data: `trips_v3.json`, `trips_routed_v3.json`, `segmentation_stats.json`.
+- Caveat for demand/routing work: km_rec and kg cannot be split across an identifier's tracks — allocation still blocked on operator info.
+- **Driver_Trips_Sorted.xlsx** (`W2/03_outputs/tables/`): driver rows arranged trip-by-trip (11,577 track blocks, white/gray banding, stops in service order, 59,638 pre-readings attached to their visits; 144k unattachable readings in sheet 2; sensors untouched by request).
+- User self-downloaded the **DGT 50 cm LiDAR** into `GIS_DATA/04_elevation/` (~20 GB incl. MDT-50cm.vrt) — fine-terrain upgrade now available locally; GIS_DATA excluded from git (re-downloadable, see .gitignore).
+
+### S5 — 2026-08-15 later (9-question trip analytics + Explorer v2; same chat)
+- Parallel workflow (4 agents): typology/hotspots, OSM road routing, temporal aggregates, depot inference. Key results: trips fraction-pure (99.97%), packaging+paper run SAME days (818/1,200 both); two-bin "trips" last as long as 15+-bin ones (7.4 h/122 km vs 8.1 h/175 km) → identifiers span full shifts, logging partial; **unnecessary emptyings (≤50% full at emptying): 25.4% overall, falling 41.9% (2020) → 8.1% (2024)**; 816 bins categorized 233 high/315 moderate/221 low/47 no-data; depot = Estaleiro Municipal (39.3392,-8.9249), disposal = Valorsul transfer station + Ecocentro SE (Zona Industrial); morning trips start in town, afternoon in southern parishes; **NEW data-quality find: sensor scale discontinuity Nov 2020** (median ~100% of ceiling before, 33–46% after).
+- **Trip Explorer v2** (`W2/03_outputs/Trip_Explorer_RioMaior.html`, 14.3 MB): road-following routes (3,430 trips routed, 0 disconnected legs, dijkstra on drivable OSM graph), stops numbered from 1, fraction-coloured trips + split-colour calendar, depot/disposal markers, 816-bin category layer, monthly-kg strip. Browser-verified.
+- Temporal tables `W2/03_outputs/tables/temporal_{daily,weekly,monthly,seasonal,annual}.csv` + figures F10–F12. Annual: 2020 2,821 trips/7,194 t/362k km → 2023 1,573/4,414 t/210k km; kg/km stable 19–21.
+
+### S4 — 2026-08-15 (plain-language rewrite + trips webGIS; same chat)
+- Second review round: **154 in-document comments** extracted (preserved: `W2/02_data_work/review_comments_2026-08-15_extracted.txt`). Core asks: simple human language, cautious wording, trips analysis + interactive webGIS, negatives decision closed, active windows explained.
+- **R2-01 Rev D**: full plain-language rewrite — opens with "The story in plain words"; zeros reconciled exactly (60,273 + 2,828 + 81,703); negatives DECISION: drop from fill analysis, keep as QC metadata, no interpolation across bursts, >24 h bursts subtracted from exposure (threshold provisional); sensor 82–84 = unresolved upper bound (blind-zone hypothesis); record-level (not event-level) comparison naming; D5 (weight attribution) + D8 (repeated trip totals) registered; N=452 attempts documented; disposition by certainty (resolved / provisional / open).
+- **Trips**: 9,984 collection identifiers → 3,430 multi-bin trips (median 4 bins, 7.6 h, 135 km, 2,300 kg, 16.8 kg/km; straight-line path ≈13% of recorded km; 66% single-bin identifiers → partial recording). `W2/02_data_work/{trips.json, trip_stats.json}`.
+- **Trip_Explorer_RioMaior.html** (`W2/03_outputs/`): self-contained Leaflet webGIS — calendar shaded by trips/day, per-day trip chips, multi-trip map drawing, per-trip stat cards. Verified working in browser.
+
+### S3 — 2026-08-14 (review response + event-level comparison; same chat as S2)
+- Addressed all 15 review comments on R2-01 (2 user + 13 Codex) → **Rev B**: exec summary restructured, registry as inference, zeros decomposed (60,273 post-emptying confirmations vs 81,703 standalone), cadence three denominators (1.93/2.55/1.58) + per-container active windows, shift structure found (04–06 h & 14–15 h), run-weight allocation held, glass explained by site policy (270 sites), CE46 + Óbidos route exceptions, N=452 not reproducible, D6 reclassified. Six charts F1–F6; maps rebuilt on thesis template (stats box lower-left, tidy legends).
+- **Rev C** added event-level comparison (user items 1–7): nearest-reading matching ±3 h (sensitivity stable across 7 windows), agreement only **45.2% within one driver step** → instruments non-interchangeable; ceiling cases 1,758/10,153; driver −1 = missing; `event_level_dataset.parquet` (127,928 rows, QC flags, selected fill on 58.8%); negatives rule (two families, episode evidence, no interpolation).
+- New key artifacts: `W2/02_data_work/{event_level_dataset.parquet, match_stats.json, codex_verification.json, sensor_active_windows.csv, collection_runs.csv}`, figures F1–F9, R2-01 Rev C.
+- Ops: QGIS SCP plugin disabled; crash root cause = GC'd legend trees (pin refs via builtins); QGIS relaunch procedure + port monitor.
+
+### S2 — 2026-08-13 (GIS data acquisition + driver/sensor reconciliation)
+- Built `GIS_DATA/` (research → download → clip to study area +10 km, EPSG:3763); loaded 52 styled layers into QGIS; reorganized tree into MY DATA / DOWNLOADED.
+- **R1-02 GIS Data Inventory** (`W1/04_outputs/reports/`): what's held / downloaded / must-be-requested, with relevance ratings.
+- **R2-01 Driver–Sensor Reconciliation** (`W2/03_outputs/reports/`): 344 ⊂ 816, zero mismatches, one master registry; glass uninstrumented (258→2); all 816 inside municipality; maps W2-M1…M4 with HTML stat boxes.
+- Ops notes: QGIS crash cause found (Python-owned legend tree GC'd) and fixed; SCP plugin disabled; DGT CDD LiDAR (2 m/50 cm) deferred — needs user's own login.
+- Answered: routes/schedules/shifts are NOT public → request letters to Valorsul + Câmara (guide in R1-01).
+
+### S1 — 2026-08-08 (repository + audit round)
+- Built Brain (canon, converted sources, DuckDB, hybrid index), W1 structure, maps M1–M3.
+- **R1-01 Methodology Audit**: defect register D1–D7, method chain, data-acquisition guide.
+
+## 3. Open items / next steps
+1. **R1-01 feedback** — user is reviewing; will send comments in the S2 chat; develop the audit accordingly.
+2. **Data request letters** (Valorsul + Câmara): D1 re-export, routes/GPS/weights/shifts — top blocker.
+3. **Routable graph** from OSM roads + MDT slope costs — unblocked, not started.
+4. **D7/BGRI rebuild reminder** — when the database is ready: container/demand analysis on BGRI 2021 + OSM network (memory: reminder-d7-rebuild).
+5. CDD LiDAR fine terrain — only if micro-siting chapter happens (user account exists).
+
+## 4. Session digests (chat backup)
+Full per-session digests: `Brain/01_sources/sessions/` — one file per session, git-committed, survives chat deletion.

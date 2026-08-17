@@ -1,0 +1,269 @@
+{
+ "cadence": {
+  "total_rows": 1048575,
+  "n_containers": 344,
+  "full_window_days": 1582,
+  "naive_calendar_rate": 1.927,
+  "active_day_conditional_rate": 2.551
+ },
+ "active_windows": {
+  "active_days_min": 56,
+  "active_days_median": 1581.0,
+  "active_days_max": 1582,
+  "rate_within_window_median": 1.583,
+  "rate_within_window_mean": 5.854,
+  "coverage_median": 0.98,
+  "containers_window_lt_1yr": 64,
+  "containers_window_lt_full_75pct": 77
+ },
+ "zeros": {
+  "driver_rows_with_idrecolha": 60916,
+  "idrecolha_rows_fill_zero": 60916,
+  "total_zero_rows": 144804,
+  "zeros_with_reading_within_15min_before": 63101,
+  "of_which_previous_nonzero": 60273,
+  "standalone_zeros": 81703
+ },
+ "timestamps_vs_rota": {
+  "rows_with_t_start": 60916,
+  "rows_with_rota": 22674,
+  "t_start_without_rota": 38242,
+  "start_hour_hist": [
+   {
+    "h": 4,
+    "n": 7998
+   },
+   {
+    "h": 5,
+    "n": 5548
+   },
+   {
+    "h": 6,
+    "n": 989
+   },
+   {
+    "h": 7,
+    "n": 12
+   },
+   {
+    "h": 8,
+    "n": 69
+   },
+   {
+    "h": 9,
+    "n": 75
+   },
+   {
+    "h": 10,
+    "n": 340
+   },
+   {
+    "h": 11,
+    "n": 405
+   },
+   {
+    "h": 12,
+    "n": 432
+   },
+   {
+    "h": 13,
+    "n": 889
+   },
+   {
+    "h": 14,
+    "n": 21174
+   },
+   {
+    "h": 15,
+    "n": 21194
+   },
+   {
+    "h": 16,
+    "n": 806
+   },
+   {
+    "h": 17,
+    "n": 219
+   },
+   {
+    "h": 18,
+    "n": 192
+   },
+   {
+    "h": 19,
+    "n": 144
+   },
+   {
+    "h": 20,
+    "n": 251
+   },
+   {
+    "h": 21,
+    "n": 145
+   },
+   {
+    "h": 22,
+    "n": 34
+   }
+  ],
+  "weekday_hist": [
+   {
+    "dow": 1,
+    "n": 11712
+   },
+   {
+    "dow": 2,
+    "n": 14940
+   },
+   {
+    "dow": 3,
+    "n": 7688
+   },
+   {
+    "dow": 4,
+    "n": 9185
+   },
+   {
+    "dow": 5,
+    "n": 11919
+   },
+   {
+    "dow": 6,
+    "n": 5472
+   }
+  ],
+  "run_duration_min": [
+   {
+    "v": 446.0,
+    "p": "p50"
+   },
+   {
+    "v": 545.0,
+    "p": "p90"
+   },
+   {
+    "v": 376.0,
+    "p": "p10"
+   }
+  ]
+ },
+ "runs": {
+  "n_runs": 9984,
+  "km_consistent_within_run": true,
+  "peso_consistent_within_run": false,
+  "containers_per_run_p10_50_90": [
+   1.0,
+   1.0,
+   22.700000000000728
+  ],
+  "km_p10_50_90": [
+   87.0,
+   126.0,
+   187.70000000000073
+  ],
+  "peso_p10_50_90": [
+   1440.0,
+   2160.0,
+   3520.0
+  ]
+ },
+ "effective_windows": {
+  "driver": "2020-01-02 05:52:11 to 2024-04-29 21:29:07.315",
+  "sensor": "2020-01-01 00:05:50.227 to 2024-04-30 13:01:38.553",
+  "sensor_neg_share_by_year": [
+   {
+    "y": 2020,
+    "neg_pct": 36.6
+   },
+   {
+    "y": 2021,
+    "neg_pct": 8.7
+   },
+   {
+    "y": 2022,
+    "neg_pct": 8.0
+   },
+   {
+    "y": 2023,
+    "neg_pct": 6.3
+   },
+   {
+    "y": 2024,
+    "neg_pct": 2.6
+   }
+  ],
+  "note_2024": "Jan-Apr only in both sources"
+ },
+ "clusters": {
+  "n_sites": 270,
+  "sites_by_units": {
+   "1": 17,
+   "2": 4,
+   "3": 214,
+   "4": 26,
+   "5": 9
+  },
+  "multiunit_sites": 253,
+  "multiunit_with_exactly_one_instrumented": 105,
+  "multiunit_with_zero_instrumented": 30,
+  "multiunit_with_2plus_instrumented": 118,
+  "instrumented_fraction_counts": [
+   {
+    "fraction": "Embalagens de papel e cartão",
+    "n": 173
+   },
+   {
+    "fraction": "Mistura de embalagens",
+    "n": 169
+   },
+   {
+    "fraction": "Embalagens de Vidro",
+    "n": 2
+   }
+  ]
+ },
+ "row_ordering": {
+  "distinct_cids_in_file_order_sample_first10": [
+   "6230",
+   "5673",
+   "18741",
+   "22050",
+   "6233",
+   "6046",
+   "11986",
+   "11790",
+   "20390",
+   "9579"
+  ],
+  "last_container_rows": 1564
+ },
+ "route_purity": {
+  "routes_total": 92,
+  "mixed_fraction_routes": [
+   {
+    "rota": "CE46",
+    "nf": 2,
+    "fr": "Mistura de embalagens | Embalagens de papel e cartão",
+    "n": 250
+   }
+  ],
+  "malformed_prefixes": [
+   {
+    "rota": "Óbidos CE02",
+    "n": 85
+   },
+   {
+    "rota": "Óbidos CE01",
+    "n": 49
+   },
+   {
+    "rota": "Óbidos CESexta",
+    "n": 36
+   },
+   {
+    "rota": "Óbidos CE03",
+    "n": 1
+   }
+  ]
+ }
+}

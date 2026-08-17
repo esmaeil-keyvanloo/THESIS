@@ -1,0 +1,190 @@
+{
+  "file": "C:\\Users\\esmae\\Desktop\\phd Esmaeil\\THESIS CLAUDE\\W2\\03_outputs\\reports\\R2-01_Driver_Sensor_Reconciliation_Codex_Reviewed.docx",
+  "comment_count": 8,
+  "comments": [
+    {
+      "id": "0",
+      "author": "Codex",
+      "date": "2026-08-14T14:18:40Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please restructure this section under four short subheadings: What matches; What differs; What remains uncertain; and What can safely be analysed next. Keep it concise, but define unfamiliar terms and state the main validation question clearly.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "Executive summary"
+            },
+            {
+              "where": "end",
+              "text": "Executive summary"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "author": "Codex",
+      "date": "2026-08-14T14:18:40Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Exact agreement supports, but does not prove, a shared master registry. Please frame this as an inference and state that the evidence is consistent with both exports drawing from a common container registry.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The two CSV files describe the same physical container network from two instruments: the driver’s eye and the mounted sensor. Reconciling them container by container gives a clean result. The 344 sens"
+            },
+            {
+              "where": "end",
+              "text": "The two CSV files describe the same physical container network from two instruments: the driver’s eye and the mounted sensor. Reconciling them container by container gives a clean result. The 344 sens"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "author": "Codex",
+      "date": "2026-08-14T14:18:40Z",
+      "initials": null,
+      "resolved": false,
+      "text": "This is a five-level scale (0, 25, 50, 75, 100), with -1 treated separately as a possible missing or invalid reading. Please correct the wording and add an event-level Driver-Sensor reconciliation. Match by container ID and a justified timestamp tolerance; report the matching rule and sensitivity to the time window. For matched pairs, report counts and percentages for Driver 100 versus Sensor 82-84; Driver -1 with a valid Sensor value; small, moderate, and large absolute differences; and an explicitly defined acceptable-agreement rate. Because the driver step is 25 points, 12.5 points or less is a defensible primary tolerance, with 5 or less, 12.5-25, and greater than 25 shown separately. Do not assume the sensor is correct before this validation.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            },
+            {
+              "where": "end",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "author": "Codex",
+      "date": "2026-08-14T14:18:40Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please provide the formula, denominator, and treatment of each sensor active period for 2.55 readings per day per container. A simple total rows divided by 344 containers and the full study period gives about 1.93, so 2.55 is not currently reproducible from the report or analysis script.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            },
+            {
+              "where": "end",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "author": "Codex",
+      "date": "2026-08-14T14:18:40Z",
+      "initials": null,
+      "resolved": false,
+      "text": "The repeated 82-84 ceiling is evidence that the value should not yet be interpreted as a verified percentage of usable volume; it does not prove that the unit is not percent. Please use cautious wording and discuss plausible calibration, software, or geometry explanations.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            },
+            {
+              "where": "end",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "author": "Codex",
+      "date": "2026-08-14T14:18:40Z",
+      "initials": null,
+      "resolved": false,
+      "text": "The 54.7% zero rate is descriptive, but the data alone do not establish default behaviour. Please state plausible interpretations, such as observed empty, a post-collection reading, or a software default, and identify the operator confirmation needed.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "Drivers report empty by default; sensors see partial fills."
+            },
+            {
+              "where": "end",
+              "text": "Drivers report empty by default; sensors see partial fills."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "author": "Codex",
+      "date": "2026-08-14T14:18:40Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please add a diagnostic of all negative Sensor readings (-1 to -116): counts by exact value or range, date and month, container, fraction and type, and consecutive episodes. Identify whether they concentrate in particular dates or containers and compare them with adjacent nonnegative readings. Analyse Driver -1 separately and test whether valid Sensor readings exist near those timestamps before deciding that -1 means a missed reading.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            },
+            {
+              "where": "end",
+              "text": "The two instruments measure differently, and that difference is the raw material of a thesis chapter. Drivers record a four-point visual scale where 55% of entries are zero. Sensors record a near-cont"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "author": "Codex",
+      "date": "2026-08-14T14:18:40Z",
+      "initials": null,
+      "resolved": false,
+      "text": "Please specify and produce a unified event-level analytical file without overwriting either raw value. Retain driver_fill_raw, sensor_fill_raw, both timestamps, time_gap, selected_fill, selection_rule, and QC flags. Driver 100 versus Sensor 82-84 may be treated as a capped or censored case, but large disagreements should be flagged rather than automatically accepting the Sensor until the event alignment and validation results justify that rule.",
+      "anchors": [
+        {
+          "part": "word/document.xml",
+          "paragraphs": [
+            {
+              "where": "start",
+              "text": "Adopt the reconciled layer — W2/02_data_work/containers_reconciled.geojson (816 points, per-container statistics attached) becomes the canonical container dataset; promote it to Brain/03_db."
+            },
+            {
+              "where": "end",
+              "text": "Adopt the reconciled layer — W2/02_data_work/containers_reconciled.geojson (816 points, per-container statistics attached) becomes the canonical container dataset; promote it to Brain/03_db."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

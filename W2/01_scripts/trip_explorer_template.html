@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rio Maior — Collection Trip Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--bg:#f9f9f7;--surf:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--mut:#898781;--grid:#e1e0d9;
+ --blue:#2a78d6;--orange:#eb6834;--aqua:#1baf7a;--yellow:#eda100;--crit:#d03b3b}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{padding:10px 16px;background:var(--surf);border-bottom:1px solid var(--grid);display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header h1{font-size:17px}
+header .sub{color:var(--mut);font-size:12px}
+.tiles{display:flex;gap:10px;flex-wrap:wrap}
+.tile{background:var(--bg);border:1px solid var(--grid);border-radius:8px;padding:4px 10px;text-align:center}
+.tile b{font-size:15px;display:block}
+.tile span{font-size:10.5px;color:var(--mut)}
+#main{flex:1;display:flex;min-height:0}
+#left{width:390px;min-width:330px;display:flex;flex-direction:column;border-right:1px solid var(--grid);background:var(--surf)}
+#controls{padding:8px 12px;border-bottom:1px solid var(--grid);display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px}
+#controls select,#controls button{font:inherit;padding:3px 8px;border:1px solid var(--grid);border-radius:6px;background:var(--surf);cursor:pointer}
+#controls button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+#calwrap{flex:1;overflow-y:auto;padding:10px 12px}
+.month{margin-bottom:12px}
+.month h3{font-size:11.5px;color:var(--ink2);margin-bottom:4px}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.dow{font-size:8.5px;color:var(--mut);text-align:center}
+.day{aspect-ratio:1;border-radius:4px;background:var(--bg);border:1px solid var(--grid);font-size:9px;color:var(--mut);
+ display:flex;align-items:center;justify-content:center;cursor:default;position:relative}
+.day.has{cursor:pointer;color:#fff;font-weight:600}
+.day.c1{background:#9ec5f4}.day.c2{background:#5598e7}.day.c3{background:#2a78d6}.day.c4{background:#1c5cab}
+.day.sel{outline:2.5px solid var(--orange);outline-offset:1px}
+#daypanel{max-height:34%;overflow-y:auto;border-top:1px solid var(--grid);padding:8px 12px}
+#daypanel h3{font-size:12px;margin-bottom:6px}
+.chip{display:flex;gap:8px;align-items:center;padding:5px 8px;margin-bottom:4px;border:1px solid var(--grid);border-radius:7px;cursor:pointer;font-size:11.5px;background:var(--bg)}
+.chip:hover{border-color:var(--blue)}
+.chip.on{border-width:2px}
+.chip .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.chip .meta{color:var(--mut);font-size:10.5px}
+#map{flex:1}
+#sidebar{width:300px;background:var(--surf);border-left:1px solid var(--grid);overflow-y:auto;padding:10px 12px}
+#sidebar h3{font-size:12.5px;margin-bottom:6px}
+.tripcard{border:1px solid var(--grid);border-left-width:5px;border-radius:7px;padding:7px 9px;margin-bottom:8px;font-size:11.5px}
+.tripcard table{width:100%;border-collapse:collapse;font-size:11px;margin-top:4px}
+.tripcard td{padding:1px 0;color:var(--ink2)}
+.tripcard td:last-child{text-align:right;color:var(--ink);font-weight:600}
+.note{font-size:10.5px;color:var(--mut);margin-top:8px;line-height:1.45}
+.empty{color:var(--mut);font-size:11.5px}
+#clear{margin-left:auto}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Rio Maior — Collection Trip Explorer</h1>
+    <div class="sub">Driver file 2020–2024 · a “trip” = one collection identifier (idrecolha) with ≥2 recorded bins · lines are straight bin-to-bin connections, not GPS</div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</header>
+<div id="main">
+  <div id="left">
+    <div id="controls">
+      <select id="year"></select>
+      <button data-f="Packaging" class="fbtn on" style="border-left:4px solid var(--yellow)">Packaging</button>
+      <button data-f="Paper/card" class="fbtn on" style="border-left:4px solid var(--blue)">Paper/card</button>
+      <label><input type="checkbox" id="singles"> include 1-bin records</label>
+      <button id="clear">Clear map</button>
+    </div>
+    <div id="calwrap"></div>
+    <div id="daypanel"><h3>Pick a day on the calendar</h3><div class="empty">Days are shaded by number of trips. Click a day to list its trips; click trips to draw them on the map. You can select trips from several days.</div></div>
+  </div>
+  <div id="map"></div>
+  <div id="sidebar">
+    <h3>Selected trips</h3>
+    <div id="cards"><div class="empty">Nothing selected yet.</div></div>
+    <div class="note"><b>How to read a trip:</b> markers are the bins in service order (darker = later). “Recorded km” comes from the vehicle; the straight-line path only connects bins inside town, which is why it is much shorter — the difference is depot travel and unrecorded stops.<br><br><b>Careful:</b> 66% of collection identifiers contain a single bin — recording is partial, so a “trip” here is the recorded part of the real tour, not all of it.</div>
+  </div>
+</div>
+<script>
+const TRIPS = /*__DATA__*/[];
+const PAL = ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300","#4a3aa7","#e34948"];
+const fmt = n => n==null ? "—" : n.toLocaleString("en-US");
+const state = { year: 2022, fr: new Set(["Packaging","Paper/card","Glass"]), singles: false, selDay: null, sel: new Map() };
+
+const byDate = {};
+TRIPS.forEach(t => (byDate[t.date] = byDate[t.date] || []).push(t));
+
+function visible(t){ return state.fr.has(t.frac) && (state.singles || t.n_bins >= 2); }
+
+/* tiles */
+const multi = TRIPS.filter(t => t.n_bins >= 2);
+const med = (a) => { const s=[...a].sort((x,y)=>x-y); return s.length? s[Math.floor(s.length/2)] : null; };
+document.getElementById("tiles").innerHTML = [
+  [fmt(multi.length), "multi-bin trips"],
+  [fmt(TRIPS.length - multi.length), "1-bin records"],
+  [fmt(Object.keys(byDate).length), "days with activity"],
+  [med(multi.map(t=>t.n_bins)), "median bins/trip"],
+  [med(multi.filter(t=>t.dur_h).map(t=>t.dur_h)).toFixed(1)+" h", "median duration"],
+  [fmt(med(multi.filter(t=>t.km_rec).map(t=>t.km_rec)))+" km", "median recorded"],
+  [fmt(med(multi.filter(t=>t.kg).map(t=>t.kg)))+" kg", "median load"],
+  ["16.8", "median kg/km"],
+].map(([v,l]) => `<div class="tile"><b>${v}</b><span>${l}</span></div>`).join("");
+
+/* year selector */
+const years = [...new Set(TRIPS.map(t => t.date.slice(0,4)))].sort();
+const ysel = document.getElementById("year");
+years.forEach(y => ysel.add(new Option(y, y)));
+ysel.value = "2022";
+ysel.onchange = () => { state.year = +ysel.value; calendar(); };
+
+/* calendar */
+const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function calendar(){
+  const y = state.year, wrap = document.getElementById("calwrap");
+  wrap.innerHTML = "";
+  for (let m = 0; m < 12; m++){
+    const first = new Date(Date.UTC(y, m, 1));
+    const days = new Date(Date.UTC(y, m+1, 0)).getUTCDate();
+    let html = `<div class="month"><h3>${MN[m]} ${y}</h3><div class="mgrid">`;
+    "MTWTFSS".split("").forEach(d => html += `<div class="dow">${d}</div>`);
+    const pad = (first.getUTCDay() + 6) % 7;
+    for (let i = 0; i < pad; i++) html += "<div></div>";
+    for (let d = 1; d <= days; d++){
+      const key = `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      const n = (byDate[key] || []).filter(visible).length;
+      const cls = n === 0 ? "" : n === 1 ? "c1" : n === 2 ? "c2" : n <= 4 ? "c3" : "c4";
+      html += `<div class="day ${n?"has":""} ${cls} ${state.selDay===key?"sel":""}" ${n?`data-d="${key}" title="${n} trip(s)"`:""}>${d}</div>`;
+    }
+    wrap.innerHTML += html + "</div></div>";
+  }
+  wrap.querySelectorAll(".day.has").forEach(el => el.onclick = () => { state.selDay = el.dataset.d; calendar(); daypanel(); });
+}
+
+/* day panel */
+function daypanel(){
+  const p = document.getElementById("daypanel");
+  const key = state.selDay;
+  if (!key){ return; }
+  const list = (byDate[key] || []).filter(visible);
+  p.innerHTML = `<h3>${key} — ${list.length} trip(s)</h3>` + (list.length ? "" : `<div class="empty">No trips pass the current filters.</div>`);
+  list.forEach(t => {
+    const on = state.sel.has(t.id);
+    const col = on ? state.sel.get(t.id).color : "var(--grid)";
+    const div = document.createElement("div");
+    div.className = "chip" + (on ? " on" : "");
+    div.style.borderColor = on ? state.sel.get(t.id).color : "";
+    div.innerHTML = `<span class="dot" style="background:${on?state.sel.get(t.id).color:"#c3c2b7"}"></span>
+      <span><b>${t.rota || t.frac}</b> ${t.start}–${t.end}</span>
+      <span class="meta">${t.n_bins} bins · ${t.km_rec?t.km_rec+" km":"km n/a"} · ${t.kg?fmt(t.kg)+" kg":"kg n/a"}</span>`;
+    div.onclick = () => toggle(t);
+    p.appendChild(div);
+  });
+}
+
+/* map */
+const map = L.map("map").setView([39.34, -8.94], 11);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap"}).addTo(map);
+let colorIdx = 0;
+
+function toggle(t){
+  if (state.sel.has(t.id)){
+    state.sel.get(t.id).layer.remove();
+    state.sel.delete(t.id);
+  } else {
+    const color = PAL[colorIdx++ % PAL.length];
+    const pts = t.stops.map(s => [s[0], s[1]]);
+    const grp = L.layerGroup();
+    if (pts.length > 1) L.polyline(pts, {color, weight: 3, opacity: 0.85}).addTo(grp);
+    t.stops.forEach((s, i) => {
+      L.circleMarker([s[0], s[1]], {radius: 5, color: "#fff", weight: 1.5,
+        fillColor: color, fillOpacity: 0.5 + 0.5 * i / Math.max(1, t.stops.length - 1)})
+        .bindPopup(`<b>Stop ${i+1}/${t.stops.length}</b><br>Bin ${s[2]} · ${s[3]}<br>${t.frac}`).addTo(grp);
+    });
+    grp.addTo(map);
+    state.sel.set(t.id, {t, color, layer: grp});
+    map.fitBounds(L.latLngBounds([].concat(...[...state.sel.values()].map(x => x.t.stops.map(s => [s[0], s[1]])))).pad(0.15));
+  }
+  daypanel(); cards();
+}
+
+function cards(){
+  const c = document.getElementById("cards");
+  if (!state.sel.size){ c.innerHTML = `<div class="empty">Nothing selected yet.</div>`; return; }
+  c.innerHTML = "";
+  state.sel.forEach(({t, color}) => {
+    const kgkm = (t.kg && t.km_rec) ? (t.kg / t.km_rec).toFixed(1) : "—";
+    const el = document.createElement("div");
+    el.className = "tripcard"; el.style.borderLeftColor = color;
+    el.innerHTML = `<b>${t.date}</b> · ${t.rota || t.frac}
+      <table>
+        <tr><td>Time</td><td>${t.start}–${t.end}${t.dur_h ? " ("+t.dur_h+" h)" : ""}</td></tr>
+        <tr><td>Bins recorded</td><td>${t.n_bins}</td></tr>
+        <tr><td>Recorded distance</td><td>${t.km_rec ? t.km_rec + " km" : "—"}</td></tr>
+        <tr><td>Bin-to-bin straight line</td><td>${t.km_line} km</td></tr>
+        <tr><td>Load</td><td>${t.kg ? fmt(t.kg) + " kg" : "—"}</td></tr>
+        <tr><td>kg per km</td><td>${kgkm}</td></tr>
+        <tr><td>Fraction</td><td>${t.frac}</td></tr>
+      </table>`;
+    c.appendChild(el);
+  });
+}
+
+/* filters */
+document.querySelectorAll(".fbtn").forEach(b => b.onclick = () => {
+  b.classList.toggle("on");
+  b.classList.contains("on") ? state.fr.add(b.dataset.f) : state.fr.delete(b.dataset.f);
+  calendar(); daypanel();
+});
+document.getElementById("singles").onchange = e => { state.singles = e.target.checked; calendar(); daypanel(); };
+document.getElementById("clear").onclick = () => { state.sel.forEach(x => x.layer.remove()); state.sel.clear(); colorIdx = 0; daypanel(); cards(); };
+
+calendar();
+</script>
+</body>
+</html>

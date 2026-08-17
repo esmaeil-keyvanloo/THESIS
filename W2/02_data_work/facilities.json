@@ -1,0 +1,36 @@
+{
+  "data_evidence": {
+    "first_stop_hotcells": [
+      {"lat": 39.33719, "lon": -8.93518, "n": 260},
+      {"lat": 39.26219, "lon": -8.83352, "n": 160},
+      {"lat": 39.33451, "lon": -8.93167, "n": 157}
+    ],
+    "last_stop_hotcells": [
+      {"lat": 39.26219, "lon": -8.83352, "n": 149},
+      {"lat": 39.34597, "lon": -8.83088, "n": 140},
+      {"lat": 39.34522, "lon": -8.94571, "n": 136}
+    ],
+    "shift_location_note": "Yes, dawn and afternoon trips start in different places. Dawn trips (start 04-06h, n=1250 of 3430 multi-bin trips) open in Rio Maior town: top first-stop cells 39.33719,-8.93518 (n=158) and 39.33451,-8.93167 (n=118), with 43.0% of first stops within 2 km of the Estaleiro Municipal (39.33921,-8.92493). Afternoon trips (start 14-15h, n=1944) most often open in the southern parishes: top cell 39.26219,-8.83352 (Sao Joao da Ribeira/Marmeleira area, n=142), then 39.25639,-8.89603 (n=84); only 25.9% start within 2 km of the estaleiro (median first-stop distance 6.1 km vs 4.9 km for dawn trips). This fits a single town-side depot with afternoon routes deadheading out to peripheral parishes before the first recorded container stop. Note stops are container locations only - the depot visit and the tipping leg are not themselves recorded, so first/last hot cells are depot-side hints, not the depot itself."
+  },
+  "osm_facilities": [
+    {"name": "Ecocentro de Rio Maior", "fclass": "recycling", "lat": 39.31744, "lon": -8.91077},
+    {"name": "Ecocentro de Rio Maior", "fclass": "industrial (landuse)", "lat": 39.31744, "lon": -8.91077},
+    {"name": "Estaleiro Municipal", "fclass": "building", "lat": 39.33921, "lon": -8.92493},
+    {"name": null, "fclass": "landfill (landuse)", "lat": 39.3035, "lon": -8.95181},
+    {"name": null, "fclass": "landfill (landuse)", "lat": 39.31888, "lon": -8.94114},
+    {"name": null, "fclass": "landfill (landuse)", "lat": 39.32373, "lon": -8.94398},
+    {"name": null, "fclass": "landfill (landuse)", "lat": 39.38989, "lon": -8.91069},
+    {"name": null, "fclass": "landfill (landuse)", "lat": 39.39488, "lon": -8.90871},
+    {"name": null, "fclass": "landfill (landuse)", "lat": 39.38395, "lon": -8.91926},
+    {"name": null, "fclass": "landfill (landuse)", "lat": 39.38593, "lon": -8.91733},
+    {"name": null, "fclass": "landfill (landuse)", "lat": 39.27115, "lon": -8.9939},
+    {"name": "ETAR de Rio Maior", "fclass": "wastewater_plant", "lat": 39.31342, "lon": -8.92368}
+  ],
+  "osm_facilities_note": "Facility-scale hits only; 180+ street-level recycling/glass bank points (fclass recycling, recycling_glass, recycling_clothes) and 20+ village ETARs matched the keyword scan and were excluded as non-facilities. Landfill polygons near 39.38-39.39,-8.91/-8.92 (Alcobertas area) and 39.30-39.32 west of town are unnamed landuse=landfill features, likely old quarry/dump sites, not the active disposal point.",
+  "web_facilities": [
+    {"name": "Estacao de Transferencia de Rio Maior (Valorsul)", "lat": 39.31963, "lon": -8.92405, "confidence": "approx", "source": "https://www.valorsul.pt/pt/contactos/instalacoes/ (address Zona Industrial de Rio Maior, Quinta da Rosa; coordinates from directory listing)"},
+    {"name": "Ecocentro de Rio Maior (Valorsul)", "lat": 39.31744, "lon": -8.91077, "confidence": "high", "source": "https://centroreciclar.com/centro/santarem/item/ecocentro-rio-maior (address Zona Industrial de Rio Maior; coordinates from OSM named polygon at that site)"},
+    {"name": "Estaleiro Municipal de Rio Maior", "lat": 39.33921, "lon": -8.92493, "confidence": "high", "source": "https://www.cm-riomaior.pt (estaleiro municipal referenced in municipal budget documents; coordinates from OSM named building footprint)"}
+  ],
+  "synthesis": "The likely truck base is the Estaleiro Municipal (municipal fleet yard) at 39.3392,-8.9249 on the east side of Rio Maior town, about 0.9 km from the strongest first-stop hot cell (39.3372,-8.9352, n=260) and closest to where dawn trips open their routes. The likely disposal point is the co-located Valorsul Estacao de Transferencia / Ecocentro complex in the Zona Industrial south-east of town (approx. 39.317 to 39.320, -8.924 to -8.911), roughly 2.5 km from the estaleiro. Trips record only container stops, so the pattern - first stops clustering in town near the estaleiro at dawn, last stops scattered across peripheral parishes - is consistent with trucks leaving the town depot, collecting outward, and making an unrecorded tipping leg to the transfer station before returning."
+}
