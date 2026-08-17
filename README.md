@@ -43,7 +43,8 @@ Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.
 | GIS data library (`GIS_DATA/`, 6 GB, 52 styled layers in QGIS project) | ✅ built 2026-08-13 |
 | Driver–sensor reconciliation (816 vs 344, report R2-01 Rev C, event-level QC dataset) | ✅ delivered 2026-08-14 |
 | Trip analytics: vehicle-track segmentation, road-routed Trip Explorer v3, depot/disposal ID, hotspot categories, temporal tables | ✅ delivered 2026-08-17 |
-| Trip-sorted driver workbook (`W2/03_outputs/tables/Driver_Trips_Sorted.xlsx`) | ✅ delivered 2026-08-17 |
+| Trip-sorted driver workbook — 3 tiers, 75% of loose readings assigned (`W2/03_outputs/tables/Driver_Trips_Sorted.xlsx`) | ✅ delivered 2026-08-17 |
+| Fleet story: waste-facility map, dump-leg km audit (recorded km ≈ 3× logged-stop route), Explorer v4 | ✅ delivered 2026-08-17 |
 | Demand model rebuild (sensor fill rates) | ⏭ next — critical path |
 | Container ID reconciliation (D6), BGRI fix (D7) | ⏭ next |
 | Real p-median instance (OSM network distances) | pending demand rebuild |

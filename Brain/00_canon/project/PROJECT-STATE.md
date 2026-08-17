@@ -17,6 +17,12 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
+### S7 — 2026-08-17 later (loose-reading assignment, waste-facility map, dump-leg verdict; same chat)
+- **144,263 unstamped readings resolved**: 107,821 (74.7%) assigned to tracks by time+proximity (≤60 km/h feasibility, nearest-feasible, 1.5× ambiguity rule); 34,956 ambiguous (flagged, not forced); 1,486 infeasible/no-trip. `trips_v4.json` has them as "I" stops; Excel rebuilt: 228,375 rows in trip blocks / 36,442 not assignable with reasons.
+- **Waste-facility inventory** (`facilities_v2.json`): only 2 licensed tipping points in the municipality — Valorsul transfer station (39.3196,−8.9241) + Ecocentro (39.3174,−8.9108); recyclables flow onward (Valorsul's haul, not municipal): TS → CTRO sorting Cadaval; undifferentiated → S. João da Talha incinerator / Mato da Cruz landfill. 39 regional sites mapped.
+- **Dump-leg hypothesis TESTED AND REJECTED in strong form**: recorded km ≈ **3.1×** shortest-path through ALL known stops + depot + dump legs (539 clean runs; surplus ~107 km/run; uncorrelated with TS distance; morning=afternoon). Meaning: trucks sweep far more than logged bins — logged stops are a hard lower bound (~1/3) of real driving. Dump leg itself small (~9 km loop).
+- Explorer v4: inferred stops (dashed numbered markers), dashed depot/TS legs with km, 50 facilities. Weight clarified everywhere: container 2500 = litres; Peso = weighbridge run total; never derived from fill.
+
 ### S6 — 2026-08-17 (spatio-temporal track segmentation, Explorer v3; same chat)
 - User flagged impossible trip lines (far-apart stops connected by time order). Verified: 6.6% of 49,662 consecutive segments implied >60 km/h (p99 = 467 km/h) → parallel vehicles under one identifier + sparse logging.
 - Built `segment_tracks.py`: greedy track assignment, VMAX 60 km/h implied (haversine ×1.3 detour, 2-min service time). 1,137 of 3,430 identifiers split (935→2 tracks, 191→3, 9→4, 2 pathological); **0 violating segments after**; 4,423 physically consistent vehicle tracks; re-routed on road graph (0 disconnected).

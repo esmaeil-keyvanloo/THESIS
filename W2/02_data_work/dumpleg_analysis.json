@@ -1,0 +1,70 @@
+{
+ "selection": "n_parts==1 & n_bins>=5 & km_rec>0 & routed",
+ "n_tracks": 539,
+ "depot_snap_m": 25.5,
+ "ts_snap_m": 36.8,
+ "back_km_TS_to_depot": 2.73,
+ "with_dump_leg": {
+  "n": 539,
+  "ratio_median": 3.086,
+  "ratio_p25": 2.242,
+  "ratio_p75": 4.589,
+  "ratio_mean": 3.778,
+  "median_abs_pct_err": 67.6,
+  "share_within_30pct": 0.002
+ },
+ "without_dump_leg": {
+  "n": 539,
+  "ratio_median": 3.291,
+  "ratio_p25": 2.317,
+  "ratio_p75": 5.125,
+  "ratio_mean": 4.28,
+  "median_abs_pct_err": 69.6,
+  "share_within_30pct": 0.002
+ },
+ "morning_with_dump": {
+  "n": 143,
+  "ratio_median": 3.289,
+  "ratio_p25": 2.324,
+  "ratio_p75": 4.531,
+  "ratio_mean": 3.671,
+  "median_abs_pct_err": 69.6,
+  "share_within_30pct": 0.0
+ },
+ "morning_without_dump": {
+  "n": 143,
+  "ratio_median": 3.555,
+  "ratio_p25": 2.399,
+  "ratio_p75": 5.179,
+  "ratio_mean": 4.235,
+  "median_abs_pct_err": 71.9,
+  "share_within_30pct": 0.0
+ },
+ "afternoon_with_dump": {
+  "n": 396,
+  "ratio_median": 3.037,
+  "ratio_p25": 2.218,
+  "ratio_p75": 4.602,
+  "ratio_mean": 3.816,
+  "median_abs_pct_err": 67.1,
+  "share_within_30pct": 0.003
+ },
+ "afternoon_without_dump": {
+  "n": 396,
+  "ratio_median": 3.21,
+  "ratio_p25": 2.282,
+  "ratio_p75": 5.056,
+  "ratio_mean": 4.296,
+  "median_abs_pct_err": 68.8,
+  "share_within_30pct": 0.003
+ },
+ "surplus_vs_distTS_corr": {
+  "pearson_r": 0.019,
+  "pearson_p": 0.6561794145208233,
+  "spearman_r": 0.081,
+  "spearman_p": 0.05891906932792527
+ },
+ "median_surplus_km": 106.9,
+ "median_dump_extra_km": 9.1,
+ "verdict": "No, a single dump leg at the transfer station does not close the gap: recorded km are about 3x the modeled road distance (median ratio 3.09 with the dump leg, 3.29 without; 0% of runs within +/-30%), and the ~107 km median surplus dwarfs the ~9 km a TS dump adds. The surplus is uncorrelated with distance to the TS (Pearson r=0.02, p=0.66; Spearman r=0.08), morning and afternoon runs look alike, so one facility closure cannot explain the odometer readings. The likely explanation is that sensor-visible stops capture only a fraction of the physical route: bins without sensors, repeated area sweeps and possibly multiple dump trips per shift make km_rec roughly triple the shortest-path model."
+}
