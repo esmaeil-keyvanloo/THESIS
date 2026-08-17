@@ -4,8 +4,8 @@ title: Data Dictionary — Rio Maior CSVs
 type: canon
 category: data
 status: binding
-updated: 2026-08-09
-basis: PROMPT 2 interview answers (DATA/PROMPT/PROMPT 2.docx) + first-pass profile
+updated: 2026-08-17
+basis: PROMPT 2 interview answers (DATA/PROMPT/PROMPT 2.docx) + first-pass profile + W2 reconciliation (R2-01 Rev C, sessions S2–S8)
 ---
 
 # Data Dictionary
@@ -48,6 +48,24 @@ Semantics confirmed by the author on 2026-08-09 (PROMPT 2). Anything marked
 | Depot / sorting facility locations | NOT IN SOURCE | Q14 |
 | Collection policy (schedule vs threshold vs discretion) | NOT IN SOURCE | Q15 |
 | Summer 2023 actual routes | not held as GPS/GIS; must be reconstructed from records | Q16 |
+
+## Row semantics in the collections file (established W2, sessions S3–S8)
+
+Every row is one *look* at one bin by a driver — rows are readings, not drivers or trips.
+Three tiers, distinguished by how the row links to a collection trip:
+
+| Tier | `idrecolha` | What it is | Rule |
+|---|---|---|---|
+| **Stamped** (emptying record) | present | System-written record of the emptying itself; `Enchimento` is always 0 (post-emptying confirmation), never an observed level | The only rows that count as **collection events** (60,916 rows, 9,984 identifiers) |
+| **Pre-reading** | blank | Same bin ≤15 min before a stamped row — the "how full was it" look of that visit | Use as **fill-at-collection**; never the stamped zero (59,638 rows) |
+| **Inferred** | blank | No nearby emptying; assigned to a trip only because that vehicle track was provably passing (≤60 km/h implied speed) at that time | Path **observation only** — often a co-located other-fraction bin (13.7% fraction match); NEVER count as an emptying (103,134 assigned; 41,129 not assignable) |
+
+Related binding facts:
+- One `idrecolha` can hide **multiple simultaneous vehicles**; split into tracks a/b/c by the 60 km/h rule (1,147 of 3,572 multi-bin identifiers split; see `W2/01_scripts/segment_tracks*.py`).
+- Trips are **material-pure** (99.97%): one run = one fraction. Glass runs exist (556 identifiers) but carry no route codes and share days with other fractions.
+- `Km totais` / `Peso total`: one odometer/weighbridge total per identifier — shared by all its tracks, never divisible per bin. Container volume is **litres**, weight is never derived from fill.
+- Odometer km ≈ **2.5–3× shortest road path through all known stops** incl. depot/transfer-station legs: the fleet sweeps beyond logged bins; logged stops are a lower bound of driving.
+- Only in-municipality tipping points: Valorsul transfer station (39.3196, −8.9241) + Ecocentro (39.3174, −8.9108); onward haul is Valorsul's.
 
 ## ⚠ Open contradictions
 
