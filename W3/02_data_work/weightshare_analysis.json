@@ -1,0 +1,31 @@
+{
+ "densities_kg_m3": {
+  "Packaging": [
+   25,
+   32,
+   40
+  ],
+  "Paper/card": [
+   50,
+   75,
+   100
+  ],
+  "Glass": [
+   250,
+   300,
+   350
+  ]
+ },
+ "rule": "stamped stops only; fill = pre-emptying reading (trip-median fallback); est = vol*fill*density",
+ "n_unsplit_trips_with_kg": 5739,
+ "share_pct_p10_50_90": [
+  1.9,
+  5.0,
+  22.0
+ ],
+ "median_share_by_fraction": {
+  "Paper/card": 8.6,
+  "Packaging": 3.6,
+  "Glass": 12.0
+ }
+}

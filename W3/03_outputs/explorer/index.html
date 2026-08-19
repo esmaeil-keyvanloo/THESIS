@@ -129,7 +129,7 @@ header .sub{color:var(--mut);font-size:11.5px}
     <canvas id="spark"></canvas>
     <div class="note" id="sparknote"></div>
     <div class="note" id="depotnote"></div>
-    <div class="note"><b>Reading a trip:</b> the line is the shortest road path visiting the recorded bins in order — the real driven route will differ where the crew took detours or served unrecorded bins. Weight is the weighbridge total for the whole run (bin capacity 2500 is litres, not kg). "Recorded km" and load belong to the vehicle identifier; when an identifier was split into tracks they are shared totals. Dashed stop markers are readings inferred by time + location — observations, not collections.</div>
+    <div class="note"><b>Reading a trip:</b> the line is the shortest road path visiting the recorded bins in order — the real driven route will differ where the crew took detours or served unrecorded bins. Weight is the weighbridge total for the whole run (bin capacity 2500 is litres, not kg). "Recorded km" and load belong to the vehicle identifier; when an identifier was split into tracks they are shared totals. Dashed stop markers are readings inferred by time + location — observations, not collections. Estimated bin weights use literature density bands (packaging 25–40, paper 50–100, glass 250–350 kg/m³) × bin volume × pre-emptying fill — an estimate, not a measurement; the low share vs the weighbridge total shows most served bins were never logged.</div>
     </div>
   </div>
 </div>
@@ -312,11 +312,13 @@ function cards(){
         <tr><td>Road route between bins</td><td>${routed_km ? routed_km + " km" : "n/a"}</td></tr>
         <tr><td>Vehicle recorded${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.km_rec ? t.km_rec + " km" : "—"}</td></tr>
         <tr><td>Load${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.kg ? fmt(t.kg) + " kg" : "—"}</td></tr>
-        <tr><td>kg per recorded km</td><td>${kgkm}</td></tr>${LEGS[t.id] ? `<tr><td>Inferred depot leg / to transfer st.</td><td>${LEGS[t.id].pre_km ?? "—"} / ${LEGS[t.id].toTS_km ?? "—"} km</td></tr>` : ""}
+        <tr><td>kg per recorded km</td><td>${kgkm}</td></tr>
+        ${t.est_mid != null ? `<tr><td>Est. weight of recorded bins (density bands)</td><td>${fmt(t.est_lo)}–${fmt(t.est_hi)} kg</td></tr>
+        <tr><td>Share of weighbridge load explained</td><td>${t.wshare != null ? t.wshare + "%" + (t.n_parts > 1 ? " (identifier)" : "") : "—"}</td></tr>` : ""}${LEGS[t.id] ? `<tr><td>Inferred depot leg / to transfer st.</td><td>${LEGS[t.id].pre_km ?? "—"} / ${LEGS[t.id].toTS_km ?? "—"} km</td></tr>` : ""}
       </table>
       <details><summary style="cursor:pointer;color:var(--blue);font-size:10.5px;margin-top:4px">Bin details — ${(t.stops || []).length} rows (click a row to zoom to that bin)</summary>
-      <table class="dtbl"><tr><th>№</th><th>Bin</th><th>Time</th><th>Type</th><th>Fill</th></tr>${(t.stops || []).map((s, i) =>
-        `<tr onclick="zoomStop('${t.id}',${i})" style="cursor:pointer"><td>${i + 1}</td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4] === "I" ? "inferred" : "emptied"}</td><td>${s[5] != null ? s[5] + "%" : "—"}</td></tr>`).join("")}</table></details>`;
+      <table class="dtbl"><tr><th>№</th><th>Bin</th><th>Time</th><th>Type</th><th>Fill</th><th>Est. kg</th></tr>${(t.stops || []).map((s, i) =>
+        `<tr onclick="zoomStop('${t.id}',${i})" style="cursor:pointer"><td>${i + 1}</td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4] === "I" ? "inferred" : "emptied"}</td><td>${s[5] != null ? s[5] + "%" : "—"}</td><td>${s[6] != null ? s[6] : "—"}</td></tr>`).join("")}</table></details>`;
     c.appendChild(el);
   });
 }

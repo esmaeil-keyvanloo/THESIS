@@ -17,6 +17,10 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
+### S12 — 2026-08-19 latest (weight-share estimate; same chat)
+- **Recorded bins explain a median 5.0% of the weighbridge load** (packaging 3.6% / paper 8.6% / glass 12.0%; p10–p90 = 1.9–22%; 5,739 unsplit runs). Method: stamped stops only × bin volume × pre-emptying fill × literature density bands (P 25–40, C 50–100, G 250–350 kg/m³). `W3/01_scripts/estimate_weights.py`, `W3/02_data_work/weightshare_analysis.json`. Weight-based twin of the 3× km finding — most served bins were never logged.
+- Explorer cards: est-weight band + share row; bin detail tables gained per-bin Est. kg column.
+
 ### S11 — 2026-08-19 later (Explorer v7 + Vercel; same chat)
 - Deployed on Vercel too (user's account, GitHub-import, Root Directory = W3/03_outputs/explorer; auto-deploys on push). Local double-click needs `Open_Explorer_Locally.bat` (fetch blocked on file://); W2 monolith = offline copy.
 - **v7 fixes/features** (user-reported bug: "missing" stop numbers were markers stacked at shared ecoponto sites): co-located markers spread in a ring — verified CE19b 2/2, CE39 11/11 distinct; stops enriched with fills (`enrich_stops.py`: stamped stops carry pre-emptying fill, 98.5% coverage); per-trip expandable bin tables (№/bin/time/type/fill), row click zooms to bin; panels drag-resize + collapse; chart/depot/notes behind ⓘ button; boundaries auto-flip light on satellite, Rio Maior line bolder. End-to-end browser-tested.
