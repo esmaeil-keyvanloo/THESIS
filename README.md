@@ -20,6 +20,7 @@ comparison.
 | `Brain/` | Persistent knowledge base: canon (scope, constraints, data dictionary, decisions), Markdown-converted sources, notes, DuckDB/GeoPackage numeric layer, hybrid semantic index, tooling | Append-only, verified; every claim cites a source |
 | `W1/` | Working round 1: plans, scripts, models, outputs, logs | Disposable; verified results promoted to `Brain/` |
 | `W2/` | Working round 2: driver–sensor reconciliation (scripts, reconciled layer, maps, report R2-01) | Same rule |
+| `W3/` | Working round 3: fast split Trip Explorer for GitHub Pages (`W3/03_outputs/explorer/`) | Same rule; live at esmaeil-keyvanloo.github.io/THESIS |
 | `.claude/skills/` | Project skills (e.g. `human-writing` — de-AI style linter for deliverables) | |
 
 Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.md)

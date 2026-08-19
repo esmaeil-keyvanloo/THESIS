@@ -17,7 +17,12 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
-### S9 — 2026-08-17 latest (Explorer v6: basemaps + smooth routes; same chat)
+### S10 — 2026-08-19 (W3: fast split explorer for GitHub Pages; same chat)
+- GitHub Pages activated by user: https://esmaeil-keyvanloo.github.io/THESIS/ (root index.html redirects to the explorer). Public — operational data visible to anyone with the link.
+- **W3 round opened**: explorer split for speed — `W3/03_outputs/explorer/` = small shell (index.html, ~35 KB) + `data/` (trips_index 1.5 MB; per-year chunks 0.8–4.6 MB; boundaries/bins/facilities/daily/tempo ~0.2 MB). Page interactive after ~1.7 MB (was 20 MB monolith); year chunks lazy-load in background; splitter `W3/01_scripts/split_explorer_data.py`.
+- W2 monolith kept as the offline single-file version. Vercel offered as optional mirror (needs user's own account; GitHub-import auto-deploys).
+
+### S9 — 2026-08-17 (Explorer v6: basemaps + smooth routes; same chat)
 - Basemap switcher: Street (OSM) / Satellite (Esri) / Satellite hybrid (labels) / Topography (OpenTopoMap) / Light (CARTO) — top-left control, no API keys.
 - Routes re-exported at 8 m simplify tolerance as encoded polylines (`route_export_fine.py` → trips_routed_v5_fine.json 7.2 MB, depot_legs_v5_fine.json 3.6 MB — smaller than the old 60–100 m files); lines now hug the carriageway on satellite. Template v6 decodes polylines client-side.
 
