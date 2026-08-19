@@ -129,7 +129,7 @@ header .sub{color:var(--mut);font-size:11.5px}
     <canvas id="spark"></canvas>
     <div class="note" id="sparknote"></div>
     <div class="note" id="depotnote"></div>
-    <div class="note"><b>Reading a trip:</b> the line is the shortest road path visiting the recorded bins in order — the real driven route will differ where the crew took detours or served unrecorded bins. Weight is the weighbridge total for the whole run (bin capacity 2500 is litres, not kg). "Recorded km" and load belong to the vehicle identifier; when an identifier was split into tracks they are shared totals. Dashed stop markers are readings inferred by time + location — observations, not collections. Estimated bin weights use literature density bands (packaging 25–40, paper 50–100, glass 250–350 kg/m³) × bin volume × pre-emptying fill — an estimate, not a measurement; the low share vs the weighbridge total shows most served bins were never logged.</div>
+    <div class="note"><b>Reading a trip:</b> the line is the shortest road path visiting the recorded bins in order — the real driven route will differ where the crew took detours or served unrecorded bins. Weight is the weighbridge total for the whole run (bin capacity 2500 is litres, not kg). "Recorded km" and load belong to the vehicle identifier; when an identifier was split into tracks they are shared totals. Dashed stop markers are readings inferred by time + location — observations, not collections. Estimated bin weights use literature density bands (packaging 25–40, paper 50–100, glass 250–350 kg/m³) × bin volume × pre-emptying fill — an estimate, not a measurement; the low share vs the weighbridge total shows most served bins were never logged. The "+ observed" value adds same-material bins the crew looked at (capped at the run's weighbridge load); other-material observations are listed in the table (Mat dot) but never counted in this trip's weight. Sensor column: nearest sensor reading within ±3 h as % of that bin's own ceiling — ✓ agrees with the driver within one 25-point step, ⚠ disagrees more.</div>
     </div>
   </div>
 </div>
@@ -313,12 +313,19 @@ function cards(){
         <tr><td>Vehicle recorded${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.km_rec ? t.km_rec + " km" : "—"}</td></tr>
         <tr><td>Load${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.kg ? fmt(t.kg) + " kg" : "—"}</td></tr>
         <tr><td>kg per recorded km</td><td>${kgkm}</td></tr>
-        ${t.est_mid != null ? `<tr><td>Est. weight of recorded bins</td><td>${fmt(t.est_mid)} kg <span style="color:var(--mut);font-size:9px;font-weight:400">(${fmt(t.est_lo)}–${fmt(t.est_hi)})</span></td></tr>
-        <tr><td>Share of weighbridge load explained</td><td>${t.wshare != null ? t.wshare + "%" + (t.n_parts > 1 ? " (identifier)" : "") : "—"}</td></tr>` : ""}${LEGS[t.id] ? `<tr><td>Inferred depot leg / to transfer st.</td><td>${LEGS[t.id].pre_km ?? "—"} / ${LEGS[t.id].toTS_km ?? "—"} km</td></tr>` : ""}
+        ${t.est_mid != null ? `<tr><td>Est. weight — emptied bins only</td><td>${fmt(t.est_mid)} kg <span style="color:var(--mut);font-size:9px;font-weight:400">(${fmt(t.est_lo)}–${fmt(t.est_hi)})</span></td></tr>
+        <tr><td>+ observed same-material bins${t.capped ? " (capped at load)" : ""}</td><td>${t.est2_mid != null ? fmt(t.est2_mid) + " kg" : "—"}</td></tr>
+        <tr><td>Share of load explained</td><td>${t.wshare != null ? (t.wshare > 100 ? "≥100" : t.wshare) + "% / " + (t.wshare2 != null ? t.wshare2 + "%" : "—") + (t.n_parts > 1 ? " (identifier)" : "") : "—"}</td></tr>
+        ${(() => { const st = t.stops || []; const m = st.filter(x => x[8] != null).length;
+           const gaps = st.filter(x => x[5] != null && x[8] != null).map(x => Math.abs(x[5] - x[8])).sort((a, b) => a - b);
+           const mg = gaps.length ? gaps[Math.floor(gaps.length / 2)] : null;
+           return m ? `<tr><td>Sensor check</td><td>${m} of ${st.length} stops·${mg != null ? " median gap " + mg + " pts" : ""}</td></tr>` : ""; })()}` : ""}${LEGS[t.id] ? `<tr><td>Inferred depot leg / to transfer st.</td><td>${LEGS[t.id].pre_km ?? "—"} / ${LEGS[t.id].toTS_km ?? "—"} km</td></tr>` : ""}
       </table>
       <details><summary style="cursor:pointer;color:var(--blue);font-size:10.5px;margin-top:4px">Bin details — ${(t.stops || []).length} rows (click a row to zoom to that bin)</summary>
-      <table class="dtbl"><tr><th>№</th><th>Bin</th><th>Time</th><th>Type</th><th>Fill</th><th>Est. kg</th></tr>${(t.stops || []).map((s, i) =>
-        `<tr onclick="zoomStop('${t.id}',${i})" style="cursor:pointer"><td>${i + 1}</td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4] === "I" ? "inferred" : "emptied"}</td><td>${s[5] != null ? s[5] + "%" : "—"}</td><td>${s[6] != null ? s[6] : "—"}</td></tr>`).join("")}</table></details>`;
+      <table class="dtbl"><tr><th>№</th><th>Mat</th><th>Bin</th><th>Time</th><th>Type</th><th>Fill</th><th>Sensor</th><th>Est. kg</th></tr>${(t.stops || []).map((s, i) => {
+        const mc = { P: "#eda100", C: "#2a78d6", G: "#2e8b57" }[s[7]] || "#c3c2b7";
+        const agree = (s[5] != null && s[8] != null) ? (Math.abs(s[5] - s[8]) <= 25 ? " ✓" : " ⚠" ) : "";
+        return `<tr onclick="zoomStop('${t.id}',${i})" style="cursor:pointer"><td>${i + 1}</td><td><span class="sw" style="background:${mc};margin:0"></span></td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4] === "I" ? "inferred" : "emptied"}</td><td>${s[5] != null ? s[5] + "%" : "—"}</td><td>${s[8] != null ? s[8] + "%" + agree : "—"}</td><td>${s[6] != null ? s[6] : "—"}</td></tr>`; }).join("")}</table></details>`;
     c.appendChild(el);
   });
 }
