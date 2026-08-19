@@ -6,7 +6,7 @@ W2 = f"{BASE}/W2/02_data_work"
 OUT = f"{BASE}/W3/03_outputs/explorer/data"
 os.makedirs(OUT, exist_ok=True)
 
-trips = json.load(open(f"{W2}/trips_v5.json", encoding="utf-8"))
+trips = json.load(open(f"{W2}/trips_v5_enriched.json", encoding="utf-8"))
 routes = json.load(open(f"{W2}/trips_routed_v5_fine.json", encoding="utf-8"))
 legs = json.load(open(f"{W2}/depot_legs_v5_fine.json", encoding="utf-8"))
 
