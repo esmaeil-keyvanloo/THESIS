@@ -17,7 +17,11 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
-### S12 — 2026-08-19 latest (weight-share estimate; same chat)
+### S13 — 2026-08-19 latest (v8: material-pure capped estimate + sensor columns; same chat)
+- Two-value weight estimate per trip: emptied-only (strict) and **+ same-material observed bins, capped at the identifier's weighbridge load** (user's cap idea; other-material observations NEVER counted — trips are material-pure). Median share rises only 5.0→6.2%; 2,072 tracks hit the cap → density mids can overshoot on sparse runs (strict share >100% shown as ≥100%).
+- Sensor integration in explorer: 25,127 stops matched to a sensor reading (±3 h, % of own ceiling); detail tables gained Mat dot (bin's own material) + Sensor column with ✓/⚠ agreement (one 25-pt step); per-trip "Sensor check" line. `W3/01_scripts/enrich_v8.py`; stops now 9-element.
+
+### S12 — 2026-08-19 (weight-share estimate; same chat)
 - **Recorded bins explain a median 5.0% of the weighbridge load** (packaging 3.6% / paper 8.6% / glass 12.0%; p10–p90 = 1.9–22%; 5,739 unsplit runs). Method: stamped stops only × bin volume × pre-emptying fill × literature density bands (P 25–40, C 50–100, G 250–350 kg/m³). `W3/01_scripts/estimate_weights.py`, `W3/02_data_work/weightshare_analysis.json`. Weight-based twin of the 3× km finding — most served bins were never logged.
 - Explorer cards: est-weight band + share row; bin detail tables gained per-bin Est. kg column.
 
