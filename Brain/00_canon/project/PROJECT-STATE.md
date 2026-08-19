@@ -17,6 +17,10 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
+### S14 — 2026-08-19 latest (Excel v4; same chat)
+- Excel updated to match Explorer v8 (`W3/01_scripts/build_trips_excel_v4.py`, 32.4 MB, same canonical path): 8 helper columns — Bin material (other-material rows = observed at shared site, never emptied by this truck), Fill % before emptying, Sensor fill % (±3 h, of ceiling), Est. kg (mid density). Sheet 2 gained Bin material. READ ME extended.
+- Direction set by user: converge toward **one reliable analytical dataset** for the thesis statistics — candidates to merge: event_level_dataset.parquet + trips_v5_enriched + sensor_active_windows + bins_categorized. Next round (W4?) should build and freeze it in Brain/03_db.
+
 ### S13 — 2026-08-19 latest (v8: material-pure capped estimate + sensor columns; same chat)
 - Two-value weight estimate per trip: emptied-only (strict) and **+ same-material observed bins, capped at the identifier's weighbridge load** (user's cap idea; other-material observations NEVER counted — trips are material-pure). Median share rises only 5.0→6.2%; 2,072 tracks hit the cap → density mids can overshoot on sparse runs (strict share >100% shown as ≥100%).
 - Sensor integration in explorer: 25,127 stops matched to a sensor reading (±3 h, % of own ceiling); detail tables gained Mat dot (bin's own material) + Sensor column with ✓/⚠ agreement (one 25-pt step); per-trip "Sensor check" line. `W3/01_scripts/enrich_v8.py`; stops now 9-element.
