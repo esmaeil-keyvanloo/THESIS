@@ -313,7 +313,7 @@ function cards(){
         <tr><td>Vehicle recorded${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.km_rec ? t.km_rec + " km" : "—"}</td></tr>
         <tr><td>Load${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.kg ? fmt(t.kg) + " kg" : "—"}</td></tr>
         <tr><td>kg per recorded km</td><td>${kgkm}</td></tr>
-        ${t.est_mid != null ? `<tr><td>Est. weight of recorded bins (density bands)</td><td>${fmt(t.est_lo)}–${fmt(t.est_hi)} kg</td></tr>
+        ${t.est_mid != null ? `<tr><td>Est. weight of recorded bins</td><td>${fmt(t.est_mid)} kg <span style="color:var(--mut);font-size:9px;font-weight:400">(${fmt(t.est_lo)}–${fmt(t.est_hi)})</span></td></tr>
         <tr><td>Share of weighbridge load explained</td><td>${t.wshare != null ? t.wshare + "%" + (t.n_parts > 1 ? " (identifier)" : "") : "—"}</td></tr>` : ""}${LEGS[t.id] ? `<tr><td>Inferred depot leg / to transfer st.</td><td>${LEGS[t.id].pre_km ?? "—"} / ${LEGS[t.id].toTS_km ?? "—"} km</td></tr>` : ""}
       </table>
       <details><summary style="cursor:pointer;color:var(--blue);font-size:10.5px;margin-top:4px">Bin details — ${(t.stops || []).length} rows (click a row to zoom to that bin)</summary>
