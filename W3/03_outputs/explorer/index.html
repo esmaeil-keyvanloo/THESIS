@@ -129,7 +129,7 @@ header .sub{color:var(--mut);font-size:11.5px}
     <canvas id="spark"></canvas>
     <div class="note" id="sparknote"></div>
     <div class="note" id="depotnote"></div>
-    <div class="note"><b>Reading a trip:</b> the line is the shortest road path visiting the recorded bins in order — the real driven route will differ where the crew took detours or served unrecorded bins. Weight is the weighbridge total for the whole run (bin capacity 2500 is litres, not kg). "Recorded km" and load belong to the vehicle identifier; when an identifier was split into tracks they are shared totals. Dashed stop markers are readings inferred by time + location — observations, not collections. Estimated bin weights use literature density bands (packaging 25–40, paper 50–100, glass 250–350 kg/m³) × bin volume × pre-emptying fill — an estimate, not a measurement; the low share vs the weighbridge total shows most served bins were never logged. The "+ observed" value adds same-material bins the crew looked at (capped at the run's weighbridge load); other-material observations are listed in the table (Mat dot) but never counted in this trip's weight. Sensor column: nearest sensor reading within ±3 h as % of that bin's own ceiling — ✓ agrees with the driver within one 25-point step, ⚠ disagrees more.</div>
+    <div class="note"><b>Reading a trip:</b> the line is the shortest road path visiting the recorded bins in order — the real driven route will differ where the crew took detours or served unrecorded bins. Weight is the weighbridge total for the whole run (bin capacity 2500 is litres, not kg). "Recorded km" and load belong to the vehicle identifier; when an identifier was split into tracks they are shared totals. Dashed stop markers are readings inferred by time + location — observations, not collections. Estimated bin weights use literature density bands (packaging 25–40, paper 50–100, glass 250–350 kg/m³) × bin volume × pre-emptying fill — an estimate, not a measurement; the low share vs the weighbridge total shows most served bins were never logged. The "+ observed" value adds same-material bins the crew looked at (capped at the run's weighbridge load); other-material observations are listed in the table (Mat dot) but never counted in this trip's weight. Sensor column: nearest sensor reading within ±3 h as % of that bin's own ceiling — ✓ agrees with the driver within one 25-point step, ⚠ disagrees more; a faded negative number is the sensor’s raw error code at that moment (no fill information). Map marker rings are coloured by the bin’s own material; the route line keeps the trip’s colour. Inferred bins’ Est. kg is informational only — trip weight counts emptied + same-material observed bins.</div>
     </div>
   </div>
 </div>
@@ -272,11 +272,13 @@ async function toggle(t){
     const ang = (n - 2) * 1.0472, r = 0.00013 * (1 + Math.floor((n - 2) / 6));
     return [s[0] + r * Math.cos(ang), s[1] + r * Math.sin(ang) / Math.cos(s[0] * Math.PI / 180)];
   });
+  const MC = { P: "#eda100", C: "#2a78d6", G: "#2e8b57" };
   t.stops.forEach((s, i) => {
     const inf = s[4] === "I";
+    const ring = MC[s[7]] || color;
     const fillTxt = s[5] != null ? (inf ? `<br>Seen at ${s[5]}%` : `<br>Was ${s[5]}% full before emptying`) : "";
-    L.marker(pos[i], { icon: L.divIcon({ className: "", html: `<div class="stopnum" style="border-color:${color};${inf ? "opacity:.75;border-style:dashed;background:#f4f4f0;" : ""}">${i + 1}</div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) })
-      .bindPopup(`<b>Stop ${i + 1} of ${t.stops.length}</b>${inf ? " · <i>inferred by time+location</i>" : ""}<br>Bin ${s[2]} · ${s[3]}${fillTxt}<br>${t.frac}`).addTo(grp);
+    L.marker(pos[i], { icon: L.divIcon({ className: "", html: `<div class="stopnum" style="border-color:${ring};${inf ? "opacity:.8;border-style:dashed;background:#f4f4f0;" : ""}">${i + 1}</div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) })
+      .bindPopup(`<b>Stop ${i + 1} of ${t.stops.length}</b>${inf ? " · <i>inferred by time+location</i>" : ""}<br>Bin ${s[2]} · ${({ P: "Packaging", C: "Paper/card", G: "Glass" })[s[7]] || t.frac} · ${s[3]}${fillTxt}`).addTo(grp);
   });
   const lg2 = LEGS[t.id];
   if (lg2 && document.getElementById("lyrLegs").checked){
@@ -316,16 +318,16 @@ function cards(){
         ${t.est_mid != null ? `<tr><td>Est. weight — emptied bins only</td><td>${fmt(t.est_mid)} kg <span style="color:var(--mut);font-size:9px;font-weight:400">(${fmt(t.est_lo)}–${fmt(t.est_hi)})</span></td></tr>
         <tr><td>+ observed same-material bins${t.capped ? " (capped at load)" : ""}</td><td>${t.est2_mid != null ? fmt(t.est2_mid) + " kg" : "—"}</td></tr>
         <tr><td>Share of load explained</td><td>${t.wshare != null ? (t.wshare > 100 ? "≥100" : t.wshare) + "% / " + (t.wshare2 != null ? t.wshare2 + "%" : "—") + (t.n_parts > 1 ? " (identifier)" : "") : "—"}</td></tr>
-        ${(() => { const st = t.stops || []; const m = st.filter(x => x[8] != null).length;
-           const gaps = st.filter(x => x[5] != null && x[8] != null).map(x => Math.abs(x[5] - x[8])).sort((a, b) => a - b);
+        ${(() => { const st = t.stops || []; const m = st.filter(x => x[8] != null && x[8] >= 0).length;
+           const gaps = st.filter(x => x[5] != null && x[8] != null && x[8] >= 0).map(x => Math.abs(x[5] - x[8])).sort((a, b) => a - b);
            const mg = gaps.length ? gaps[Math.floor(gaps.length / 2)] : null;
            return m ? `<tr><td>Sensor check</td><td>${m} of ${st.length} stops·${mg != null ? " median gap " + mg + " pts" : ""}</td></tr>` : ""; })()}` : ""}${LEGS[t.id] ? `<tr><td>Inferred depot leg / to transfer st.</td><td>${LEGS[t.id].pre_km ?? "—"} / ${LEGS[t.id].toTS_km ?? "—"} km</td></tr>` : ""}
       </table>
       <details><summary style="cursor:pointer;color:var(--blue);font-size:10.5px;margin-top:4px">Bin details — ${(t.stops || []).length} rows (click a row to zoom to that bin)</summary>
       <table class="dtbl"><tr><th>№</th><th>Mat</th><th>Bin</th><th>Time</th><th>Type</th><th>Fill</th><th>Sensor</th><th>Est. kg</th></tr>${(t.stops || []).map((s, i) => {
         const mc = { P: "#eda100", C: "#2a78d6", G: "#2e8b57" }[s[7]] || "#c3c2b7";
-        const agree = (s[5] != null && s[8] != null) ? (Math.abs(s[5] - s[8]) <= 25 ? " ✓" : " ⚠" ) : "";
-        return `<tr onclick="zoomStop('${t.id}',${i})" style="cursor:pointer"><td>${i + 1}</td><td><span class="sw" style="background:${mc};margin:0"></span></td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4] === "I" ? "inferred" : "emptied"}</td><td>${s[5] != null ? s[5] + "%" : "—"}</td><td>${s[8] != null ? s[8] + "%" + agree : "—"}</td><td>${s[6] != null ? s[6] : "—"}</td></tr>`; }).join("")}</table></details>`;
+        const agree = (s[5] != null && s[8] != null && s[8] >= 0) ? (Math.abs(s[5] - s[8]) <= 25 ? " ✓" : " ⚠" ) : "";
+        return `<tr onclick="zoomStop('${t.id}',${i})" style="cursor:pointer"><td>${i + 1}</td><td><span class="sw" style="background:${mc};margin:0"></span></td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4] === "I" ? "inferred" : "emptied"}</td><td>${s[5] != null ? s[5] + "%" : "—"}</td><td>${s[8] == null ? "—" : (s[8] < 0 ? `<span style="color:#c8c6bd">${s[8]}</span>` : s[8] + "%" + agree)}</td><td>${s[6] != null ? s[6] : "—"}</td></tr>`; }).join("")}</table></details>`;
     c.appendChild(el);
   });
 }
