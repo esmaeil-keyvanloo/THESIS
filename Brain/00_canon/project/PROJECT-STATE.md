@@ -17,6 +17,10 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
+### S11 — 2026-08-19 later (Explorer v7 + Vercel; same chat)
+- Deployed on Vercel too (user's account, GitHub-import, Root Directory = W3/03_outputs/explorer; auto-deploys on push). Local double-click needs `Open_Explorer_Locally.bat` (fetch blocked on file://); W2 monolith = offline copy.
+- **v7 fixes/features** (user-reported bug: "missing" stop numbers were markers stacked at shared ecoponto sites): co-located markers spread in a ring — verified CE19b 2/2, CE39 11/11 distinct; stops enriched with fills (`enrich_stops.py`: stamped stops carry pre-emptying fill, 98.5% coverage); per-trip expandable bin tables (№/bin/time/type/fill), row click zooms to bin; panels drag-resize + collapse; chart/depot/notes behind ⓘ button; boundaries auto-flip light on satellite, Rio Maior line bolder. End-to-end browser-tested.
+
 ### S10 — 2026-08-19 (W3: fast split explorer for GitHub Pages; same chat)
 - GitHub Pages activated by user: https://esmaeil-keyvanloo.github.io/THESIS/ (root index.html redirects to the explorer). Public — operational data visible to anyone with the link.
 - **W3 round opened**: explorer split for speed — `W3/03_outputs/explorer/` = small shell (index.html, ~35 KB) + `data/` (trips_index 1.5 MB; per-year chunks 0.8–4.6 MB; boundaries/bins/facilities/daily/tempo ~0.2 MB). Page interactive after ~1.7 MB (was 20 MB monolith); year chunks lazy-load in background; splitter `W3/01_scripts/split_explorer_data.py`.
