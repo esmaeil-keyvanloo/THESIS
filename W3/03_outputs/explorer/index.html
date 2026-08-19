@@ -4,8 +4,10 @@
 <meta charset="utf-8">
 <title>Rio Maior — Collection Trip Explorer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+<link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 <style>
 :root{--bg:#f9f9f7;--surf:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--mut:#898781;--grid:#e1e0d9;
  --blue:#2a78d6;--orange:#eb6834;--aqua:#1baf7a;--yellow:#eda100;--crit:#d03b3b;--pack:#eda100;--paper:#2a78d6}
@@ -375,9 +377,11 @@ document.getElementById("clear").onclick = () => { state.sel.forEach(x => x.laye
     const years = initTrips();
     setLoad("loading routes…");
     await ensureYear(state.year);
-    setLoad("ready");
-    for (const y of years){ if (!YEARLOADED[y]) await ensureYear(y); }
     setLoad("");
+    // polite prefetch: other years only after 12 s of idle, one at a time
+    setTimeout(async () => {
+      for (const y of years){ if (!YEARLOADED[y]) { await ensureYear(y); await new Promise(r => setTimeout(r, 3000)); } }
+    }, 12000);
   } catch (e){
     setLoad("load failed: " + e.message);
   }
