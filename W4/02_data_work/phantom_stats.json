@@ -1,0 +1,43 @@
+{
+  "input_leftovers": 20905,
+  "input_by_status": {
+    "INFEASIBLE": 13896,
+    "NO_TRIP_RUNNING": 7009
+  },
+  "no_coordinate_rows": 0,
+  "phantom_tracks": 2445,
+  "stops_absorbed": 20368,
+  "isolated_observations": 537,
+  "isolated_by_reason": {
+    "INFEASIBLE": 382,
+    "NO_TRIP_RUNNING": 155
+  },
+  "dates_with_phantoms": 1232,
+  "mat_hint_counts": {
+    "Packaging": 899,
+    "Paper/card": 956,
+    "Glass": 590
+  },
+  "n_bins_distribution": {
+    "min": 3,
+    "median": 7.0,
+    "max": 63
+  },
+  "largest_phantom": {
+    "id": "PH20210628-1",
+    "date": "2021-06-28",
+    "start": "07:22",
+    "end": "22:59",
+    "dur_h": 15.61,
+    "n_bins": 63,
+    "km_line": 63.78,
+    "mat_hint": "Packaging"
+  },
+  "params": {
+    "detour": 1.3,
+    "service_min": 2.0,
+    "min_gap_min": 0.5,
+    "vmax_kmh": 60.0,
+    "min_chain_stops": 3
+  }
+}

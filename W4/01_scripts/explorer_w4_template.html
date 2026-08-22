@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rio Maior — Collection Trip Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+<link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+<style>
+:root{--bg:#f9f9f7;--surf:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--mut:#898781;--grid:#e1e0d9;
+ --blue:#2a78d6;--orange:#eb6834;--aqua:#1baf7a;--yellow:#eda100;--crit:#d03b3b;--pack:#eda100;--paper:#2a78d6}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{padding:8px 14px;background:var(--surf);border-bottom:1px solid var(--grid);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{font-size:16px}
+header .sub{color:var(--mut);font-size:11.5px}
+#loadstate{font-size:10.5px;color:var(--blue);font-weight:600}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.tile{background:var(--bg);border:1px solid var(--grid);border-radius:8px;padding:3px 9px;text-align:center}
+.tile b{font-size:14px;display:block}
+.tile span{font-size:10px;color:var(--mut)}
+#main{flex:1;display:flex;min-height:0}
+#left{width:380px;min-width:320px;display:flex;flex-direction:column;border-right:1px solid var(--grid);background:var(--surf)}
+#controls{padding:7px 10px;border-bottom:1px solid var(--grid);display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11.5px}
+#controls select,#controls button{font:inherit;padding:3px 8px;border:1px solid var(--grid);border-radius:6px;background:var(--surf);cursor:pointer}
+#controls button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#controls .fbtn.on[data-f="Packaging"]{background:var(--pack);border-color:var(--pack);color:#fff}
+#controls .fbtn.on[data-f="Paper/card"]{background:var(--paper);border-color:var(--paper);color:#fff}
+#controls .fbtn.on[data-f="Glass"]{background:#2e8b57;border-color:#2e8b57;color:#fff}
+#controls .fbtn.on[data-f="Phantom"]{background:#6b6b66;border-color:#6b6b66;color:#fff}
+#calwrap{flex:1;overflow-y:auto;padding:8px 10px}
+.month{margin-bottom:10px}
+.month h3{font-size:11px;color:var(--ink2);margin-bottom:3px}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.dow{font-size:8px;color:var(--mut);text-align:center}
+.day{aspect-ratio:1;border-radius:4px;background:var(--bg);border:1px solid var(--grid);font-size:8.5px;color:var(--mut);display:flex;align-items:center;justify-content:center;cursor:default;position:relative;overflow:hidden}
+.fstrip{position:absolute;bottom:1px;left:2px;right:2px;height:4px;display:flex;gap:1px}
+.fs{flex:1;border-radius:1px}
+.mchip{display:inline-block;width:9px;height:9px;border-radius:2px;margin-left:5px;vertical-align:-1px;border:1px solid var(--grid)}
+#heatlegend{padding:4px 10px;border-bottom:1px solid var(--grid);font-size:10px;color:var(--mut);display:flex;align-items:center;gap:6px}
+#heatbar{height:8px;flex:1;max-width:130px;border-radius:4px;background:linear-gradient(90deg,#ffffff,#fed976,#fc4e2a,#bd0026);border:1px solid var(--grid)}
+.day.has{cursor:pointer;font-weight:600}
+.day.sel{outline:2.5px solid var(--crit);outline-offset:1px}
+#daypanel{max-height:32%;overflow-y:auto;border-top:1px solid var(--grid);padding:7px 10px}
+#daypanel h3{font-size:11.5px;margin-bottom:5px}
+.chip{display:flex;gap:7px;align-items:center;padding:4px 7px;margin-bottom:3px;border:1px solid var(--grid);border-radius:7px;cursor:pointer;font-size:11px;background:var(--bg)}
+.chip:hover{border-color:var(--ink2)}
+.chip.on{border-width:2px}
+.chip .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.chip .meta{color:var(--mut);font-size:10px;margin-left:auto}
+#map{flex:1}
+#sidebar{width:300px;background:var(--surf);border-left:1px solid var(--grid);overflow-y:auto;padding:8px 10px}
+#sidebar h3{font-size:12px;margin:6px 0}
+.tripcard{border:1px solid var(--grid);border-left-width:5px;border-radius:7px;padding:6px 8px;margin-bottom:7px;font-size:11px}
+.tripcard table{width:100%;border-collapse:collapse;font-size:10.5px;margin-top:3px}
+.tripcard td{padding:1px 0;color:var(--ink2)}
+.tripcard td:last-child{text-align:right;color:var(--ink);font-weight:600}
+.note{font-size:10px;color:var(--mut);margin-top:6px;line-height:1.4}
+.empty{color:var(--mut);font-size:11px}
+.lyr{display:flex;gap:6px;align-items:center;font-size:11px;padding:2px 0}
+.stopnum{background:#fff;border:2px solid #333;border-radius:50%;width:20px;height:20px;line-height:16px;text-align:center;font-size:10px;font-weight:700;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.facil{font-size:16px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.legend{background:var(--surf);border:1px solid var(--grid);border-radius:8px;padding:6px 9px;font-size:10.5px;line-height:1.6}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+#spark{width:100%;height:56px;margin-top:4px}
+#main{position:relative}
+.phandle{width:6px;cursor:col-resize;background:transparent;flex:none}
+.phandle:hover{background:var(--blue)}
+.coll{position:absolute;top:50%;transform:translateY(-50%);z-index:900;background:var(--surf);border:1px solid var(--grid);border-radius:6px;width:20px;height:44px;font-size:11px;cursor:pointer;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+#collL{left:4px}
+#collR{right:4px}
+#infoBtn{margin-top:10px;width:100%;padding:5px;border:1px solid var(--grid);border-radius:7px;background:var(--bg);cursor:pointer;font:inherit;font-size:11px;color:var(--ink2)}
+#infoBtn:hover{border-color:var(--blue);color:var(--blue)}
+.dtbl{width:100%;border-collapse:collapse;font-size:10px;margin-top:4px}
+.dtbl th{text-align:left;color:var(--mut);font-weight:600;padding:1px 4px;border-bottom:1px solid var(--grid)}
+.dtbl td{padding:2px 4px;border-bottom:1px solid var(--grid)}
+.dtbl tr:hover td{background:var(--bg)}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Rio Maior — Collection Trip Explorer <span style="color:var(--mut)">W4</span></h1>
+    <div class="sub">Trips follow the road network · split identifiers re-merged when one truck could drive them (dotted segment = needs above-legal speed) · dashed stop = inferred · gray "?" stop = low confidence · dotted line = reconstructed vehicle (no stamps) · <span style="color:var(--pack)">■</span> packaging · <span style="color:var(--paper)">■</span> paper/card · <span style="color:#2e8b57">■</span> glass · <span id="loadstate">loading…</span></div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</header>
+<div id="main">
+  <div id="left">
+    <div id="controls">
+      <select id="year"></select>
+      <button data-f="Packaging" class="fbtn on">Packaging</button>
+      <button data-f="Paper/card" class="fbtn on">Paper/card</button>
+      <button data-f="Glass" class="fbtn on">Glass</button>
+      <button data-f="Phantom" class="fbtn on">Phantom</button>
+      <select id="colormode" title="Line colouring">
+        <option value="frac">Colour by fraction</option>
+        <option value="trip">Colour by trip</option>
+      </select>
+      <button id="clear">Clear</button>
+    </div>
+    <div id="heatlegend"><span>0</span><div id="heatbar"></div><span id="heatmax"></span><span>kg/day collected (≈ waste accumulated since previous emptying)</span></div>
+    <div id="calwrap"><div class="empty" style="padding:20px">Loading calendar…</div></div>
+    <div id="daypanel"><h3>Pick a day</h3><div class="empty">Day colour = weight collected (darker = more). Bottom strips show which materials ran. Click a day, then click trips to draw them; numbers show service order from 1.</div></div>
+  </div>
+  <div class="phandle" id="phL"></div>
+  <div id="map"></div>
+  <div class="phandle" id="phR"></div>
+  <button class="coll" id="collL" title="Hide/show left panel">◀</button>
+  <button class="coll" id="collR" title="Hide/show right panel">▶</button>
+  <div id="sidebar">
+    <h3>Layers</h3>
+    <label class="lyr"><input type="checkbox" id="lyrBound" checked> Municipality &amp; freguesia boundaries</label>
+    <label class="lyr"><input type="checkbox" id="lyrFacil" checked> Depot &amp; disposal sites</label>
+    <label class="lyr"><input type="checkbox" id="lyrLegs" checked> Inferred depot &amp; disposal legs (dashed)</label>
+    <label class="lyr"><input type="checkbox" id="lyrBins"> Bin need-categories (all 816)</label>
+    <div class="legend" id="binlegend" style="display:none">
+      <span class="sw" style="background:var(--crit)"></span>High need &nbsp;
+      <span class="sw" style="background:var(--yellow)"></span>Moderate &nbsp;
+      <span class="sw" style="background:var(--aqua)"></span>Low &nbsp;
+      <span class="sw" style="background:#c3c2b7"></span>Too little data
+      <div id="catcounts" style="color:var(--mut)"></div>
+    </div>
+    <h3>Selected trips</h3>
+    <button id="kmzBtn" style="width:100%;margin-bottom:6px;padding:5px;border:1px solid var(--grid);border-radius:7px;background:var(--bg);cursor:pointer;font:inherit;font-size:11px;color:var(--ink2)">⬇ Download selected trips as KMZ (Google Earth)</button>
+    <div id="cards"><div class="empty">Nothing selected.</div></div>
+    <button id="infoBtn">ⓘ chart · depot &amp; disposal · how to read</button>
+    <div id="extrainfo" style="display:none">
+    <h3>Monthly collected weight</h3>
+    <canvas id="spark"></canvas>
+    <div class="note" id="sparknote"></div>
+    <div class="note" id="depotnote"></div>
+    <div class="note"><b>Reading a trip:</b> the line is the shortest road path visiting the recorded bins in order — the real driven route will differ where the crew took detours or served unrecorded bins. Weight is the weighbridge total for the whole run (bin capacity 2500 is litres, not kg). "Recorded km" and load belong to the vehicle identifier; when an identifier was split into tracks they are shared totals. Dashed stop markers are readings inferred by time + location — observations, not collections. Estimated bin weights use literature density bands (packaging 25–40, paper 50–100, glass 250–350 kg/m³) × bin volume × pre-emptying fill — an estimate, not a measurement; the low share vs the weighbridge total shows most served bins were never logged. The "+ observed" value adds same-material bins the crew looked at (capped at the run's weighbridge load); other-material observations are listed in the table (Mat dot) but never counted in this trip's weight. Sensor column: nearest sensor reading within ±3 h as % of that bin's own ceiling — ✓ agrees with the driver within one 25-point step, ⚠ disagrees more; a faded negative number is the sensor’s raw error code at that moment (no fill information). Map marker rings are coloured by the bin’s own material; the route line keeps the trip’s colour. Inferred bins’ Est. kg is informational only — trip weight counts emptied + same-material observed bins.</div>
+    </div>
+  </div>
+</div>
+<script>
+"use strict";
+const TRIPS = [];
+const ROUTES = {}, LEGS = {}, YEARLOADED = {};
+let BINS = [], FACIL = {}, TEMPO = {}, DAILY = {}, BOUND = {};
+const FR = { "Packaging": "#eda100", "Paper/card": "#2a78d6", "Glass": "#2e8b57", "Phantom": "#6b6b66" };
+const PAL = ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300","#4a3aa7","#e34948"];
+const fmt = n => n == null ? "—" : n.toLocaleString("en-US");
+const state = { year: 2022, fr: new Set(["Packaging","Paper/card","Glass","Phantom"]), selDay: null, sel: new Map(), colormode: "frac" };
+const byDate = {};
+const nstops = t => t.n_bins + (t.n_inferred || 0);
+const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const med = a => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
+function visible(t){ return state.fr.has(t.frac); }
+const J = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
+const setLoad = t => { document.getElementById("loadstate").textContent = t; };
+
+/* ---------- map & static layers ---------- */
+const map = L.map("map").setView([39.34, -8.94], 12);
+const BASES = {
+  "Street (OSM)": L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap contributors" }),
+  "Satellite": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Esri, Maxar, Earthstar Geographics" }),
+  "Satellite hybrid": L.layerGroup([
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Esri, Maxar" }),
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 }),
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 }),
+  ]),
+  "Topography": L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "© OpenTopoMap (CC-BY-SA), © OpenStreetMap" }),
+  "Light": L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, attribution: "© CARTO, © OpenStreetMap" }),
+};
+BASES["Street (OSM)"].addTo(map);
+L.control.layers(BASES, null, { position: "topleft", collapsed: true }).addTo(map);
+
+function decodePoly(str){
+  if (!str) return null;
+  if (Array.isArray(str)) return str;
+  let i = 0, lat = 0, lon = 0; const out = [];
+  while (i < str.length){
+    for (const which of [0, 1]){
+      let sh = 0, res = 0, b;
+      do { b = str.charCodeAt(i++) - 63; res |= (b & 0x1f) << sh; sh += 5; } while (b >= 0x20);
+      const dv = (res & 1) ? ~(res >> 1) : res >> 1;
+      if (which === 0) lat += dv; else lon += dv;
+    }
+    out.push([lat / 1e5, lon / 1e5]);
+  }
+  return out;
+}
+
+/* ---------- year data (lazy) ---------- */
+const yearPromises = {};
+function ensureYear(y){
+  if (!yearPromises[y]){
+    yearPromises[y] = J(`data/year_${y}.json`).then(d => {
+      Object.assign(ROUTES, d.routes); Object.assign(LEGS, d.legs);
+      ROUTES.flags = Object.assign(ROUTES.flags || {}, d.flags || {});
+      TRIPS.forEach(t => { if (t.date.slice(0, 4) === String(y) && d.stops[t.id]) t.stops = d.stops[t.id]; });
+      YEARLOADED[y] = true;
+    });
+  }
+  return yearPromises[y];
+}
+
+/* ---------- calendar ---------- */
+function calendar(){
+  const y = state.year, wrap = document.getElementById("calwrap");
+  wrap.innerHTML = "";
+  const KMAX = DAILY._max || 1;
+  const MMAX = Math.max(1, ...Object.values(DAILY._monthly || {1:1}));
+  function heat(kg){
+    const t = Math.pow(Math.min(kg / KMAX, 1), 0.6);
+    const ramp = [[255,255,255],[254,217,118],[252,78,42],[189,0,38]];
+    const x = t * 3, i = Math.min(Math.floor(x), 2), f = x - i;
+    const c = ramp[i].map((v, k) => Math.round(v + (ramp[i+1][k] - v) * f));
+    return { bg: `rgb(${c})`, dark: t > 0.55 };
+  }
+  document.getElementById("heatmax").textContent = KMAX.toLocaleString();
+  for (let m = 0; m < 12; m++){
+    const days = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    const pad = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7;
+    const mk = `${y}-${String(m + 1).padStart(2, "0")}`;
+    const mkg = (DAILY._monthly || {})[mk] || 0;
+    let html = `<div class="month"><h3>${MN[m]} ${y} · ${(mkg / 1000).toFixed(0)} t<span class="mchip" style="background:${heat(KMAX * mkg / MMAX).bg}"></span></h3><div class="mgrid">`;
+    "MTWTFSS".split("").forEach(d => html += `<div class="dow">${d}</div>`);
+    for (let i = 0; i < pad; i++) html += "<div></div>";
+    for (let d = 1; d <= days; d++){
+      const key = `${mk}-${String(d).padStart(2, "0")}`;
+      const list = (byDate[key] || []).filter(visible);
+      const kg = (DAILY[key] || {}).kg || 0;
+      const h = heat(kg);
+      const fr = [...new Set(list.map(t => t.frac))];
+      const strip = fr.length ? `<div class="fstrip">${fr.map(f => `<div class="fs" style="background:${FR[f]}"></div>`).join("")}</div>` : "";
+      html += `<div class="day ${list.length ? "has" : ""} ${state.selDay === key ? "sel" : ""}" style="background:${list.length || kg ? h.bg : "var(--bg)"};color:${h.dark ? "#fff" : "var(--mut)"}" ${list.length ? `data-d="${key}" title="${list.length} trip(s) · ${kg.toLocaleString()} kg"` : ""}>${d}${strip}</div>`;
+    }
+    wrap.innerHTML += html + "</div></div>";
+  }
+  wrap.querySelectorAll(".day.has").forEach(el => el.onclick = () => { state.selDay = el.dataset.d; calendar(); daypanel(); });
+}
+
+function daypanel(){
+  const p = document.getElementById("daypanel"), key = state.selDay;
+  if (!key) return;
+  const list = (byDate[key] || []).filter(visible);
+  p.innerHTML = `<h3>${key} — ${list.length} trip(s)</h3>`;
+  list.forEach(t => {
+    const on = state.sel.has(t.id);
+    const div = document.createElement("div");
+    div.className = "chip" + (on ? " on" : "");
+    if (on) div.style.borderColor = state.sel.get(t.id).color;
+    div.innerHTML = `<span class="dot" style="background:${on ? state.sel.get(t.id).color : FR[t.frac]}"></span>
+      <span><b>#${t.id}</b> ${t.rota || t.frac}${t.part ? " · track " + t.part : ""} · ${t.start}–${t.end}</span>
+      <span class="meta">${t.merged ? (t.flagged ? "⚡" : "⇦⇨") : ""}${t.n_bins}+${(t.n_inferred || 0) + (t.n_lowconf || 0)} bins · ${t.km_rec ? t.km_rec + " km" : "—"} · ${t.kg ? fmt(t.kg) + " kg" : "—"}</span>`;
+    div.onclick = () => toggle(t);
+    p.appendChild(div);
+  });
+}
+
+/* ---------- trip drawing ---------- */
+let colorIdx = 0;
+async function toggle(t){
+  if (state.sel.has(t.id)){ state.sel.get(t.id).layer.remove(); state.sel.delete(t.id); daypanel(); cards(); return; }
+  await ensureYear(t.date.slice(0, 4));
+  if (!t.stops) return;
+  const color = state.colormode === "frac" ? FR[t.frac] : PAL[colorIdx++ % PAL.length];
+  const grp = L.layerGroup();
+  const routed = ROUTES[t.id];
+  const rpath = routed ? decodePoly(routed.p || routed.path) : null;
+  if (rpath && rpath.length > 1){
+    L.polyline(rpath, { color, weight: 3.5, opacity: 0.92, lineJoin: "round", lineCap: "round",
+      dashArray: t.frac === "Phantom" ? "2 7" : null }).addTo(grp);
+    ((ROUTES.flags || {})[t.id] || []).forEach(fl => {
+      const fp = decodePoly(fl.p);
+      if (fp && fp.length > 1) L.polyline(fp, { color: "#111", weight: 5, opacity: 0.85, dashArray: "1 9", lineCap: "round" })
+        .bindTooltip(`needs above-legal speed: ${fl.req} min drive in ${fl.gap} min gap`, { sticky: true }).addTo(grp);
+    });
+  } else if (t.stops.length > 1){
+    L.polyline(t.stops.map(s => [s[0], s[1]]), { color, weight: 2.5, dashArray: "6 5", opacity: 0.8 }).addTo(grp);
+  }
+  const seen = {};
+  const pos = t.stops.map(s => {
+    const k = s[0].toFixed(5) + "," + s[1].toFixed(5);
+    const n = seen[k] = (seen[k] || 0) + 1;
+    if (n === 1) return [s[0], s[1]];
+    const ang = (n - 2) * 1.0472, r = 0.00013 * (1 + Math.floor((n - 2) / 6));
+    return [s[0] + r * Math.cos(ang), s[1] + r * Math.sin(ang) / Math.cos(s[0] * Math.PI / 180)];
+  });
+  const MC = { P: "#eda100", C: "#2a78d6", G: "#2e8b57" };
+  t.stops.forEach((s, i) => {
+    const typ = s[4];
+    const inf = typ === "I" || typ === "L" || typ === "P";
+    const ring = MC[s[7]] || color;
+    const extra = typ === "L" ? "opacity:.75;border-style:dashed;background:#e3e1da;color:#555;"
+                : typ === "P" ? "opacity:.8;border-style:dotted;background:#fff;"
+                : inf ? "opacity:.8;border-style:dashed;background:#f4f4f0;" : "";
+    const fillTxt = s[5] != null ? (inf ? `<br>Seen at ${s[5]}%` : `<br>Was ${s[5]}% full before emptying`) : "";
+    L.marker(pos[i], { icon: L.divIcon({ className: "", html: `<div class="stopnum" style="border-color:${ring};${extra}">${typ === "L" ? (i + 1) + "?" : i + 1}</div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) })
+      .bindPopup(`<b>Stop ${i + 1} of ${t.stops.length}</b>${typ === "L" ? " · <i>assigned, LOW confidence</i>" : typ === "P" ? " · <i>reconstructed vehicle</i>" : inf ? " · <i>inferred by time+location</i>" : ""}<br>Bin ${s[2]} · ${({ P: "Packaging", C: "Paper/card", G: "Glass" })[s[7]] || t.frac} · ${s[3]}${fillTxt}`).addTo(grp);
+  });
+  const lg2 = LEGS[t.id];
+  if (lg2 && document.getElementById("lyrLegs").checked){
+    const pp = decodePoly(lg2.pre), pt = decodePoly(lg2.toTS);
+    if (pp && pp.length > 1) L.polyline(pp, { color: "#777", weight: 2, dashArray: "2 6", opacity: 0.8, lineJoin: "round" }).addTo(grp);
+    if (pt && pt.length > 1) L.polyline(pt, { color: "#c0392b", weight: 2, dashArray: "2 6", opacity: 0.85, lineJoin: "round" }).addTo(grp);
+  }
+  grp.addTo(map);
+  state.sel.set(t.id, { t, color, layer: grp, routed_km: routed ? routed.km : null, pos });
+  const all = [].concat(...[...state.sel.values()].map(x => (x.t.stops || []).map(s => [s[0], s[1]])));
+  if (all.length) map.fitBounds(L.latLngBounds(all).pad(0.18));
+  daypanel(); cards();
+}
+
+window.zoomStop = (tid, i) => {
+  const e = state.sel.get(tid);
+  if (!e) return;
+  const p = (e.pos || [])[i] || [e.t.stops[i][0], e.t.stops[i][1]];
+  map.setView(p, 18);
+};
+function cards(){
+  const c = document.getElementById("cards");
+  if (!state.sel.size){ c.innerHTML = `<div class="empty">Nothing selected.</div>`; return; }
+  c.innerHTML = "";
+  state.sel.forEach(({ t, color, routed_km }) => {
+    const kgkm = (t.kg && t.km_rec) ? (t.kg / t.km_rec).toFixed(1) : "—";
+    const el = document.createElement("div");
+    el.className = "tripcard"; el.style.borderLeftColor = color;
+    el.innerHTML = `<b>Trip #${t.id}</b> · ${t.date} · ${t.rota || t.frac}${t.part ? " · track " + t.part + " of " + t.n_parts : ""}
+      <table>
+        <tr><td>Time</td><td>${t.start}–${t.end}${t.dur_h ? " (" + t.dur_h + " h)" : ""}</td></tr>
+        <tr><td>Bins: stamped + inferred + low-conf</td><td>${t.n_bins} + ${t.n_inferred || 0} + ${t.n_lowconf || 0}</td></tr>${t.merged ? `<tr><td>Split status</td><td>${t.flagged ? "re-merged — dotted segment(s) assume above-legal speed" : "re-merged (fully legal drive)"}</td></tr>` : ""}
+        <tr><td>Road route between bins</td><td>${routed_km ? routed_km + " km" : "n/a"}</td></tr>
+        <tr><td>Vehicle recorded${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.km_rec ? t.km_rec + " km" : "—"}</td></tr>
+        <tr><td>Load${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.kg ? fmt(t.kg) + " kg" : "—"}</td></tr>
+        <tr><td>kg per recorded km</td><td>${kgkm}</td></tr>
+        ${t.est_mid != null ? `<tr><td>Est. weight — emptied bins only</td><td>${fmt(t.est_mid)} kg <span style="color:var(--mut);font-size:9px;font-weight:400">(${fmt(t.est_lo)}–${fmt(t.est_hi)})</span></td></tr>
+        <tr><td>+ observed same-material bins${t.capped ? " (capped at load)" : ""}</td><td>${t.est2_mid != null ? fmt(t.est2_mid) + " kg" : "—"}</td></tr>
+        <tr><td>Share of load explained</td><td>${t.wshare != null ? (t.wshare > 100 ? "≥100" : t.wshare) + "% / " + (t.wshare2 != null ? t.wshare2 + "%" : "—") + (t.n_parts > 1 ? " (identifier)" : "") : "—"}</td></tr>
+        ${(() => { const st = t.stops || []; const m = st.filter(x => x[8] != null && x[8] >= 0).length;
+           const gaps = st.filter(x => x[5] != null && x[8] != null && x[8] >= 0).map(x => Math.abs(x[5] - x[8])).sort((a, b) => a - b);
+           const mg = gaps.length ? gaps[Math.floor(gaps.length / 2)] : null;
+           return m ? `<tr><td>Sensor check</td><td>${m} of ${st.length} stops·${mg != null ? " median gap " + mg + " pts" : ""}</td></tr>` : ""; })()}` : ""}${LEGS[t.id] ? `<tr><td>Inferred depot leg / to transfer st.</td><td>${LEGS[t.id].pre_km ?? "—"} / ${LEGS[t.id].toTS_km ?? "—"} km</td></tr>` : ""}
+      </table>
+      <details><summary style="cursor:pointer;color:var(--blue);font-size:10.5px;margin-top:4px">Bin details — ${(t.stops || []).length} rows (click a row to zoom to that bin)</summary>
+      <table class="dtbl"><tr><th>№</th><th>Mat</th><th>Bin</th><th>Time</th><th>Type</th><th>Fill</th><th>Sensor</th><th>Est. kg</th></tr>${(t.stops || []).map((s, i) => {
+        const mc = { P: "#eda100", C: "#2a78d6", G: "#2e8b57" }[s[7]] || "#c3c2b7";
+        const agree = (s[5] != null && s[8] != null && s[8] >= 0) ? (Math.abs(s[5] - s[8]) <= 25 ? " ✓" : " ⚠" ) : "";
+        return `<tr onclick="zoomStop('${t.id}',${i})" style="cursor:pointer"><td>${i + 1}</td><td><span class="sw" style="background:${mc};margin:0"></span></td><td>${s[2]}</td><td>${s[3]}</td><td>${{ S: "emptied", I: "inferred", L: "low conf.", P: "phantom" }[s[4]] || s[4]}</td><td>${s[5] != null ? s[5] + "%" : "—"}</td><td>${s[8] == null ? "—" : (s[8] < 0 ? `<span style="color:#c8c6bd">${s[8]}</span>` : s[8] + "%" + agree)}</td><td>${s[6] != null ? s[6] : "—"}</td></tr>`; }).join("")}</table></details>`;
+    c.appendChild(el);
+  });
+}
+
+/* ---------- static layers (after fetch) ---------- */
+function initStatic(){
+  const boundLayer = L.layerGroup();
+  const muniPolys = (BOUND.muni || []).map(r => L.polygon(r, { color: "#1a1a19", weight: 3.4, fill: false }).bindTooltip("Rio Maior (municipality)", { sticky: true }).addTo(boundLayer));
+  const fregPolys = [];
+  (BOUND.freg || []).forEach(f => (f.rings || []).forEach(r =>
+    fregPolys.push(L.polygon(r, { color: "#6b6b66", weight: 0.9, dashArray: "4 4", fill: false })
+      .bindTooltip(f.name, { sticky: true }).addTo(boundLayer))));
+  boundLayer.addTo(map);
+  map.on("baselayerchange", ev => {
+    const dark = /Satellite/i.test(ev.name);
+    muniPolys.forEach(pl => pl.setStyle({ color: dark ? "#ffffff" : "#1a1a19", weight: dark ? 3.8 : 3.4 }));
+    fregPolys.forEach(pl => pl.setStyle({ color: dark ? "#f0ede4" : "#6b6b66" }));
+  });
+  document.getElementById("lyrBound").onchange = e => e.target.checked ? boundLayer.addTo(map) : boundLayer.remove();
+
+  const facilLayer = L.layerGroup();
+  const fl = (FACIL.local || []).concat(FACIL.regional || [], FACIL.depot ? [Object.assign({ type: "depot" }, FACIL.depot)] : []);
+  fl.forEach(f => {
+    const nm = (f.name || "") + " " + (f.type || "");
+    const icon = /depot|estaleiro/i.test(nm) ? "🚚" : /transfer|aterro|landfill|tratamento|central/i.test(nm) ? "🏭" : "♻️";
+    L.marker([f.lat, f.lon], { icon: L.divIcon({ className: "", html: `<div class="facil">${icon}</div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) })
+      .bindPopup(`<b>${f.name}</b><br>${f.type || ""}${f.source ? "<br><small>" + f.source + "</small>" : ""}`).addTo(facilLayer);
+  });
+  facilLayer.addTo(map);
+  document.getElementById("lyrFacil").onchange = e => e.target.checked ? facilLayer.addTo(map) : facilLayer.remove();
+  document.getElementById("depotnote").innerHTML = FACIL.synthesis ? "<b>Depot &amp; disposal:</b> " + FACIL.synthesis : "";
+
+  const CATC = { H: "#d03b3b", M: "#eda100", L: "#1baf7a", U: "#c3c2b7" };
+  const binLayer = L.layerGroup();
+  BINS.forEach(bn => {
+    L.circleMarker([bn.lat, bn.lon], { radius: bn.cat === "H" ? 6 : 4, color: "#fff", weight: 1, fillColor: CATC[bn.cat] || "#c3c2b7", fillOpacity: 0.85 })
+      .bindPopup(`<b>Bin ${bn.cid}</b> (${{ P: "Packaging", C: "Paper/card", G: "Glass" }[bn.frac] || ""})<br>Collections: ${bn.ev}<br>Arrived ≥75% full: ${(bn.pfull * 100).toFixed(0)}%<br>Arrived ≤25% full: ${(bn.plow * 100).toFixed(0)}%<br>Category: <b>${{ H: "High need", M: "Moderate", L: "Low need", U: "Too little data" }[bn.cat]}</b>`).addTo(binLayer);
+  });
+  document.getElementById("lyrBins").onchange = e => {
+    document.getElementById("binlegend").style.display = e.target.checked ? "" : "none";
+    e.target.checked ? binLayer.addTo(map) : binLayer.remove();
+  };
+  const cc = { H: 0, M: 0, L: 0, U: 0 }; BINS.forEach(bn => cc[bn.cat] = (cc[bn.cat] || 0) + 1);
+  document.getElementById("catcounts").textContent = `high ${cc.H} · moderate ${cc.M} · low ${cc.L} · little data ${cc.U}`;
+
+  window.drawSpark = () => {
+  const cv = document.getElementById("spark"), m = TEMPO.months || [];
+  if (m.length){
+    const kg = TEMPO.kg, ctx = cv.getContext("2d");
+    const Wc = cv.width = cv.offsetWidth * 2, Hc = cv.height = 112;
+    const mx = Math.max(...kg);
+    ctx.fillStyle = "#9ec5f4";
+    kg.forEach((v, i) => { const bw = Wc / kg.length; ctx.fillRect(i * bw + 1, Hc - v / mx * (Hc - 8), bw - 2, v / mx * (Hc - 8)); });
+    ctx.fillStyle = "#52514e"; ctx.font = "20px Segoe UI";
+    ctx.fillText(m[0].slice(0, 4), 4, 20); ctx.fillText(m[m.length - 1], Wc - 110, 20);
+    document.getElementById("sparknote").textContent = `Total collected weight per month, ${m[0]} to ${m[m.length - 1]} (2024 partial). Peak ${fmt(mx)} kg.`;
+  }
+  };
+}
+
+/* ---------- trips index init ---------- */
+function initTrips(){
+  TRIPS.forEach(t => { if (nstops(t) >= 2) (byDate[t.date] = byDate[t.date] || []).push(t); });
+  const multi = TRIPS.filter(t => nstops(t) >= 2);
+  document.getElementById("tiles").innerHTML = [
+    [fmt(multi.length), "vehicle tracks"], [fmt(Object.keys(byDate).length), "active days"],
+    [med(multi.map(t => t.n_bins)), "median bins"], [med(multi.filter(t => t.dur_h).map(t => t.dur_h)).toFixed(1) + " h", "median duration"],
+    [fmt(med(multi.filter(t => t.km_rec).map(t => t.km_rec))) + " km", "median recorded"],
+    [fmt(med(multi.filter(t => t.kg).map(t => t.kg))) + " kg", "median load"],
+  ].map(([v, l]) => `<div class="tile"><b>${v}</b><span>${l}</span></div>`).join("");
+  const years = [...new Set(multi.map(t => t.date.slice(0, 4)))].sort();
+  const ysel = document.getElementById("year");
+  years.forEach(y => ysel.add(new Option(y, y)));
+  ysel.value = years.includes("2022") ? "2022" : years[0];
+  state.year = +ysel.value;
+  ysel.onchange = () => { state.year = +ysel.value; calendar(); ensureYear(state.year); };
+  calendar();
+  return years;
+}
+
+/* ---------- controls ---------- */
+document.querySelectorAll(".fbtn").forEach(bt => bt.onclick = () => {
+  bt.classList.toggle("on");
+  bt.classList.contains("on") ? state.fr.add(bt.dataset.f) : state.fr.delete(bt.dataset.f);
+  calendar(); daypanel();
+});
+document.getElementById("colormode").onchange = e => state.colormode = e.target.value;
+
+/* ---------- KMZ export ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(name, data){
+  const enc = new TextEncoder(), nameB = enc.encode(name), crc = crc32(data), sz = data.length;
+  const lh = new Uint8Array(30 + nameB.length), dv = new DataView(lh.buffer);
+  dv.setUint32(0, 0x04034b50, true); dv.setUint16(4, 20, true); dv.setUint16(8, 0, true);
+  dv.setUint32(14, crc, true); dv.setUint32(18, sz, true); dv.setUint32(22, sz, true);
+  dv.setUint16(26, nameB.length, true); lh.set(nameB, 30);
+  const cd = new Uint8Array(46 + nameB.length), dc = new DataView(cd.buffer);
+  dc.setUint32(0, 0x02014b50, true); dc.setUint16(4, 20, true); dc.setUint16(6, 20, true);
+  dc.setUint32(16, crc, true); dc.setUint32(20, sz, true); dc.setUint32(24, sz, true);
+  dc.setUint16(28, nameB.length, true); cd.set(nameB, 46);
+  const eo = new Uint8Array(22), de = new DataView(eo.buffer);
+  de.setUint32(0, 0x06054b50, true); de.setUint16(8, 1, true); de.setUint16(10, 1, true);
+  de.setUint32(12, cd.length, true); de.setUint32(16, lh.length + sz, true);
+  const out = new Uint8Array(lh.length + sz + cd.length + eo.length);
+  let o = 0; for (const part of [lh, data, cd, eo]){ if (part === data) out.set(data, o); else out.set(part, o); o += part.length; }
+  // fix central dir offset of local header (0) already ok; set relative offset field:
+  return out;
+}
+const kesc = t => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const kcol = hex => "ff" + hex.slice(5, 7) + hex.slice(3, 5) + hex.slice(1, 3);
+function coordStr(path){ return path.map(p => p[1] + "," + p[0] + ",0").join(" "); }
+function buildKML(){
+  const MATW = { P: "Packaging", C: "Paper/card", G: "Glass" };
+  const MC = { P: "#eda100", C: "#2a78d6", G: "#2e8b57" };
+  let k = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Rio Maior selected trips</name>\n';
+  for (const m of ["P", "C", "G"]){
+    k += `<Style id="pt${m}"><IconStyle><color>${kcol(MC[m])}</color><scale>0.9</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle><LabelStyle><scale>0.9</scale></LabelStyle></Style>\n`;
+  }
+  state.sel.forEach(({ t, color, pos, routed_km }) => {
+    k += `<Folder><name>Trip #${kesc(t.id)} · ${kesc(t.frac)} · ${kesc(t.date)}</name>\n`;
+    const routed = ROUTES[t.id];
+    const rpath = routed ? decodePoly(routed.p || routed.path) : null;
+    k += `<Folder><name>Route (line)</name>`;
+    if (rpath && rpath.length > 1){
+      k += `<Placemark><name>Route #${kesc(t.id)}</name><description><![CDATA[<table border="1" cellpadding="3">
+<tr><td>Trip ID</td><td>${kesc(t.id)}</td></tr><tr><td>Material</td><td>${kesc(t.frac)}</td></tr>
+<tr><td>Date</td><td>${kesc(t.date)} ${kesc(t.start)}–${kesc(t.end)}</td></tr>
+<tr><td>Bins stamped + inferred</td><td>${t.n_bins} + ${t.n_inferred || 0}</td></tr>
+<tr><td>Road route between bins</td><td>${routed_km ?? "—"} km</td></tr>
+<tr><td>Vehicle recorded</td><td>${t.km_rec ?? "—"} km</td></tr><tr><td>Load (weighbridge)</td><td>${t.kg ?? "—"} kg</td></tr></table>]]></description>
+<Style><LineStyle><color>${kcol(color)}</color><width>4</width></LineStyle></Style>
+<LineString><tessellate>1</tessellate><coordinates>${coordStr(rpath)}</coordinates></LineString></Placemark>`;
+    }
+    k += `</Folder>\n<Folder><name>Stops (points)</name>\n`;
+    (t.stops || []).forEach((st, i) => {
+      const p = (pos || [])[i] || [st[0], st[1]];
+      const inf = st[4] === "I";
+      k += `<Placemark><name>${i + 1}</name><styleUrl>#pt${st[7] || "P"}</styleUrl><description><![CDATA[<table border="1" cellpadding="3">
+<tr><td>Stop</td><td>${i + 1} of ${t.stops.length}</td></tr><tr><td>Trip</td><td>#${kesc(t.id)}</td></tr>
+<tr><td>Bin</td><td>${kesc(st[2])}</td></tr><tr><td>Bin material</td><td>${MATW[st[7]] || ""}</td></tr>
+<tr><td>Time</td><td>${kesc(t.date)} ${kesc(st[3])}</td></tr><tr><td>Type</td><td>${inf ? "inferred (observed)" : "emptying record"}</td></tr>
+<tr><td>Fill</td><td>${st[5] != null ? st[5] + "%" : "—"}</td></tr><tr><td>Sensor</td><td>${st[8] != null ? (st[8] < 0 ? st[8] + " (error code)" : st[8] + "%") : "—"}</td></tr>
+<tr><td>Est. kg</td><td>${st[6] ?? "—"}</td></tr></table>]]></description>
+<Point><coordinates>${p[1]},${p[0]},0</coordinates></Point></Placemark>\n`;
+    });
+    k += `</Folder>\n`;
+    const lg = LEGS[t.id];
+    if (lg){
+      k += `<Folder><name>Depot &amp; disposal legs (lines, inferred)</name>`;
+      const pp = decodePoly(lg.pre), pt2 = decodePoly(lg.toTS);
+      if (pp && pp.length > 1) k += `<Placemark><name>Depot → first stop (${lg.pre_km ?? "?"} km)</name><Style><LineStyle><color>ff777777</color><width>2</width></LineStyle></Style><LineString><tessellate>1</tessellate><coordinates>${coordStr(pp)}</coordinates></LineString></Placemark>`;
+      if (pt2 && pt2.length > 1) k += `<Placemark><name>Last stop → transfer station (${lg.toTS_km ?? "?"} km)</name><Style><LineStyle><color>ff2b39c0</color><width>2</width></LineStyle></Style><LineString><tessellate>1</tessellate><coordinates>${coordStr(pt2)}</coordinates></LineString></Placemark>`;
+      k += `</Folder>\n`;
+    }
+    k += `</Folder>\n`;
+  });
+  k += "</Document></kml>";
+  return k;
+}
+document.getElementById("kmzBtn").onclick = () => {
+  if (!state.sel.size){ alert("Select at least one trip first."); return; }
+  const kml = buildKML();
+  const zip = makeZip("doc.kml", new TextEncoder().encode(kml));
+  const blob = new Blob([zip], { type: "application/vnd.google-earth.kmz" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  const ids = [...state.sel.keys()].slice(0, 3).join("_");
+  a.download = `RioMaior_trips_${ids}${state.sel.size > 3 ? "_etc" : ""}.kmz`;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+};
+
+document.getElementById("clear").onclick = () => { state.sel.forEach(x => x.layer.remove()); state.sel.clear(); colorIdx = 0; daypanel(); cards(); };
+let infoDrawn = false;
+document.getElementById("infoBtn").onclick = () => {
+  const x = document.getElementById("extrainfo");
+  const show = x.style.display === "none";
+  x.style.display = show ? "" : "none";
+  if (show && !infoDrawn && window.drawSpark){ window.drawSpark(); infoDrawn = true; }
+};
+document.getElementById("collL").onclick = () => {
+  const el = document.getElementById("left"), ph = document.getElementById("phL");
+  const hide = el.style.display !== "none";
+  el.style.display = hide ? "none" : "flex"; ph.style.display = hide ? "none" : "";
+  document.getElementById("collL").textContent = hide ? "▶" : "◀";
+  setTimeout(() => map.invalidateSize(), 60);
+};
+document.getElementById("collR").onclick = () => {
+  const el = document.getElementById("sidebar"), ph = document.getElementById("phR");
+  const hide = el.style.display !== "none";
+  el.style.display = hide ? "none" : "block"; ph.style.display = hide ? "none" : "";
+  document.getElementById("collR").textContent = hide ? "◀" : "▶";
+  setTimeout(() => map.invalidateSize(), 60);
+};
+function dragify(handle, panel, fromLeft){
+  handle.addEventListener("mousedown", e => {
+    e.preventDefault();
+    const startX = e.clientX, startW = panel.offsetWidth;
+    const move = ev => {
+      const w = Math.max(200, Math.min(700, startW + (fromLeft ? ev.clientX - startX : startX - ev.clientX)));
+      panel.style.width = w + "px"; panel.style.minWidth = w + "px";
+      map.invalidateSize();
+    };
+    const up = () => { document.removeEventListener("mousemove", move); document.removeEventListener("mouseup", up); };
+    document.addEventListener("mousemove", move); document.addEventListener("mouseup", up);
+  });
+}
+dragify(document.getElementById("phL"), document.getElementById("left"), true);
+dragify(document.getElementById("phR"), document.getElementById("sidebar"), false);
+
+/* ---------- bootstrap ---------- */
+(async () => {
+  try {
+    setLoad("loading map data…");
+    const [bound, daily, facil, bins, tempo] = await Promise.all([
+      J("data/boundaries.json"), J("data/daily_kg.json"), J("data/facilities.json"),
+      J("data/bins.json"), J("data/tempo.json"),
+    ]);
+    BOUND = bound; DAILY = daily; FACIL = facil; BINS = bins; TEMPO = tempo;
+    initStatic();
+    setLoad("loading trips…");
+    const idx = await J("data/trips_index.json");
+    TRIPS.push(...idx);
+    const years = initTrips();
+    setLoad("loading routes…");
+    await ensureYear(state.year);
+    setLoad("");
+    // polite prefetch: other years only after 12 s of idle, one at a time
+    setTimeout(async () => {
+      for (const y of years){ if (!YEARLOADED[y]) { await ensureYear(y); await new Promise(r => setTimeout(r, 3000)); } }
+    }, 12000);
+  } catch (e){
+    setLoad("load failed: " + e.message);
+  }
+})();
+</script>
+</body>
+</html>

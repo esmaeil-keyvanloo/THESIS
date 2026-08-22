@@ -1,0 +1,62 @@
+{
+  "loose_readings_total": 144263,
+  "counts_by_status": {
+    "ASSIGNED": 85597,
+    "ASSIGNED_LOW": 37761,
+    "INFEASIBLE": 13896,
+    "NO_TRIP_RUNNING": 7009
+  },
+  "pct_by_status": {
+    "ASSIGNED": 59.33,
+    "ASSIGNED_LOW": 26.18,
+    "INFEASIBLE": 9.63,
+    "NO_TRIP_RUNNING": 4.86
+  },
+  "per_year": {
+    "2020": {
+      "total": 41702,
+      "ASSIGNED": 24084,
+      "ASSIGNED_LOW": 11575,
+      "INFEASIBLE": 4349,
+      "NO_TRIP_RUNNING": 1694
+    },
+    "2021": {
+      "total": 33238,
+      "ASSIGNED": 19308,
+      "ASSIGNED_LOW": 8506,
+      "INFEASIBLE": 3626,
+      "NO_TRIP_RUNNING": 1798
+    },
+    "2022": {
+      "total": 31137,
+      "ASSIGNED": 18290,
+      "ASSIGNED_LOW": 8097,
+      "INFEASIBLE": 3006,
+      "NO_TRIP_RUNNING": 1744
+    },
+    "2023": {
+      "total": 29814,
+      "ASSIGNED": 17963,
+      "ASSIGNED_LOW": 8027,
+      "INFEASIBLE": 2287,
+      "NO_TRIP_RUNNING": 1537
+    },
+    "2024": {
+      "total": 8372,
+      "ASSIGNED": 5952,
+      "ASSIGNED_LOW": 1556,
+      "INFEASIBLE": 628,
+      "NO_TRIP_RUNNING": 236
+    }
+  },
+  "median_score_assigned_kmh": 14.6,
+  "median_p_best_assigned": 0.9997,
+  "params": {
+    "window_min": 30,
+    "vmax_kmh": 60.0,
+    "detour": 1.3,
+    "service_min": 2.0,
+    "min_gap_min": 0.5,
+    "p_low_threshold": 0.7
+  }
+}

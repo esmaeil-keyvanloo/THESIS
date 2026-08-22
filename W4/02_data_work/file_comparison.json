@@ -1,0 +1,115 @@
+{
+  "task": "C2/T5 two-file comparison, bin-day level",
+  "definitions": {
+    "universe": "instrumented bins (>=1 valid sensor reading) x days within each bin's first-to-last valid-reading span",
+    "driver_evidence": "bin appears as an 'S' (stamped) stop in a trips_v6 track that day",
+    "sensor_evidence": "a sensor drop event (A2) whose before-after window touches that day",
+    "neither_with_activity": "no evidence from either file but >=1 valid sensor reading that day",
+    "recovered_emptying": "drop event with no stamped stop for that bin on any day of its window",
+    "tonnage": "drop_units/100 x bin volume (L, raw_collections; default 2500) x material mid density P32/C75/G300 kg/m3"
+  },
+  "bins_instrumented": 344,
+  "confusion_matrix": {
+    "both": 14233,
+    "driver_only": 39764,
+    "sensor_only": 32203,
+    "neither_with_activity": 278815
+  },
+  "confusion_matrix_per_year": {
+    "2020": {
+      "both": 614,
+      "driver_only": 9907,
+      "sensor_only": 1920,
+      "neither_with_activity": 35602
+    },
+    "2021": {
+      "both": 3930,
+      "driver_only": 9413,
+      "sensor_only": 8794,
+      "neither_with_activity": 70460
+    },
+    "2022": {
+      "both": 4096,
+      "driver_only": 9013,
+      "sensor_only": 8900,
+      "neither_with_activity": 70228
+    },
+    "2023": {
+      "both": 4210,
+      "driver_only": 8799,
+      "sensor_only": 9036,
+      "neither_with_activity": 74685
+    },
+    "2024": {
+      "both": 1383,
+      "driver_only": 2632,
+      "sensor_only": 3553,
+      "neither_with_activity": 27840
+    }
+  },
+  "sensor_only_classification": {
+    "logging_gap_track_visited": 690,
+    "off_log_or_phantom": 31513
+  },
+  "driver_only_classification": {
+    "sensor_negative_episode": 13076,
+    "low_cadence_lt2_readings": 19477,
+    "no_drop_possible_false_stamp": 7211
+  },
+  "recovered_emptyings": {
+    "events": 30504,
+    "estimated_tonnes_mid": 1678.3,
+    "per_year": {
+      "2020": {
+        "events": 2052,
+        "tonnes": 113.3
+      },
+      "2021": {
+        "events": 8366,
+        "tonnes": 441.2
+      },
+      "2022": {
+        "events": 8107,
+        "tonnes": 414.6
+      },
+      "2023": {
+        "events": 8386,
+        "tonnes": 438.8
+      },
+      "2024": {
+        "events": 3593,
+        "tonnes": 270.4
+      }
+    },
+    "events_on_days_with_any_track_visit": 790
+  },
+  "agreement_over_time": {
+    "2020": {
+      "matched_records": 4609,
+      "agree_pct": 39.2
+    },
+    "2021": {
+      "matched_records": 11211,
+      "agree_pct": 51.7
+    },
+    "2022": {
+      "matched_records": 11318,
+      "agree_pct": 50.3
+    },
+    "2023": {
+      "matched_records": 12222,
+      "agree_pct": 49.1
+    },
+    "2024": {
+      "matched_records": 3979,
+      "agree_pct": 48.7
+    }
+  },
+  "findings": [
+    "On instrumented bins the two files agree on only 14,233 bin-days (both a stamped stop and a sensor drop); the driver file alone claims 39,764 more emptying days and the sensor alone shows 32,203 more - neither record is a superset of the other.",
+    "Of the 32,203 sensor-only days, 690 (2.1%) fall on days when a v6 track did visit the bin without stamping it (logging gap); the remaining 31,513 have no recorded visit at all - off-log services or non-collection disturbances.",
+    "Of the 39,764 driver-only days, 81.9% are explained by the sensor itself - a negative-code episode (13,076) or fewer than two valid readings that day (19,477); only 7,211 days show a healthy, well-sampled sensor with no drop, the candidate false stamps.",
+    "30,504 drop events are never matched by a stamped stop on any day of their window - recovered emptyings worth an estimated 1,678.3 tonnes (drop magnitude x bin volume x material mid density), material the driver file misses entirely.",
+    "Record-level agreement between the two instruments stays flat at roughly half (39-52% by year, A2 table), so the comparison must stay at bin-day granularity; the confusion matrix, not either file alone, is the honest inventory of service events."
+  ]
+}

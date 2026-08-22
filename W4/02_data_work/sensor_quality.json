@@ -1,0 +1,113 @@
+{
+  "task": "A2/T4 sensor drop-event log + quality trends",
+  "definitions": {
+    "drop_event": "fill decrease >=25 raw units between consecutive valid (0..100) readings, gap <=24 h, 'before' reading not adjacent (+/-1 reading) to a negative-code episode",
+    "ceiling": "per-container max valid reading",
+    "agreement": "driver record matched to nearest valid sensor reading within +/-3 h; agree if |driver - sensor/ceiling*100| <= 25",
+    "stamped_emptying": "distinct (container, idrecolha) driver record with timestamp, instrumented bins only",
+    "families": "small = -1..-9, large = -10..-116 (convention from R2-01 Rev C)"
+  },
+  "drop_events": {
+    "total": 47093,
+    "per_year": {
+      "2020": 2767,
+      "2021": 13024,
+      "2022": 12856,
+      "2023": 13261,
+      "2024": 5185
+    },
+    "median_window_min": 281.7,
+    "containers_with_events": 343
+  },
+  "negatives_by_year": {
+    "2020": {
+      "readings": 108067,
+      "negatives": 39599,
+      "neg_share_pct": 36.64,
+      "family_small_-1..-9": 2878,
+      "family_large_-10..-116": 36721
+    },
+    "2021": {
+      "readings": 169430,
+      "negatives": 14752,
+      "neg_share_pct": 8.71,
+      "family_small_-1..-9": 12014,
+      "family_large_-10..-116": 2738
+    },
+    "2022": {
+      "readings": 159811,
+      "negatives": 12757,
+      "neg_share_pct": 7.98,
+      "family_small_-1..-9": 10718,
+      "family_large_-10..-116": 2039
+    },
+    "2023": {
+      "readings": 373162,
+      "negatives": 23466,
+      "neg_share_pct": 6.29,
+      "family_small_-1..-9": 14687,
+      "family_large_-10..-116": 8779
+    },
+    "2024": {
+      "readings": 238105,
+      "negatives": 6258,
+      "neg_share_pct": 2.63,
+      "family_small_-1..-9": 5491,
+      "family_large_-10..-116": 767
+    }
+  },
+  "agreement_by_year": {
+    "2020": {
+      "matched_records": 4609,
+      "agree_pct": 39.2
+    },
+    "2021": {
+      "matched_records": 11211,
+      "agree_pct": 51.7
+    },
+    "2022": {
+      "matched_records": 11318,
+      "agree_pct": 50.3
+    },
+    "2023": {
+      "matched_records": 12222,
+      "agree_pct": 49.1
+    },
+    "2024": {
+      "matched_records": 3979,
+      "agree_pct": 48.7
+    }
+  },
+  "drops_vs_stamped_by_year": {
+    "2020": {
+      "sensor_drop_events": 2767,
+      "stamped_emptyings_instrumented": 8348,
+      "drops_per_stamped": 0.33
+    },
+    "2021": {
+      "sensor_drop_events": 13024,
+      "stamped_emptyings_instrumented": 8593,
+      "drops_per_stamped": 1.52
+    },
+    "2022": {
+      "sensor_drop_events": 12856,
+      "stamped_emptyings_instrumented": 8691,
+      "drops_per_stamped": 1.48
+    },
+    "2023": {
+      "sensor_drop_events": 13261,
+      "stamped_emptyings_instrumented": 8159,
+      "drops_per_stamped": 1.63
+    },
+    "2024": {
+      "sensor_drop_events": 5185,
+      "stamped_emptyings_instrumented": 2210,
+      "drops_per_stamped": 2.35
+    }
+  },
+  "findings": [
+    "Sensors registered 47,093 drop events (fill fall >=25 units within 24 h) against 36,001 stamped driver emptyings on the same instrumented bins - the sensor stream sees roughly 1.3 drop events per stamped emptying, so many emptyings (and some non-collection disturbances) are visible only in the sensor data.",
+    "Negative error codes make up 9.2% of all sensor rows overall, split between the small family (-1..-9) and the large family (-10..-116, dominated by -116); the yearly share varies (see negatives_by_year), so per-year exposure corrections are needed.",
+    "Record-level driver-vs-sensor agreement (+/-3 h nearest reading, within 25 points of the ceiling-normalized fill) is 49.0% overall and varies by year - consistent with the earlier finding that the two instruments are not interchangeable."
+  ]
+}

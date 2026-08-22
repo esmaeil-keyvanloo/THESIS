@@ -1,0 +1,77 @@
+{
+  "task": "D1/T6a trip census + master dataset",
+  "trip_classes": {
+    "merged_clean": {
+      "trips": 369,
+      "stops_total": 44247,
+      "stops_by_type": {
+        "L": 2849,
+        "I": 15175,
+        "S": 26223
+      }
+    },
+    "merged_flagged": {
+      "trips": 108,
+      "stops_total": 11780,
+      "stops_by_type": {
+        "L": 744,
+        "I": 4145,
+        "S": 6891
+      }
+    },
+    "phantom": {
+      "trips": 2445,
+      "stops_total": 20368,
+      "stops_by_type": {
+        "P": 20368
+      }
+    },
+    "split_batch_entry": {
+      "trips": 434,
+      "stops_total": 20628,
+      "stops_by_type": {
+        "S": 11169,
+        "I": 5615,
+        "L": 3844
+      }
+    },
+    "split_multi_vehicle": {
+      "trips": 1268,
+      "stops_total": 95982,
+      "stops_by_type": {
+        "S": 51782,
+        "I": 26714,
+        "L": 17486
+      }
+    },
+    "stamped_single": {
+      "trips": 8837,
+      "stops_total": 114771,
+      "stops_by_type": {
+        "I": 33948,
+        "S": 67985,
+        "L": 12838
+      }
+    }
+  },
+  "trip_class_note": "trips_v6.json stop lists double-carry readings: v5 inferred stops were relabelled 'S' at merge time AND the same loose pool was re-assigned as I/L, so stops_total across classes (287,408 driver-file stops) exceeds the 264,817 raw rows. The master parquet is deduplicated: one row per raw reading; row_type 'S' is granted only to the 60,916 stamped collection rows.",
+  "reading_tiers": {
+    "S_stamped_collection": 60916,
+    "pre_reading": 59638,
+    "I_inferred_assigned": 85597,
+    "L_inferred_low_confidence": 37761,
+    "P_phantom_absorbed": 20368,
+    "isolated_by_reason": {
+      "INFEASIBLE": 382,
+      "NO_TRIP_RUNNING": 155
+    },
+    "unclassified": 0,
+    "total_driver_rows": 264817
+  },
+  "master": {
+    "rows_total": 311910,
+    "rows_driver": 264817,
+    "rows_sensor_drop": 47093,
+    "path": "Brain/03_db/parquet/master_events_w4.parquet"
+  }
+}

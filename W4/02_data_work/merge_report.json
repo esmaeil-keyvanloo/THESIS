@@ -1,0 +1,53 @@
+{
+  "split_identifiers": 1147,
+  "verdict_counts": {
+    "merge": 477,
+    "batch-entry": 116,
+    "multi-vehicle": 554
+  },
+  "flagged_junctions_total": 117,
+  "merged_tracks_with_flags": 108,
+  "tracks_before": 11495,
+  "tracks_after": 11016,
+  "parts_collapsed": 479,
+  "params": {
+    "speeds_truck_legal_kmh": {
+      "motorway": 90,
+      "trunk": 80,
+      "primary": 80,
+      "secondary": 80,
+      "tertiary": 70,
+      "motorway_link": 60,
+      "trunk_link": 60,
+      "primary_link": 55,
+      "secondary_link": 55,
+      "tertiary_link": 50,
+      "default": 50
+    },
+    "speeds_ceiling_kmh": {
+      "motorway": 130,
+      "trunk": 100,
+      "primary": 100,
+      "secondary": 90,
+      "tertiary": 80,
+      "default": 60
+    },
+    "service_min": {
+      "truck_legal": 1.0,
+      "ceiling": 0.5
+    },
+    "min_budget_min": 0.5,
+    "feasible_rule": "fastest road time <= max(gap - service, 0.5 min)",
+    "batch_entry_rule": "any link gap <= 1 min AND straight-line > 2 km",
+    "merged_chain": "base stamped stops time-ordered (trips_v5_base.json)",
+    "speed_flags": "junction infeasible under TRUCK-LEGAL, feasible under CEILING; i = index of earlier stamped stop in output stops",
+    "banned_fclass": [
+      "bridleway",
+      "cycleway",
+      "footway",
+      "path",
+      "pedestrian",
+      "steps"
+    ]
+  }
+}
