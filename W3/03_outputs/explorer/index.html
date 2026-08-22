@@ -242,7 +242,7 @@ function daypanel(){
     div.className = "chip" + (on ? " on" : "");
     if (on) div.style.borderColor = state.sel.get(t.id).color;
     div.innerHTML = `<span class="dot" style="background:${on ? state.sel.get(t.id).color : FR[t.frac]}"></span>
-      <span><b>${t.rota || t.frac}${t.part ? " · track " + t.part : ""}</b> ${t.start}–${t.end}</span>
+      <span><b>#${t.id}</b> ${t.rota || t.frac}${t.part ? " · track " + t.part : ""} · ${t.start}–${t.end}</span>
       <span class="meta">${t.n_bins}+${t.n_inferred || 0} bins · ${t.km_rec ? t.km_rec + " km" : "—"} · ${t.kg ? fmt(t.kg) + " kg" : "—"}</span>`;
     div.onclick = () => toggle(t);
     p.appendChild(div);
@@ -307,7 +307,7 @@ function cards(){
     const kgkm = (t.kg && t.km_rec) ? (t.kg / t.km_rec).toFixed(1) : "—";
     const el = document.createElement("div");
     el.className = "tripcard"; el.style.borderLeftColor = color;
-    el.innerHTML = `<b>${t.date}</b> · ${t.rota || t.frac}${t.part ? " · track " + t.part + " of " + t.n_parts : ""}
+    el.innerHTML = `<b>Trip #${t.id}</b> · ${t.date} · ${t.rota || t.frac}${t.part ? " · track " + t.part + " of " + t.n_parts : ""}
       <table>
         <tr><td>Time</td><td>${t.start}–${t.end}${t.dur_h ? " (" + t.dur_h + " h)" : ""}</td></tr>
         <tr><td>Bins: stamped + inferred</td><td>${t.n_bins} + ${t.n_inferred || 0}</td></tr>

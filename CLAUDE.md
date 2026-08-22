@@ -5,3 +5,5 @@
 3. Thesis reports are Word (.docx) with the fixed 12-part structure (cover → appendices), numbered `R<round>-<n>`, built per the spec in `Brain/00_canon/constraints/`. Run the `human-writing` skill on prose before delivery.
 4. Working CRS is EPSG:3763; new working rounds go in `W<n>/` with tidy subfolders; `DATA/` is frozen — never edit it.
 5. Chat replies stay concise (bullets/tables); depth goes into reports. Refresh the root `README.md` before any push and at session close.
+6. **[Rephrase]** For every user prompt: first state, simply and concisely, what you understand the request to be, and proceed only after approval. Reply in a plain human-to-human tone with simple words; when a technical term is unavoidable, explain it in brackets.
+7. Trip references: every vehicle trip carries one unique **Trip ID** = collection number (idrecolha) + track letter (e.g. 17242b); every output (explorer, Excel, reports, chat) must display it. Raw data rows are referenced by **Row ID** (line number in the original CSV).

@@ -17,6 +17,11 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
+### S16 — 2026-08-19 latest (ID convention + raw workbook; same chat)
+- **ID convention (binding, in CLAUDE.md):** Trip ID = idrecolha + track letter (e.g. 17242b), shown in ALL outputs; Row ID = line number in the original CSV. idrecolha alone is NOT a trip reference (splits + stampless rows).
+- New deliverables in `W3/03_outputs/tables/`: raw CSV copy + **Raw_Drivers_Data.xlsx** (264,817 rows in original file order; helper cols Row ID / Trip ID / Row type incl. non-assignment reasons) + sorted workbook v5 (headers now Trip ID + **Raw Row ID** back-reference).
+- Explorer chips/cards show #TripID. CLAUDE.md gained the **[Rephrase]** interaction rule (restate understanding → approval → simple human tone, technical terms in brackets).
+
 ### S15 — 2026-08-19 latest (Explorer v9 + folder discipline; same chat)
 - **RULE (user, binding): a round's outputs are written ONLY inside that round's folder; older W folders are read-only inputs.** Violation corrected: canonical Excel moved to `W3/03_outputs/tables/Driver_Trips_Sorted.xlsx` (v4 builder now writes there); W2's historical v3 xlsx lives in git history (commit 570c8ccb^).
 - Map markers now ring-coloured by the bin's OWN material (route line keeps trip colour) — cross-material observations visible on the map itself; inferred bins show informational Est. kg in tables (101,682 added; summary math unchanged); sensor matching now includes error codes: 23,303 valid + 11,247 negatives shown faded (raw code, no agreement mark). enrich_v9.py.
