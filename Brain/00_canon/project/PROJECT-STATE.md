@@ -17,7 +17,10 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
-### S16 — 2026-08-19 latest (ID convention + raw workbook; same chat)
+### S17 — 2026-08-19 latest (KMZ export; same chat)
+- Explorer: 'Download selected trips as KMZ' — one folder per trip, sub-folders by geometry (Route line / numbered Stops points / depot+disposal legs), popup data tables per placemark; client-side KML+ZIP generation, validated (DOMParser + python zipfile). OPEN TOPICS parked for W4: split-identifier forensics, assign-all-ambiguous with <70/30 flag, phantom tracks, sensor drop-log + full file comparison, master dataset.
+
+### S16 — 2026-08-19 (ID convention + raw workbook; same chat)
 - **ID convention (binding, in CLAUDE.md):** Trip ID = idrecolha + track letter (e.g. 17242b), shown in ALL outputs; Row ID = line number in the original CSV. idrecolha alone is NOT a trip reference (splits + stampless rows).
 - New deliverables in `W3/03_outputs/tables/`: raw CSV copy + **Raw_Drivers_Data.xlsx** (264,817 rows in original file order; helper cols Row ID / Trip ID / Row type incl. non-assignment reasons) + sorted workbook v5 (headers now Trip ID + **Raw Row ID** back-reference).
 - Explorer chips/cards show #TripID. CLAUDE.md gained the **[Rephrase]** interaction rule (restate understanding → approval → simple human tone, technical terms in brackets).

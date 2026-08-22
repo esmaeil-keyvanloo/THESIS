@@ -122,6 +122,7 @@ header .sub{color:var(--mut);font-size:11.5px}
       <div id="catcounts" style="color:var(--mut)"></div>
     </div>
     <h3>Selected trips</h3>
+    <button id="kmzBtn" style="width:100%;margin-bottom:6px;padding:5px;border:1px solid var(--grid);border-radius:7px;background:var(--bg);cursor:pointer;font:inherit;font-size:11px;color:var(--ink2)">⬇ Download selected trips as KMZ (Google Earth)</button>
     <div id="cards"><div class="empty">Nothing selected.</div></div>
     <button id="infoBtn">ⓘ chart · depot &amp; disposal · how to read</button>
     <div id="extrainfo" style="display:none">
@@ -415,6 +416,92 @@ document.querySelectorAll(".fbtn").forEach(bt => bt.onclick = () => {
   calendar(); daypanel();
 });
 document.getElementById("colormode").onchange = e => state.colormode = e.target.value;
+
+/* ---------- KMZ export ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(name, data){
+  const enc = new TextEncoder(), nameB = enc.encode(name), crc = crc32(data), sz = data.length;
+  const lh = new Uint8Array(30 + nameB.length), dv = new DataView(lh.buffer);
+  dv.setUint32(0, 0x04034b50, true); dv.setUint16(4, 20, true); dv.setUint16(8, 0, true);
+  dv.setUint32(14, crc, true); dv.setUint32(18, sz, true); dv.setUint32(22, sz, true);
+  dv.setUint16(26, nameB.length, true); lh.set(nameB, 30);
+  const cd = new Uint8Array(46 + nameB.length), dc = new DataView(cd.buffer);
+  dc.setUint32(0, 0x02014b50, true); dc.setUint16(4, 20, true); dc.setUint16(6, 20, true);
+  dc.setUint32(16, crc, true); dc.setUint32(20, sz, true); dc.setUint32(24, sz, true);
+  dc.setUint16(28, nameB.length, true); cd.set(nameB, 46);
+  const eo = new Uint8Array(22), de = new DataView(eo.buffer);
+  de.setUint32(0, 0x06054b50, true); de.setUint16(8, 1, true); de.setUint16(10, 1, true);
+  de.setUint32(12, cd.length, true); de.setUint32(16, lh.length + sz, true);
+  const out = new Uint8Array(lh.length + sz + cd.length + eo.length);
+  let o = 0; for (const part of [lh, data, cd, eo]){ if (part === data) out.set(data, o); else out.set(part, o); o += part.length; }
+  // fix central dir offset of local header (0) already ok; set relative offset field:
+  return out;
+}
+const kesc = t => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const kcol = hex => "ff" + hex.slice(5, 7) + hex.slice(3, 5) + hex.slice(1, 3);
+function coordStr(path){ return path.map(p => p[1] + "," + p[0] + ",0").join(" "); }
+function buildKML(){
+  const MATW = { P: "Packaging", C: "Paper/card", G: "Glass" };
+  const MC = { P: "#eda100", C: "#2a78d6", G: "#2e8b57" };
+  let k = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Rio Maior selected trips</name>\n';
+  for (const m of ["P", "C", "G"]){
+    k += `<Style id="pt${m}"><IconStyle><color>${kcol(MC[m])}</color><scale>0.9</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle><LabelStyle><scale>0.9</scale></LabelStyle></Style>\n`;
+  }
+  state.sel.forEach(({ t, color, pos, routed_km }) => {
+    k += `<Folder><name>Trip #${kesc(t.id)} · ${kesc(t.frac)} · ${kesc(t.date)}</name>\n`;
+    const routed = ROUTES[t.id];
+    const rpath = routed ? decodePoly(routed.p || routed.path) : null;
+    k += `<Folder><name>Route (line)</name>`;
+    if (rpath && rpath.length > 1){
+      k += `<Placemark><name>Route #${kesc(t.id)}</name><description><![CDATA[<table border="1" cellpadding="3">
+<tr><td>Trip ID</td><td>${kesc(t.id)}</td></tr><tr><td>Material</td><td>${kesc(t.frac)}</td></tr>
+<tr><td>Date</td><td>${kesc(t.date)} ${kesc(t.start)}–${kesc(t.end)}</td></tr>
+<tr><td>Bins stamped + inferred</td><td>${t.n_bins} + ${t.n_inferred || 0}</td></tr>
+<tr><td>Road route between bins</td><td>${routed_km ?? "—"} km</td></tr>
+<tr><td>Vehicle recorded</td><td>${t.km_rec ?? "—"} km</td></tr><tr><td>Load (weighbridge)</td><td>${t.kg ?? "—"} kg</td></tr></table>]]></description>
+<Style><LineStyle><color>${kcol(color)}</color><width>4</width></LineStyle></Style>
+<LineString><tessellate>1</tessellate><coordinates>${coordStr(rpath)}</coordinates></LineString></Placemark>`;
+    }
+    k += `</Folder>\n<Folder><name>Stops (points)</name>\n`;
+    (t.stops || []).forEach((st, i) => {
+      const p = (pos || [])[i] || [st[0], st[1]];
+      const inf = st[4] === "I";
+      k += `<Placemark><name>${i + 1}</name><styleUrl>#pt${st[7] || "P"}</styleUrl><description><![CDATA[<table border="1" cellpadding="3">
+<tr><td>Stop</td><td>${i + 1} of ${t.stops.length}</td></tr><tr><td>Trip</td><td>#${kesc(t.id)}</td></tr>
+<tr><td>Bin</td><td>${kesc(st[2])}</td></tr><tr><td>Bin material</td><td>${MATW[st[7]] || ""}</td></tr>
+<tr><td>Time</td><td>${kesc(t.date)} ${kesc(st[3])}</td></tr><tr><td>Type</td><td>${inf ? "inferred (observed)" : "emptying record"}</td></tr>
+<tr><td>Fill</td><td>${st[5] != null ? st[5] + "%" : "—"}</td></tr><tr><td>Sensor</td><td>${st[8] != null ? (st[8] < 0 ? st[8] + " (error code)" : st[8] + "%") : "—"}</td></tr>
+<tr><td>Est. kg</td><td>${st[6] ?? "—"}</td></tr></table>]]></description>
+<Point><coordinates>${p[1]},${p[0]},0</coordinates></Point></Placemark>\n`;
+    });
+    k += `</Folder>\n`;
+    const lg = LEGS[t.id];
+    if (lg){
+      k += `<Folder><name>Depot &amp; disposal legs (lines, inferred)</name>`;
+      const pp = decodePoly(lg.pre), pt2 = decodePoly(lg.toTS);
+      if (pp && pp.length > 1) k += `<Placemark><name>Depot → first stop (${lg.pre_km ?? "?"} km)</name><Style><LineStyle><color>ff777777</color><width>2</width></LineStyle></Style><LineString><tessellate>1</tessellate><coordinates>${coordStr(pp)}</coordinates></LineString></Placemark>`;
+      if (pt2 && pt2.length > 1) k += `<Placemark><name>Last stop → transfer station (${lg.toTS_km ?? "?"} km)</name><Style><LineStyle><color>ff2b39c0</color><width>2</width></LineStyle></Style><LineString><tessellate>1</tessellate><coordinates>${coordStr(pt2)}</coordinates></LineString></Placemark>`;
+      k += `</Folder>\n`;
+    }
+    k += `</Folder>\n`;
+  });
+  k += "</Document></kml>";
+  return k;
+}
+document.getElementById("kmzBtn").onclick = () => {
+  if (!state.sel.size){ alert("Select at least one trip first."); return; }
+  const kml = buildKML();
+  const zip = makeZip("doc.kml", new TextEncoder().encode(kml));
+  const blob = new Blob([zip], { type: "application/vnd.google-earth.kmz" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  const ids = [...state.sel.keys()].slice(0, 3).join("_");
+  a.download = `RioMaior_trips_${ids}${state.sel.size > 3 ? "_etc" : ""}.kmz`;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+};
+
 document.getElementById("clear").onclick = () => { state.sel.forEach(x => x.layer.remove()); state.sel.clear(); colorIdx = 0; daypanel(); cards(); };
 let infoDrawn = false;
 document.getElementById("infoBtn").onclick = () => {
