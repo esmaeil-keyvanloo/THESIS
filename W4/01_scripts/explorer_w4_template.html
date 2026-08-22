@@ -150,7 +150,8 @@ const nstops = t => t.n_bins + (t.n_inferred || 0);
 const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const med = a => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
 function visible(t){ return state.fr.has(t.frac); }
-const J = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
+const DATAV = "w4r2";  // bump per data rebuild: busts browser cache on lazily-fetched year files
+const J = u => fetch(u + (u.includes("?") ? "&" : "?") + "v=" + DATAV, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
 const setLoad = t => { document.getElementById("loadstate").textContent = t; };
 
 /* ---------- map & static layers ---------- */
