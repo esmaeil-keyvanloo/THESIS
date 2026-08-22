@@ -17,7 +17,8 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
-### S15 — 2026-08-19 latest (Explorer v9; same chat)
+### S15 — 2026-08-19 latest (Explorer v9 + folder discipline; same chat)
+- **RULE (user, binding): a round's outputs are written ONLY inside that round's folder; older W folders are read-only inputs.** Violation corrected: canonical Excel moved to `W3/03_outputs/tables/Driver_Trips_Sorted.xlsx` (v4 builder now writes there); W2's historical v3 xlsx lives in git history (commit 570c8ccb^).
 - Map markers now ring-coloured by the bin's OWN material (route line keeps trip colour) — cross-material observations visible on the map itself; inferred bins show informational Est. kg in tables (101,682 added; summary math unchanged); sensor matching now includes error codes: 23,303 valid + 11,247 negatives shown faded (raw code, no agreement mark). enrich_v9.py.
 
 ### S14 — 2026-08-19 (Excel v4; same chat)

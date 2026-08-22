@@ -14,7 +14,7 @@ import pandas as pd
 import xlsxwriter
 
 BASE = r"C:/Users/esmae/Desktop/phd Esmaeil/THESIS CLAUDE"
-OUT = f"{BASE}/W2/03_outputs/tables/Driver_Trips_Sorted.xlsx"  # canonical location
+OUT = f"{BASE}/W3/03_outputs/tables/Driver_Trips_Sorted.xlsx"  # canonical location
 
 COLS = ["idcontentor", "Matricula do contentor", "Tipo de contentor",
         "Volume do tipo de contentor", "description", "Distrito", "Concelho",
