@@ -25,7 +25,7 @@
 - **T5** comparison (bin-days, instrumented): both 14,233 | driver-only 39,764 (81.9% explained by sensor faults/low cadence; 7,211 candidate false stamps) | sensor-only 32,203 → **30,504 recovered emptyings ≈ 1,678 t** never in the logbook.
 - **T6** census: stamped_single 8,837 · merged_clean 369 · merged_flagged 108 · split_multi 1,268 · split_batch 434 · phantom 2,445. **Master dataset frozen: `Brain/03_db/parquet/master_events_w4.parquet`** (311,910 rows = 264,817 driver + 47,093 sensor; every raw line classified; schema in W4/02_data_work/master_schema.md).
 - ⚠ Known defect (documented): intermediate `W4/02_data_work/trips_v6.json` double-carries relabeled stops — DO NOT USE; canonical are trips_v6_enriched.json and the master parquet (both verified clean, 60,916 genuine S).
-- Explorer W4 live (root redirect updated): dotted above-legal segments, "?" low-conf stops, phantom layer, merge badges. **USER ACTION: change Vercel Root Directory to W4/03_outputs/explorer.**
+- Explorer W4 live (root redirect updated): dotted above-legal segments, "?" low-conf stops, phantom layer, merge badges. Vercel LIVE on W4 (root dir fixed — failure cause was a trailing space in the setting: 'W4/03_outputs/explorer '); Pages live too. Deep links: ?trip=ID. Local: port 8766.
 
 ### S17 — 2026-08-19 latest (KMZ export; same chat)
 - Explorer: 'Download selected trips as KMZ' — one folder per trip, sub-folders by geometry (Route line / numbered Stops points / depot+disposal legs), popup data tables per placemark; client-side KML+ZIP generation, validated (DOMParser + python zipfile). OPEN TOPICS parked for W4: split-identifier forensics, assign-all-ambiguous with <70/30 flag, phantom tracks, sensor drop-log + full file comparison, master dataset.
