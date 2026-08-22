@@ -571,6 +571,21 @@ dragify(document.getElementById("phR"), document.getElementById("sidebar"), fals
     setLoad("loading routes…");
     await ensureYear(state.year);
     setLoad("");
+    // deep link: ?trip=17221 (comma-separated ok) opens with trips drawn
+    const qp = new URLSearchParams(location.search);
+    if (qp.get("trip")){
+      for (const id of qp.get("trip").split(",")){
+        const t = TRIPS.find(x => String(x.id) === id.trim());
+        if (t){
+          state.year = +t.date.slice(0, 4);
+          document.getElementById("year").value = String(state.year);
+          calendar();
+          state.selDay = t.date; calendar(); daypanel();
+          await ensureYear(state.year);
+          await toggle(t);
+        }
+      }
+    }
     // polite prefetch: other years only after 12 s of idle, one at a time
     setTimeout(async () => {
       for (const y of years){ if (!YEARLOADED[y]) { await ensureYear(y); await new Promise(r => setTimeout(r, 3000)); } }
