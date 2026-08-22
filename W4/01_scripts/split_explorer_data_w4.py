@@ -6,9 +6,11 @@ OUT = f"{BASE}/W4/03_outputs/explorer/data"
 os.makedirs(OUT, exist_ok=True)
 idx = json.load(open(f"{W4}/trips_index_v6.json", encoding="utf-8"))
 trips = json.load(open(f"{W4}/trips_v6_enriched.json", encoding="utf-8"))
-routes = json.load(open(f"{W4}/trips_routed_v6_fine.json", encoding="utf-8"))
+_r = json.load(open(f"{W4}/trips_routed_v6_fine.json", encoding="utf-8"))
+routes = _r.get("routes", _r)
+flags = _r.get("flags", {})
 legs = json.load(open(f"{W4}/depot_legs_v6_fine.json", encoding="utf-8"))
-flags = routes.pop("flags", {}) if isinstance(routes, dict) else {}
+legs = legs.get("legs", legs)
 stops = {str(t["id"]): t["stops"] for t in trips}
 keep = [t for t in idx if (t.get("n_bins", 0) + (t.get("n_inferred") or 0) + (t.get("n_lowconf") or 0)) >= 2]
 years = {}
