@@ -1,0 +1,159 @@
+{
+ "input_rows": 1048575,
+ "kept_rows": 791207,
+ "removed_rows": 257368,
+ "removed_by_reason": {
+  "STUCK": 160280,
+  "NEG_CODE": 50620,
+  "NEG_SMALL": 46212,
+  "SPIKE": 218,
+  "DUPLICATE": 38
+ },
+ "drops_v2": {
+  "detected": 50900,
+  "excluded_touching_removed": 3357,
+  "kept": 47543,
+  "by_confidence": {
+   "high": 27837,
+   "med": 10975,
+   "low": 8731
+  }
+ },
+ "per_year": {
+  "2020": {
+   "sensors_active": 265,
+   "sensors_added": 265,
+   "sensors_silent": 0,
+   "readings_kept": 37319,
+   "readings_removed_by_reason": {
+    "NEG_CODE": 36689,
+    "STUCK": 31003,
+    "NEG_SMALL": 2910,
+    "SPIKE": 146
+   },
+   "drops_count": 2883,
+   "drops_by_confidence": {
+    "high": 1980,
+    "med": 519,
+    "low": 384
+   }
+  },
+  "2021": {
+   "sensors_active": 279,
+   "sensors_added": 14,
+   "sensors_silent": 0,
+   "readings_kept": 125481,
+   "readings_removed_by_reason": {
+    "STUCK": 29127,
+    "NEG_SMALL": 12152,
+    "NEG_CODE": 2600,
+    "SPIKE": 70
+   },
+   "drops_count": 13133,
+   "drops_by_confidence": {
+    "high": 7622,
+    "med": 3119,
+    "low": 2392
+   }
+  },
+  "2022": {
+   "sensors_active": 279,
+   "sensors_added": 0,
+   "sensors_silent": 0,
+   "readings_kept": 115361,
+   "readings_removed_by_reason": {
+    "STUCK": 31693,
+    "NEG_SMALL": 10836,
+    "NEG_CODE": 1921
+   },
+   "drops_count": 12981,
+   "drops_by_confidence": {
+    "high": 7166,
+    "med": 3239,
+    "low": 2576
+   }
+  },
+  "2023": {
+   "sensors_active": 335,
+   "sensors_added": 56,
+   "sensors_silent": 0,
+   "readings_kept": 295078,
+   "readings_removed_by_reason": {
+    "STUCK": 54580,
+    "NEG_SMALL": 14784,
+    "NEG_CODE": 8682,
+    "DUPLICATE": 38
+   },
+   "drops_count": 13349,
+   "drops_by_confidence": {
+    "high": 7681,
+    "med": 3147,
+    "low": 2521
+   }
+  },
+  "2024": {
+   "sensors_active": 335,
+   "sensors_added": 9,
+   "sensors_silent": 9,
+   "readings_kept": 217968,
+   "readings_removed_by_reason": {
+    "STUCK": 13877,
+    "NEG_SMALL": 5530,
+    "NEG_CODE": 728,
+    "SPIKE": 2
+   },
+   "drops_count": 5197,
+   "drops_by_confidence": {
+    "high": 3388,
+    "med": 951,
+    "low": 858
+   }
+  }
+ },
+ "era_table": {
+  "E1": {
+   "bins": 250,
+   "readings": 9742,
+   "ceiling_median": 82.0,
+   "ceiling_p25": 82.0,
+   "ceiling_p75": 82.0,
+   "ceiling_max": 84.0,
+   "pct_mean": 69.3
+  },
+  "E2": {
+   "bins": 279,
+   "readings": 268419,
+   "ceiling_median": 82.0,
+   "ceiling_p25": 82.0,
+   "ceiling_p75": 82.0,
+   "ceiling_max": 84.0,
+   "pct_mean": 46.5
+  },
+  "E3": {
+   "bins": 344,
+   "readings": 513046,
+   "ceiling_median": 82.0,
+   "ceiling_p25": 82.0,
+   "ceiling_p75": 82.0,
+   "ceiling_max": 84.0,
+   "pct_mean": 47.8
+  }
+ },
+ "rules": {
+  "NEG_SMALL": "fill in [-10, -1] transient negative",
+  "NEG_CODE": "fill < -10 hard sensor error code",
+  "DUPLICATE": "same cid+ts, keep first",
+  "STUCK": ">=6 identical consecutive valid values spanning >48h; first kept, rest dropped",
+  "SPIKE": "rise >= +40 units within <=30 min; spiked reading dropped",
+  "eras": "E1 <=2020-10-31, E2 2020-11-01..2022-12-31, E3 >=2023-01-01",
+  "ceiling": "per-bin-era max of clean fill; pct = fill/ceiling*100",
+  "drops_v2": "clean consecutive fall >=25 units within <=24h; confidence <=6h high, <=12h med, else low; excluded if a removed reading lies between t_before and t_after"
+ },
+ "drops_by_confidence": {
+  "med": 6447,
+  "high": 14864,
+  "low": 26232
+ },
+ "drops_rebound_demoted": 21055,
+ "rebound_rule": "fill rises >=20 points within 6h after the drop -> suspect false emptying, confidence demoted to low"
+}

@@ -1,0 +1,64 @@
+{
+  "raw_rows": 264817,
+  "accounting": {
+    "stamped_stops_in_tracks": 60477,
+    "stamped_duplicates_dropped": 439,
+    "pre_readings": 59638,
+    "loose_readings_assessed": 142999,
+    "loose_duplicates_dropped": 1264,
+    "total_accounted": 264817,
+    "all_rows_accounted": true
+  },
+  "identifiers": 9984,
+  "tracks": 11691,
+  "track_verdicts": {
+    "single-clean": 9308,
+    "multi-vehicle": 559,
+    "batch-entry": 101,
+    "single-merged": 16
+  },
+  "split_identifiers": 660,
+  "merged_single_tracks": 16,
+  "speed_flagged_junctions": 90,
+  "continuations": {
+    "pairs_found": 133,
+    "later_trips_annotated": 132,
+    "criteria": "same end/start date, same rota prefix (material if rota missing), 0<=gap<=20min, last-first bins <=3km"
+  },
+  "assignment_status_counts": {
+    "EVICTED_CONFLICT": 2981,
+    "I": 120813,
+    "L": 7807,
+    "INFEASIBLE": 4721,
+    "NO_TRIP": 6677
+  },
+  "tier_stop_counts": {
+    "S": 60477,
+    "I": 120813,
+    "L": 7807
+  },
+  "evictions": 2981,
+  "residual_inserted_link_violations": 0,
+  "phantoms": {
+    "tracks": 1674,
+    "stops_in_tracks": 10136,
+    "isolated": 1262
+  },
+  "kg_total_once_per_identifier": 25724240.0,
+  "km_rec_total_once_per_identifier": 1308593.0,
+  "params": {
+    "service_med_min": 0.02,
+    "tol_min": 0,
+    "min_avail_min": 0.5,
+    "ceiling_service_min": 0.5,
+    "window_min": 30,
+    "p_low_threshold": 0.7,
+    "batch_gap_min": 1.0,
+    "batch_km": 2.0,
+    "phantom_min_stops": 3,
+    "feasible_legal": "legal_min <= max(gap - service_med + tol, 0.5)",
+    "feasible_ceiling": "ceiling_min <= max(gap - 0.5, 0.5)",
+    "engine": "W5 site_travel.parquet (truck-legal + ceiling road times); no flat speed",
+    "p_best": "altScore/(best+alt), score = legal-min detour cost of insertion"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "service_med_min": 0.02,
+  "service_p75_min": 0.29,
+  "same_site_gap_quantiles_min": {
+    "p25": 0.01,
+    "p50": 0.024,
+    "p75": 0.285,
+    "p90": 26.418,
+    "p95": 60.0
+  },
+  "same_site_share_le_5s": 0.66,
+  "same_site_med_excl_le_5s": 4.99,
+  "tol_min": 0,
+  "slack_quantiles": {
+    "p01": 1.92,
+    "p05": 2.53,
+    "p10": 2.95,
+    "p25": 3.97,
+    "p50": 6.2,
+    "p75": 11.89,
+    "p90": 42.79,
+    "p95": 83.83,
+    "p99": 150.49
+  },
+  "n_links_used": 12587,
+  "n_same_site_gaps": 318,
+  "n_trusted_trips": 8837,
+  "notes": "Trusted evidence = consecutive S-rows within clean unsplit trips (n_parts=1, not merged, not flagged, from trips_index_v6). Same-site: road_km<0.05 & gap<=60min. Links: road_km>=0.05 & gap<=180min. tol_min = ceil(max(0, -p05(slack))).",
+  "site_note": "270 unique rounded-5dp coordinates across 816 containers (multi-bin sites share coordinates) + depot + TS = 272 sites.",
+  "graph": {
+    "nodes_main_component": 236364,
+    "roads_features": 13204,
+    "n_sites": 272,
+    "n_unique_snapped_nodes": 271,
+    "snap_m_median": 7.1,
+    "snap_m_max": 65.1
+  }
+}

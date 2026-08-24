@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the numbers were made — Rio Maior collection data 2020–2024</title>
+<style>
+  :root{
+    --paper:#f7f5f0; --card:#fffdf8; --ink:#22211e; --mut:#6b6a63; --line:#dcd9cf;
+    --head:#ecebe2; --acc:#2b5db8; --warn:#a15c00; --good:#1b7a56;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font:15px/1.62 "Segoe UI",-apple-system,"Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:900px;margin:0 auto;padding:36px 22px 90px}
+  header.top{border-bottom:3px double var(--line);padding-bottom:18px;margin-bottom:26px}
+  h1{font-size:27px;line-height:1.25;margin:0 0 8px;font-weight:650;letter-spacing:.1px}
+  .sub{color:var(--mut);font-size:14px;margin:0}
+  .sub a{color:var(--acc);text-decoration:none}
+  .sub a:hover{text-decoration:underline}
+  nav.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:14px 18px;margin:22px 0 30px;font-size:14px}
+  nav.toc b{display:block;margin-bottom:6px;font-size:12.5px;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--mut)}
+  nav.toc ol{margin:0;padding-left:22px}
+  nav.toc li{margin:3px 0}
+  nav.toc a{color:var(--acc);text-decoration:none}
+  nav.toc a:hover{text-decoration:underline}
+  .totals{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 6px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:9px;
+    padding:9px 14px;min-width:132px;flex:1}
+  .tile b{display:block;font-size:19px;font-weight:650}
+  .tile span{font-size:11.5px;color:var(--mut)}
+  section{margin:44px 0}
+  h2{font-size:20.5px;margin:0 0 4px;padding-top:10px;border-top:1px solid var(--line);
+    scroll-margin-top:16px;font-weight:650}
+  h2 .no{color:var(--mut);font-weight:400;margin-right:8px}
+  h3{font-size:15.5px;margin:26px 0 6px;font-weight:650}
+  p{margin:10px 0}
+  .note{color:var(--mut);font-size:13.5px}
+  .box{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);
+    border-radius:8px;padding:10px 15px;margin:16px 0;font-size:14px}
+  .box.warn{border-left-color:var(--warn)}
+  .box.good{border-left-color:var(--good)}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px;background:var(--card)}
+  caption{caption-side:top;text-align:left;font-size:12.5px;color:var(--mut);padding:4px 2px}
+  th{background:var(--head);font-weight:650;font-size:12.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr:nth-child(even) td{background:#faf8f2}
+  tr.sum td{border-top:2px solid var(--mut);font-weight:650;background:var(--head)}
+  .tablewrap{overflow-x:auto}
+  code{background:#efede5;border:1px solid var(--line);border-radius:4px;
+    padding:1px 5px;font:12px/1.5 Consolas,Menlo,monospace}
+  .tier{display:inline-block;min-width:26px;text-align:center;border-radius:5px;
+    padding:1px 6px;font-weight:650;font-size:12px;border:1px solid var(--line)}
+  .tS{background:#dcebdd;color:#1b5e34}.tP{background:#eee3f1;color:#6d3a80}
+  .tI{background:#e2e9f6;color:#274d8f}.tL{background:#fbeed6;color:#8a5a00}
+  .tX{background:#f3e0dd;color:#8c2f24}.tD{background:#e9e8e2;color:#55544e}
+  footer{border-top:3px double var(--line);margin-top:56px;padding-top:14px;
+    color:var(--mut);font-size:13px}
+  @media print{
+    body{background:#fff;font-size:11.5pt}
+    .wrap{max-width:none;padding:0}
+    nav.toc,.backlink{display:none}
+    section{break-inside:avoid-page}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>How the numbers were made</h1>
+  <p class="sub">Sensor-based recyclables collection in Rio Maior, Portugal · operator data January&nbsp;2020 – April&nbsp;2024 · working round W5
+    · <a class="backlink" href="../index.html">back to the explorer</a></p>
+</header>
+
+<p>The explorer draws on two files handed over by the collection operator: the drivers'
+electronic logbook and the readings of the fill sensors mounted inside part of the bins.
+Neither file can be used as delivered. This page explains, step by step and in plain
+language, what was done to each file, what was removed and why, and which rules stand
+behind every number on the screen. It is written so that a jury member can check any
+figure against the named source files without reading code.</p>
+
+<div class="totals">
+  <div class="tile"><b>264,817</b><span>driver logbook rows</span></div>
+  <div class="tile"><b>1,048,575</b><span>sensor readings</span></div>
+  <div class="tile"><b>9,984 → 11,691</b><span>route identifiers → vehicle tracks</span></div>
+  <div class="tile"><b>25,724 t</b><span>weighed at the transfer station</span></div>
+  <div class="tile"><b>1,308,593 km</b><span>recorded by the trucks</span></div>
+  <div class="tile"><b>37,784</b><span>emptyings only the sensors saw</span></div>
+</div>
+
+<nav class="toc">
+  <b>Contents</b>
+  <ol>
+    <li><a href="#overview">The two files, and the accounting promise</a></li>
+    <li><a href="#trips">From button presses to drivable vehicle tracks</a></li>
+    <li><a href="#sensors">Cleaning the sensor file</a></li>
+    <li><a href="#cross">What each file says about the other</a></li>
+    <li><a href="#assumptions">The assumption register</a></li>
+    <li><a href="#sources">File-by-file lineage</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<section id="overview">
+<h2><span class="no">1</span>The two files, and the accounting promise</h2>
+
+<p>Rio Maior has 816 recycling bins for packaging, paper/card and glass. When a crew
+empties one, the driver presses a button; the logbook stores the bin, the moment, and a
+route identifier called <i>idrecolha</i> (the run number the crew keys in). At the end of
+the run the truck is weighed, so each identifier also carries a total load in kg and a
+total distance in km. That file has 264,817 rows covering January 2020 to April 2024.</p>
+
+<p>Separately, 344 of the 816 bins carry an ultrasonic fill sensor (a device that
+measures how full the bin is, several times a day). Its export holds 1,048,575 readings.
+That number is exactly the row ceiling of an Excel sheet, which means the export was cut
+off there, not that the sensors stopped; this truncation is logged as defect D1 in the
+project's defect register. Glass is essentially uninstrumented: 2 sensors.</p>
+
+<p>The central problem is that most rows in the driver file are not emptying records at
+all, and one identifier is often not one trip. Untangled, every one of the 264,817 rows
+ends up in exactly one of eight places:</p>
+
+<div class="tablewrap">
+<table>
+  <caption>Evidence tiers — the complete accounting of the driver file</caption>
+  <tr><th>Tier</th><th class="n">Rows</th><th>What it is</th></tr>
+  <tr><td><span class="tier tS">S</span></td><td class="n">60,477</td>
+      <td>Stamped emptying record: the driver pressed the button at the bin. These are the
+      only rows ever counted as collections.</td></tr>
+  <tr><td><span class="tier tD">pre</span></td><td class="n">59,638</td>
+      <td>Fill reading logged moments before an S row (at most 15 min). Attached to its stop
+      as the bin's level just before emptying.</td></tr>
+  <tr><td><span class="tier tI">I</span></td><td class="n">120,813</td>
+      <td>Inferred pass-by: an unstamped reading placed on the one vehicle track that could
+      feasibly have produced it (win probability ≥ 0.7). An observation of the bin, never a
+      collection.</td></tr>
+  <tr><td><span class="tier tL">L</span></td><td class="n">7,807</td>
+      <td>Low-confidence placement (below 0.7): more than one track fits. Drawn with a
+      question mark.</td></tr>
+  <tr><td><span class="tier tP">P</span></td><td class="n">10,136</td>
+      <td>Phantom stop: a reading no logged truck could reach, chained with others into
+      1,674 reconstructed vehicle tracks (drawn dotted).</td></tr>
+  <tr><td><span class="tier tP">iso</span></td><td class="n">1,262</td>
+      <td>Unreachable readings too few to chain (fewer than 3): kept as isolated
+      observations.</td></tr>
+  <tr><td><span class="tier tX">evicted</span></td><td class="n">2,981</td>
+      <td>Placements pushed out when a better-fitting reading claimed the same time gap.
+      Listed in the companion workbook with the reason.</td></tr>
+  <tr><td><span class="tier tX">dup</span></td><td class="n">1,703</td>
+      <td>Exact duplicates removed: same bin, same timestamp (439 stamped + 1,264
+      unstamped).</td></tr>
+  <tr class="sum"><td>Total</td><td class="n">264,817</td><td>Every raw row, exactly once.</td></tr>
+</table>
+</div>
+
+<div class="box good">Nothing was silently discarded. A row that does not appear on the
+map sits in a companion workbook with a stated reason, and the eight tiers above sum to
+the raw row count without remainder.</div>
+
+<p>Two rules hold everywhere in the explorer and in the thesis. First, inferred,
+low-confidence, phantom and isolated rows are <em>observations</em>, not collections;
+no statistic ever counts them as an emptying. Second, the weighbridge load and the
+recorded kilometres describe a whole identifier. When an identifier turns out to contain
+several vehicles, its kg and km are shown with each track but summed once. Totals built
+this way: 25,724 tonnes and 1,308,593 km over the four years and four months.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="trips">
+<h2><span class="no">2</span>From button presses to drivable vehicle tracks</h2>
+
+<p>Treating each idrecolha as one trip fails on physical grounds. Some identifiers stamp
+two bins seconds apart that lie 20 km from each other; one recorded 54 bins in a single
+minute, spread over 20.8 km. Crews share numbers, run two trucks under one code, or type
+the whole day in at the desk after the shift. So every identifier was tested against the
+road network, and split or repaired until each consecutive pair of stamps is physically
+drivable by a real truck.</p>
+
+<h3>The road-time engine</h3>
+<p>Distances and times come from the OpenStreetMap road network around Rio Maior
+(13,204 road segments; footpaths and stairs excluded), built into a routable graph of
+236,364 nodes in the Portuguese national grid (EPSG:3763). The 816 bins collapse to 270
+kerbside sites (bins standing together share a site), plus the depot and the transfer
+station: 272 sites, snapped to the nearest road with a median error of 7 m. Between
+every pair of sites the engine stores two travel times. The <b>legal</b> time uses the
+speed a loaded truck may actually drive on each road class (90 km/h on motorway, 80 on
+trunk, primary and secondary roads, 70 on tertiary, 50–60 on links and everything else).
+The <b>ceiling</b> time uses the physical limit of the road (130/100/100/90/80, 60
+otherwise) and exists only to judge doubtful cases. No flat average speed appears
+anywhere in the pipeline.</p>
+
+<h3>Service time and tolerance, measured rather than assumed</h3>
+<p>How long does a stop take? The data answer: within clean single-vehicle trips, the
+median gap between consecutive stamps at different sites leaves 0.02 minutes beyond the
+driving time, measured over 12,587 stamp pairs in 8,837 trusted trips. Drivers stamp in
+bursts. The 5th percentile of slack is +2.5 minutes, comfortably positive, so the
+feasibility test runs with zero added tolerance. Both numbers are calibrated in
+<code>calibration.json</code>, not chosen.</p>
+
+<h3>Splitting, merging, flagging</h3>
+<div class="tablewrap">
+<table>
+  <caption>What the 9,984 identifiers turned out to be</caption>
+  <tr><th>Verdict</th><th class="n">Identifiers</th><th>Meaning</th></tr>
+  <tr><td>single-clean</td><td class="n">9,308</td><td>One vehicle; every consecutive stamp pair drivable at legal speeds.</td></tr>
+  <tr><td>multi-vehicle</td><td class="n">559</td><td>Impossible jumps even at ceiling speeds: two or more trucks under one code. Split into tracks a, b, c…</td></tr>
+  <tr><td>batch-entry</td><td class="n">101</td><td>Stamps ≤ 1 min apart spanning &gt; 2 km: the day typed in afterwards. Kept, but excluded from route mining.</td></tr>
+  <tr><td>single-merged</td><td class="n">16</td><td>An earlier split that the ceiling test showed to be one vehicle after all; re-joined.</td></tr>
+  <tr class="sum"><td>Total</td><td class="n">9,984</td><td>→ 11,691 vehicle tracks.</td></tr>
+</table>
+</div>
+
+<p>Ninety junctions sit in between: too fast for legal speeds, possible at the physical
+ceiling. They stay merged but flagged, and the explorer draws them dotted with a
+tooltip. A further 133 pairs of tracks are continuations (same crew starting a new
+identifier within 20 minutes and 3 km of closing the old one, same route prefix); the
+later trip carries a "continues from" note. All 13,365 tracks, phantoms included, were
+routed on the graph with zero failures.</p>
+
+<h3>Placing the unstamped readings</h3>
+<p>142,999 rows are fill readings with no button press. Each was offered to every track
+that passes its bin at a plausible moment, and charged the legal-time detour its
+insertion would cost. A reading joins a track as tier I only when the best candidate
+beats the runner-up by at least 70/30 on that cost; otherwise it stays tier L with a
+question mark. Readings feasible for no logged track at all went to a separate pool:
+11,398 of them. Chained by the same feasibility rules, they form 1,674 <b>phantom
+tracks</b> (reconstructed vehicles of three stops or more, absorbing 10,136 readings)
+plus 1,262 isolated observations. Phantom tracks are the strongest single finding of the
+rebuild: bins were verifiably visited by vehicles that never appear in the logbook.</p>
+
+<div class="box warn">Limitation. The 2,981 evicted placements show that greedy
+insertion is imperfect; they are retained row-by-row in
+<code>dropped_v7.parquet</code>. And a low-confidence (L) placement is a guess between
+plausible tracks, which is why the explorer never lets one masquerade as evidence.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="sensors">
+<h2><span class="no">3</span>Cleaning the sensor file</h2>
+
+<p>The raw sensor export is one long table: bin, timestamp, fill value. A quarter of it
+cannot be used as fill information. Negative values are error codes, not levels; frozen
+electronics repeat one number for weeks; occasional readings jump upward faster than any
+bin can physically fill. Each pathology has a written rule, and every removed reading
+keeps its reason in <code>sensor_removed.parquet</code>.</p>
+
+<div class="tablewrap">
+<table>
+  <caption>Removal rules, applied in order</caption>
+  <tr><th>Rule</th><th class="n">Removed</th><th>Definition and reason</th></tr>
+  <tr><td>STUCK</td><td class="n">160,280</td><td>Six or more identical consecutive values spanning over 48 h: a frozen sensor. The first reading of the run is kept. Worst case: bin 11593 reported "82" for 305 days.</td></tr>
+  <tr><td>NEG_CODE</td><td class="n">50,620</td><td>Values below −10 are hardware error codes (−116 alone occurs 37,052 times). Kept as fault metadata, shown faded in the explorer, never used as fill.</td></tr>
+  <tr><td>NEG_SMALL</td><td class="n">46,212</td><td>Values −10 to −1: brief electronic dips around empty.</td></tr>
+  <tr><td>SPIKE</td><td class="n">218</td><td>A rise of ≥ 40 units within 30 minutes is physically implausible; the spiked reading goes.</td></tr>
+  <tr><td>DUPLICATE</td><td class="n">38</td><td>Same bin, same timestamp; first kept.</td></tr>
+  <tr class="sum"><td>Removed</td><td class="n">257,368</td><td>24.5% of the file. Kept for analysis: 791,207 readings.</td></tr>
+</table>
+</div>
+
+<h3>The fleet, year by year</h3>
+<div class="tablewrap">
+<table>
+  <caption>Sensor fleet and yield per year (readings after cleaning; cadence = clean readings per bin-day)</caption>
+  <tr><th>Year</th><th class="n">Active</th><th class="n">Added</th><th class="n">Went silent</th>
+      <th class="n">Readings kept</th><th class="n">Removed</th><th class="n">Emptyings detected</th>
+      <th class="n">Cadence (median bin)</th></tr>
+  <tr><td>2020</td><td class="n">265</td><td class="n">265</td><td class="n">0</td><td class="n">37,319</td><td class="n">70,748</td><td class="n">2,883</td><td class="n">0.50</td></tr>
+  <tr><td>2021</td><td class="n">279</td><td class="n">14</td><td class="n">0</td><td class="n">125,481</td><td class="n">43,949</td><td class="n">13,133</td><td class="n">1.23</td></tr>
+  <tr><td>2022</td><td class="n">279</td><td class="n">0</td><td class="n">0</td><td class="n">115,361</td><td class="n">44,450</td><td class="n">12,981</td><td class="n">1.08</td></tr>
+  <tr><td>2023</td><td class="n">335</td><td class="n">56</td><td class="n">0</td><td class="n">295,078</td><td class="n">78,084</td><td class="n">13,349</td><td class="n">1.29</td></tr>
+  <tr><td>2024 (to Apr)</td><td class="n">335</td><td class="n">9</td><td class="n">9</td><td class="n">217,968</td><td class="n">20,137</td><td class="n">5,197</td><td class="n">1.40</td></tr>
+  <tr class="sum"><td>Total</td><td class="n">344</td><td class="n">344</td><td class="n">9</td><td class="n">791,207</td><td class="n">257,368</td><td class="n">47,543</td><td class="n">—</td></tr>
+</table>
+</div>
+
+<p>The hardware clearly improved. Error codes made up 36.6% of all 2020 readings and
+2.6% of 2024 readings, and a typical bin went from one report every two days to about
+1.4 per day (fleet means run higher, up to 5.7 in early 2024, because some 2023-fitted
+units report many times a day).</p>
+
+<h3>Eras and the ceiling problem</h3>
+<p>The sensor's unit was never documented, and its behaviour changed twice: the scale
+shifted in November 2020, and the reporting rate doubled from 2023. The record is
+therefore split into three eras (E1 to October 2020, E2 November 2020 – December 2022,
+E3 from January 2023), and each bin's fill is expressed as a percentage of that bin's own
+maximum within the era. The ceiling is remarkably uniform: median 82, maximum 84, in all
+three eras. Whether "82" means a physically full bin or the sensor's blind zone is an
+open question (registered as such since round W2), which is exactly why the explorer
+shows percentages of ceiling rather than claiming litres.</p>
+
+<div class="tablewrap">
+<table>
+  <caption>Era summary</caption>
+  <tr><th>Era</th><th>Window</th><th class="n">Bins</th><th class="n">Readings</th><th class="n">Ceiling (median)</th><th class="n">Mean fill, % of ceiling</th></tr>
+  <tr><td>E1</td><td>Jan – Oct 2020</td><td class="n">250</td><td class="n">9,742</td><td class="n">82</td><td class="n">69.3</td></tr>
+  <tr><td>E2</td><td>Nov 2020 – Dec 2022</td><td class="n">279</td><td class="n">268,419</td><td class="n">82</td><td class="n">46.5</td></tr>
+  <tr><td>E3</td><td>Jan 2023 – Apr 2024</td><td class="n">344</td><td class="n">513,046</td><td class="n">82</td><td class="n">47.8</td></tr>
+</table>
+</div>
+
+<h3>Detecting emptyings in the sensor record</h3>
+<p>An emptying shows up as a sharp fall. The rule: a clean fall of at least 25 units
+within at most 24 hours. 50,900 such falls were found; 3,357 were discarded because a
+removed reading sat inside the fall window (the fall might be an artefact of the fault),
+leaving <b>47,543 detected emptying events</b>. Each carries a confidence from the
+window's width: high within 6 h (14,864 after demotion), medium within 12 h (6,447), low
+otherwise (26,232). One further guard: if the level rebounds by 20 points within 6 hours
+of the fall, the event smells of a sensor dip rather than a truck, and its confidence is
+demoted to low. That demotion touched 21,055 events, so the confident core is
+deliberately small.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="cross">
+<h2><span class="no">4</span>What each file says about the other</h2>
+
+<p>With the driver file rebuilt (section 2) and the sensor file cleaned (section 3), the
+two can finally be laid side by side. The matching rule is simple: a stamped stop counts
+as sensor-confirmed when a detected emptying of the same bin overlaps the stamp by at
+most 90 minutes. The comparison is only fair where a sensor was actually reporting, so
+the table below counts stamped stops at bins whose sensor delivered at least one clean
+reading in that calendar year.</p>
+
+<div class="tablewrap">
+<table>
+  <caption>Emptyings per year, by which file saw them (instrumented bins only)</caption>
+  <tr><th>Year</th><th class="n">Driver-only</th><th class="n">Both agree (D+S)</th><th class="n">Sensor-only recovered</th></tr>
+  <tr><td>2020</td><td class="n">6,586</td><td class="n">351</td><td class="n">2,523</td></tr>
+  <tr><td>2021</td><td class="n">4,713</td><td class="n">2,431</td><td class="n">10,629</td></tr>
+  <tr><td>2022</td><td class="n">4,688</td><td class="n">2,749</td><td class="n">10,187</td></tr>
+  <tr><td>2023</td><td class="n">5,131</td><td class="n">2,981</td><td class="n">10,264</td></tr>
+  <tr><td>2024 (to Apr)</td><td class="n">1,182</td><td class="n">1,003</td><td class="n">4,181</td></tr>
+  <tr class="sum"><td>Total</td><td class="n">22,300</td><td class="n">9,515</td><td class="n">37,784</td></tr>
+</table>
+</div>
+
+<p>Three things follow. The overlap is thin: of 60,477 stamped emptyings, 9,515 have a
+matching sensor event, and 28,662 more sit at bins with no live sensor that year at all.
+2020 barely registers on the sensor side because cadence was one reading every two days
+and a third of readings were error codes; a fall cannot be seen between two readings
+that never arrived. And the sensor-only column is large in every mature year.</p>
+
+<div class="box">The headline: <b>37,784 emptyings appear in the sensor record and
+nowhere in the logbook.</b> Valued at each bin's volume, its level before the fall and
+mid-range material densities, that is roughly 4,500 tonnes of collected recyclables with
+no written trace. The explorer draws these as diamonds (38,419 placements on 6,638
+tracks, since one event can sit within 300 m of two different trips that day).</div>
+
+<p>Honesty about that tonnage figure: it is an order-of-magnitude estimate, not a
+measurement. It inherits the density bands, the unverified fill unit and the era
+ceilings, and none of it was weighed. The event count is the solid number; the tonnes
+are its rough translation. Earlier rounds also showed record-level agreement between
+driver fill notes and sensor levels stuck near 50%, so the two instruments are treated
+throughout as non-interchangeable witnesses rather than as calibrations of each other.
+Consistent with all of this, recorded truck kilometres run about three times the
+shortest path through the logged stops (a W4 result), so the logbook is best read as a
+hard lower bound on the real work done.</p>
+
+<h3>Standing circuits</h3>
+<p>If crews drive habitual rounds, trips should repeat their site sets. Among the 3,164
+eligible trips (at least 4 sites, no batch entries, no speed-flagged junctions),
+chronological clustering by Jaccard similarity (the share of sites two trips have in
+common) at a 0.5 threshold finds <b>151 standing circuits</b> containing 1,103 trips,
+34.9% of the eligible set. The threshold sits at the coverage/cohesion elbow and reads
+as "majority of sites shared with the founding trip". Coverage falls from 59.8% of 2020
+trips to zero in early 2024: the operation visibly moved away from fixed rounds, which
+is what a sensor-driven service is supposed to do.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="assumptions">
+<h2><span class="no">5</span>The assumption register</h2>
+
+<p>Every rule that shapes a number in the explorer, with its value and its one-line
+justification. Calibrated values were measured from the data; set values are choices,
+and each names its reason.</p>
+
+<div class="tablewrap">
+<table>
+  <tr><th>Rule</th><th>Value</th><th>Why</th></tr>
+  <tr><td>Road-type legal speeds</td><td>90/80/80/80/70; links 50–60; other 50 km/h</td>
+      <td>Feasibility clock: the fastest a loaded truck may legally drive each OSM road class. No flat network speed anywhere.</td></tr>
+  <tr><td>Ceiling speeds (merge policy only)</td><td>130/100/100/90/80; other 60 km/h</td>
+      <td>Physical road limits, used only to judge split junctions: impossible even at ceiling = different vehicles; legal-impossible but ceiling-possible = merged with a visible flag (90 junctions, dotted).</td></tr>
+  <tr><td>Service time at a stop</td><td>0.02 min median (p75 0.29)</td>
+      <td>Calibrated from 12,587 consecutive stamp pairs inside 8,837 clean trips; stamps arrive in bursts.</td></tr>
+  <tr><td>Feasibility tolerance</td><td>0 min</td>
+      <td>5th percentile of slack on trusted links is +2.5 min, so no allowance is needed.</td></tr>
+  <tr><td>Inference cutoff</td><td>p ≥ 0.7</td>
+      <td>A loose reading becomes an I stop only when the best track beats the runner-up 70/30 on legal-time detour cost; otherwise L with a question mark.</td></tr>
+  <tr><td>Batch-entry rule</td><td>gap ≤ 1 min and jump &gt; 2 km</td>
+      <td>Stamps seconds apart but kilometres apart were typed at a desk, not driven; 101 identifiers marked and excluded from circuit mining.</td></tr>
+  <tr><td>Phantom rule</td><td>≥ 3 chained stops</td>
+      <td>A reconstructed vehicle needs at least three feasibly-chained unreachable readings; fewer stay isolated observations.</td></tr>
+  <tr><td>Sensor error codes</td><td>fill &lt; −10 removed (50,620)</td>
+      <td>Hardware codes (−116, −3, −1…), never fill levels; kept as fault metadata, shown faded.</td></tr>
+  <tr><td>Transient negatives</td><td>−10 to −1 removed (46,212)</td>
+      <td>Brief electronic dips around empty.</td></tr>
+  <tr><td>Stuck filter</td><td>≥ 6 identical values over &gt; 48 h (160,280)</td>
+      <td>Frozen sensors repeat one number for weeks (record: 305 days); first reading kept.</td></tr>
+  <tr><td>Spike filter</td><td>rise ≥ +40 units in ≤ 30 min (218)</td>
+      <td>No bin fills that fast; physically implausible.</td></tr>
+  <tr><td>Emptying detection</td><td>fall ≥ 25 units in ≤ 24 h</td>
+      <td>Smallest fall clearly separated from noise. Confidence: ≤ 6 h high, ≤ 12 h medium, else low; windows touching a removed reading excluded (3,357).</td></tr>
+  <tr><td>Rebound demotion</td><td>rise ≥ 20 within 6 h after a fall → low</td>
+      <td>A quick refill after an apparent emptying suggests a sensor dip, not a truck (21,055 demoted).</td></tr>
+  <tr><td>Era ceilings</td><td>E1 ≤ Oct 2020 · E2 Nov 2020–Dec 2022 · E3 2023+</td>
+      <td>Scale change Nov 2020, cadence doubling 2023; fill shown as % of the bin's own era maximum (median 82) because the raw unit is unverified.</td></tr>
+  <tr><td>Density bands</td><td>P 25–40 · C 50–100 · G 250–350 kg/m³</td>
+      <td>Literature ranges for loose collected packaging, paper/card and glass; mids 32/75/300 for single estimates.</td></tr>
+  <tr><td>Sensor display window</td><td>± 3 h</td>
+      <td>A stop shows the nearest clean reading within 3 hours; a negative code is shown raw and faded.</td></tr>
+  <tr><td>Corroboration window (D+S)</td><td>± 90 min</td>
+      <td>A stamp counts as sensor-confirmed when a detected emptying overlaps it by at most 90 minutes.</td></tr>
+  <tr><td>Sensor-event radius</td><td>300 m</td>
+      <td>A sensor-only emptying is drawn on a trip only if its bin lies within 300 m of that day's route.</td></tr>
+  <tr><td>Circuit threshold</td><td>Jaccard ≥ 0.5, ≥ 3 occurrences</td>
+      <td>Coverage/cohesion elbow (34.9% / 0.685); majority of sites shared with the founding trip.</td></tr>
+  <tr><td>kg / km accounting</td><td>once per identifier</td>
+      <td>Weighbridge kg and recorded km describe the whole identifier; shown per track, summed once.</td></tr>
+</table>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="sources">
+<h2><span class="no">6</span>File-by-file lineage</h2>
+
+<p>The raw exports live frozen under <code>DATA/</code> and are never edited. Everything
+else regenerates from them by the scripts in <code>W5/01_scripts/</code>, in the order
+T0 to T7 below; each intermediate file keeps the dropped rows and reasons of its step.</p>
+
+<div class="tablewrap">
+<table>
+  <tr><th>File</th><th>Role</th></tr>
+  <tr><td><code>DATA/XLS/Enchimentos_com_Recolhas[RioMaior].csv</code></td><td>Driver logbook, 264,817 rows, 816 bins (mirrored as <code>Brain/03_db/parquet/raw_collections.parquet</code>).</td></tr>
+  <tr><td><code>DATA/XLS/Enchimentos_de_Sensores[RioMaior].csv</code></td><td>Sensor export, 1,048,575 readings, 344 bins, truncated at the Excel row ceiling (defect D1); mirrored as <code>raw_sensors.parquet</code>.</td></tr>
+  <tr><td><code>GIS_DATA/01_osm/riomaior_10km/osm_roads_riomaior10km.gpkg</code></td><td>OpenStreetMap roads (EPSG:3763) behind every travel time; footpaths banned.</td></tr>
+  <tr><td><code>W5/02_data_work/site_travel.parquet</code> + <code>calibration.json</code></td><td>T0/T1 — 272-site legal + ceiling road-time matrix; calibrated service time and tolerance.</td></tr>
+  <tr><td><code>trips_v7.json</code> + <code>phantom_tracks_v7.json</code> + <code>rebuild_stats.json</code></td><td>T2 — the track rebuild: splits, merges, batch flags, I/L placement, phantoms.</td></tr>
+  <tr><td><code>assignments_v7.parquet</code> + <code>dropped_v7.parquet</code></td><td>T2 — the fate of every unstamped reading, row by row, with reasons.</td></tr>
+  <tr><td><code>trip_anomaly_report.json</code> + <code>sensor_anomaly_report.json</code></td><td>T3 — anomaly audits: duplicates, same-minute bursts, stuck runs, error codes.</td></tr>
+  <tr><td><code>sensor_clean.parquet</code> + <code>sensor_removed.parquet</code> + <code>sensor_stats.json</code></td><td>Task E — sensor cleaning, kept vs removed by rule.</td></tr>
+  <tr><td><code>sensor_drops_v2.parquet</code></td><td>Task E — 47,543 detected emptying events with confidence and rebound flag.</td></tr>
+  <tr><td><code>trips_v7_enriched.json</code> + <code>trips_index_v7.json</code></td><td>T4 — fusion: fills, sensor columns, D/DS source tags, sensor-only events, weight bands.</td></tr>
+  <tr><td><code>circuits.json</code> + <code>circuit_membership.json</code></td><td>T5 — 151 standing circuits and their member trips.</td></tr>
+  <tr><td><code>trips_routed_v7.json</code> + <code>depot_legs_v7.json</code></td><td>T7 — road-following route geometry and depot/disposal legs (0 unroutable).</td></tr>
+  <tr><td><code>W4/02_data_work/trips_v5_base.json</code></td><td>Reference — the 9,984 stamped identifiers carried into W5.</td></tr>
+  <tr><td><code>W5/02_data_work/info_stats.json</code></td><td>This page's numbers, machine-readable: the same file feeds the explorer's info panel.</td></tr>
+</table>
+</div>
+
+<p class="note">Coordinate system EPSG:3763 (PT-TM06/ETRS89). Depot: Estaleiro Municipal,
+39.3392, −8.9249. Disposal: Valorsul transfer station, 39.3196, −8.9241. Densities
+and speeds as registered in section 5. Page generated 24 August 2026 within working
+round W5 of the PhD project on sensor-based recyclables collection planning, Rio Maior.</p>
+</section>
+
+<footer>
+  Every figure on this page is reproducible from the named files. Where a number required
+  a judgement call, the call and its reason stand in the assumption register above;
+  where something remains unknown (the sensor unit, the 82–84 ceiling, the true extent
+  of unlogged work), it is said so in place.
+  · <a href="../index.html" style="color:var(--acc)">Back to the explorer</a>
+</footer>
+
+</div>
+</body>
+</html>

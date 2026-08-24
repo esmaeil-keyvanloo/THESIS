@@ -1,0 +1,501 @@
+{
+  "meta": {
+    "rows": 1048575,
+    "bins": 344,
+    "ts_min": "2020-01-01 00:05:50.227000",
+    "ts_max": "2024-04-30 13:01:38.553000",
+    "valid_rows": 951743,
+    "negative_rows": 96832,
+    "definitions": {
+      "valid": "Enchimento >= 0 (range observed 0..84); negatives are sensor error codes",
+      "stuck": ">=6 identical consecutive valid values per bin spanning >48h",
+      "spike": "rise >= +40 units between consecutive valid readings <=30 min apart",
+      "rebound": "valid reading immediately after a negative run that is >= pre-run valid value (sensor recovers, no data lost) vs lower (possible missed emptying)",
+      "big_drop": "fall >= 30 units between consecutive valid readings (collection-like)",
+      "inconsistent_after_drop": "rise >= 20 units within 6h after a big drop",
+      "silent_gap": "> 7 days between consecutive readings inside a bin's active window",
+      "near_zero_bin": ">= 100 valid readings and >= 95% of them == 0",
+      "eras": "E1 2020-01..2020-10 (pre Nov-2020 scale change), E2 2020-11..2022-12, E3 2023-01..2024-04 (post cadence doubling)"
+    }
+  },
+  "negatives": {
+    "total": 96832,
+    "share_pct": 9.23,
+    "by_family_year": {
+      "2020": {
+        "glass": 0,
+        "packaging": 19095,
+        "paper": 20504
+      },
+      "2021": {
+        "glass": 0,
+        "packaging": 7281,
+        "paper": 7471
+      },
+      "2022": {
+        "glass": 0,
+        "packaging": 6066,
+        "paper": 6691
+      },
+      "2023": {
+        "glass": 168,
+        "packaging": 11932,
+        "paper": 11366
+      },
+      "2024": {
+        "glass": 18,
+        "packaging": 2420,
+        "paper": 3820
+      }
+    },
+    "top_codes": {
+      "-116": 37052,
+      "-3": 11748,
+      "-1": 10114,
+      "-4": 8422,
+      "-2": 5804,
+      "-89": 3353,
+      "-6": 3226,
+      "-5": 3015,
+      "-8": 1403,
+      "-7": 1068
+    },
+    "bins_with_negatives": 329
+  },
+  "stuck_runs": {
+    "count": 11862,
+    "count_nonzero_value": 11832,
+    "count_zero_value": 30,
+    "bins_affected": 336,
+    "longest_examples": [
+      {
+        "cid": "11593",
+        "value": 82,
+        "n_readings": 34,
+        "start": "2020-01-01 14:45:31.989000",
+        "end": "2020-11-02 04:22:12.799000",
+        "days": 305.6
+      },
+      {
+        "cid": "7945",
+        "value": 82,
+        "n_readings": 283,
+        "start": "2020-01-01 01:47:03.113000",
+        "end": "2020-10-31 12:10:50.004000",
+        "days": 304.4
+      },
+      {
+        "cid": "10168",
+        "value": 82,
+        "n_readings": 317,
+        "start": "2020-01-01 10:59:31.239000",
+        "end": "2020-10-31 08:02:15.450000",
+        "days": 303.9
+      },
+      {
+        "cid": "20619",
+        "value": 82,
+        "n_readings": 304,
+        "start": "2020-01-01 23:26:28.882000",
+        "end": "2020-10-31 12:44:21.782000",
+        "days": 303.6
+      },
+      {
+        "cid": "3336",
+        "value": 82,
+        "n_readings": 133,
+        "start": "2020-01-01 06:24:05.365000",
+        "end": "2020-10-30 17:29:00.180000",
+        "days": 303.5
+      }
+    ],
+    "longest_nonzero_examples": [
+      {
+        "cid": "11593",
+        "value": 82,
+        "n_readings": 34,
+        "start": "2020-01-01 14:45:31.989000",
+        "end": "2020-11-02 04:22:12.799000",
+        "days": 305.6
+      },
+      {
+        "cid": "7945",
+        "value": 82,
+        "n_readings": 283,
+        "start": "2020-01-01 01:47:03.113000",
+        "end": "2020-10-31 12:10:50.004000",
+        "days": 304.4
+      },
+      {
+        "cid": "10168",
+        "value": 82,
+        "n_readings": 317,
+        "start": "2020-01-01 10:59:31.239000",
+        "end": "2020-10-31 08:02:15.450000",
+        "days": 303.9
+      },
+      {
+        "cid": "20619",
+        "value": 82,
+        "n_readings": 304,
+        "start": "2020-01-01 23:26:28.882000",
+        "end": "2020-10-31 12:44:21.782000",
+        "days": 303.6
+      },
+      {
+        "cid": "3336",
+        "value": 82,
+        "n_readings": 133,
+        "start": "2020-01-01 06:24:05.365000",
+        "end": "2020-10-30 17:29:00.180000",
+        "days": 303.5
+      }
+    ]
+  },
+  "spikes": {
+    "count": 218,
+    "bins_affected": 60,
+    "by_year": {
+      "2020": 146,
+      "2021": 70,
+      "2024": 2
+    },
+    "examples": [
+      {
+        "cid": "1116",
+        "ts": "2021-01-01 10:31:39.729000",
+        "from": 1,
+        "to": 82,
+        "minutes": 28.9
+      },
+      {
+        "cid": "1116",
+        "ts": "2021-01-01 06:16:57.243000",
+        "from": 0,
+        "to": 80,
+        "minutes": 28.8
+      },
+      {
+        "cid": "18705",
+        "ts": "2021-01-06 08:31:05.633000",
+        "from": 3,
+        "to": 82,
+        "minutes": 28.4
+      },
+      {
+        "cid": "17812",
+        "ts": "2021-01-15 21:42:31.831000",
+        "from": 4,
+        "to": 82,
+        "minutes": 29.3
+      },
+      {
+        "cid": "13579",
+        "ts": "2021-01-01 16:07:00.202000",
+        "from": 6,
+        "to": 82,
+        "minutes": 29.0
+      }
+    ]
+  },
+  "post_negative_rebounds": {
+    "negative_runs_total": 29885,
+    "runs_with_before_and_after": 29714,
+    "rebound_ge_before": 11631,
+    "resume_lower_than_before": 18083,
+    "rebound_share_pct": 39.1,
+    "examples_rebound": [
+      {
+        "cid": "10037",
+        "neg_readings": 2,
+        "start": "2020-01-05 15:55:37.075000",
+        "end": "2020-01-05 19:28:26.949000",
+        "before": 81,
+        "after": 81
+      },
+      {
+        "cid": "10037",
+        "neg_readings": 2,
+        "start": "2020-01-17 20:17:22.797000",
+        "end": "2020-01-18 01:21:07",
+        "before": 15,
+        "after": 48
+      },
+      {
+        "cid": "10037",
+        "neg_readings": 4,
+        "start": "2020-02-06 19:52:43.042000",
+        "end": "2020-02-09 15:36:46.584000",
+        "before": 69,
+        "after": 80
+      }
+    ],
+    "examples_lower": [
+      {
+        "cid": "24584",
+        "neg_readings": 2,
+        "start": "2020-03-16 14:17:01.144000",
+        "end": "2020-03-17 08:34:16.964000",
+        "before": 84,
+        "after": 83
+      },
+      {
+        "cid": "24584",
+        "neg_readings": 1,
+        "start": "2020-05-11 08:25:46.171000",
+        "end": "2020-05-11 08:25:46.171000",
+        "before": 84,
+        "after": 82
+      },
+      {
+        "cid": "24671",
+        "neg_readings": 6,
+        "start": "2023-11-09 08:55:12.721000",
+        "end": "2023-11-09 13:55:12.721000",
+        "before": 84,
+        "after": 82
+      }
+    ]
+  },
+  "duplicate_timestamps": {
+    "duplicate_rows": 76,
+    "duplicate_pairs_groups": 38,
+    "groups_with_conflicting_fill": 15,
+    "bins_affected": 37,
+    "examples_conflicting": [
+      {
+        "cid": "1170",
+        "ts": "2023-10-29 01:42:46.380000",
+        "values": [
+          38,
+          37
+        ]
+      },
+      {
+        "cid": "13243",
+        "ts": "2023-10-29 01:41:28.585000",
+        "values": [
+          21,
+          20
+        ]
+      },
+      {
+        "cid": "1399",
+        "ts": "2023-10-29 01:01:23.269000",
+        "values": [
+          45,
+          38
+        ]
+      }
+    ]
+  },
+  "cadence": {
+    "readings_per_day_by_month": {
+      "2020-01-01": 209.3,
+      "2020-02-01": 243.1,
+      "2020-03-01": 253.3,
+      "2020-04-01": 252.6,
+      "2020-05-01": 223.9,
+      "2020-06-01": 247.0,
+      "2020-07-01": 236.7,
+      "2020-08-01": 220.2,
+      "2020-09-01": 231.0,
+      "2020-10-01": 317.9,
+      "2020-11-01": 537.6,
+      "2020-12-01": 569.9,
+      "2021-01-01": 538.1,
+      "2021-02-01": 558.9,
+      "2021-03-01": 481.7,
+      "2021-04-01": 440.2,
+      "2021-05-01": 444.9,
+      "2021-06-01": 451.7,
+      "2021-07-01": 458.4,
+      "2021-08-01": 456.2,
+      "2021-09-01": 450.8,
+      "2021-10-01": 442.5,
+      "2021-11-01": 426.7,
+      "2021-12-01": 426.6,
+      "2022-01-01": 434.8,
+      "2022-02-01": 424.0,
+      "2022-03-01": 423.3,
+      "2022-04-01": 440.0,
+      "2022-05-01": 450.4,
+      "2022-06-01": 448.3,
+      "2022-07-01": 464.5,
+      "2022-08-01": 470.6,
+      "2022-09-01": 454.6,
+      "2022-10-01": 428.6,
+      "2022-11-01": 400.7,
+      "2022-12-01": 412.6,
+      "2023-01-01": 430.2,
+      "2023-02-01": 459.1,
+      "2023-03-01": 467.8,
+      "2023-04-01": 487.9,
+      "2023-05-01": 511.8,
+      "2023-06-01": 872.2,
+      "2023-07-01": 1198.0,
+      "2023-08-01": 1211.4,
+      "2023-09-01": 1379.9,
+      "2023-10-01": 1580.3,
+      "2023-11-01": 1753.8,
+      "2023-12-01": 1874.5,
+      "2024-01-01": 1888.7,
+      "2024-02-01": 1964.8,
+      "2024-03-01": 2008.7,
+      "2024-04-01": 2010.2
+    },
+    "change_point_months_ratio_gt1.5_or_lt0.67": [
+      "2020-11-01",
+      "2023-06-01"
+    ],
+    "mean_per_day_2020": 295.2,
+    "mean_per_day_2021": 464.7,
+    "mean_per_day_2022": 437.7,
+    "mean_per_day_2023": 1018.9,
+    "mean_per_day_2024": 1968.1
+  },
+  "ceiling_drift": {
+    "era_global_max": {
+      "E1": 84,
+      "E2": 84,
+      "E3": 84
+    },
+    "era_global_p99": {
+      "E1": 83.0,
+      "E2": 82.0,
+      "E3": 84.0
+    },
+    "E1_to_E2": {
+      "bins_compared": 175,
+      "median_ceiling_change": 0.0,
+      "bins_ceiling_up_gt20": 1,
+      "bins_ceiling_down_gt20": 0
+    },
+    "E2_to_E3": {
+      "bins_compared": 279,
+      "median_ceiling_change": 0.0,
+      "bins_ceiling_up_gt20": 0,
+      "bins_ceiling_down_gt20": 1
+    },
+    "examples_biggest_E1E2_shift": [
+      {
+        "cid": "11828",
+        "E1_max": 56,
+        "E2_max": 82
+      },
+      {
+        "cid": "12460",
+        "E1_max": 65,
+        "E2_max": 82
+      },
+      {
+        "cid": "10150",
+        "E1_max": 79,
+        "E2_max": 82
+      }
+    ]
+  },
+  "silent_gaps_gt7d": {
+    "count": 640,
+    "bins_affected": 124,
+    "longest_examples": [
+      {
+        "cid": "18704",
+        "gap_days": 302.9,
+        "from": "2021-10-27 13:07:58.582000",
+        "to": "2022-08-26 10:57:16.861000"
+      },
+      {
+        "cid": "20155",
+        "gap_days": 254.8,
+        "from": "2021-12-14 13:43:45.746000",
+        "to": "2022-08-26 09:44:58.445000"
+      },
+      {
+        "cid": "13750",
+        "gap_days": 231.4,
+        "from": "2020-03-11 09:32:44.273000",
+        "to": "2020-10-28 17:58:03.490000"
+      },
+      {
+        "cid": "629",
+        "gap_days": 228.0,
+        "from": "2023-08-25 15:45:29.997000",
+        "to": "2024-04-09 15:40:04.959000"
+      },
+      {
+        "cid": "1875",
+        "gap_days": 220.0,
+        "from": "2020-03-27 17:16:23.367000",
+        "to": "2020-11-02 16:55:12.934000"
+      }
+    ],
+    "total_silent_days": 17659.0
+  },
+  "post_drop_inconsistent": {
+    "big_drops_ge30": 45706,
+    "rise_ge20_within_6h_after_drop": 13986,
+    "share_pct": 30.6,
+    "bins_affected": 324,
+    "examples": [
+      {
+        "cid": "10037",
+        "ts": "2020-01-04 00:26:59.434000",
+        "pre_drop": 82,
+        "post_drop": 15,
+        "rebound_to": 81,
+        "hours_to_rebound": 1.0
+      },
+      {
+        "cid": "10037",
+        "ts": "2020-01-04 20:41:58.857000",
+        "pre_drop": 81,
+        "post_drop": 48,
+        "rebound_to": 81,
+        "hours_to_rebound": 0.5
+      },
+      {
+        "cid": "10037",
+        "ts": "2020-01-06 19:47:08.700000",
+        "pre_drop": 82,
+        "post_drop": 48,
+        "rebound_to": 80,
+        "hours_to_rebound": 0.5
+      },
+      {
+        "cid": "10037",
+        "ts": "2020-01-08 23:54:47.536000",
+        "pre_drop": 82,
+        "post_drop": 48,
+        "rebound_to": 81,
+        "hours_to_rebound": 0.5
+      },
+      {
+        "cid": "10037",
+        "ts": "2020-01-10 06:16:32.881000",
+        "pre_drop": 82,
+        "post_drop": 16,
+        "rebound_to": 82,
+        "hours_to_rebound": 0.5
+      }
+    ]
+  },
+  "near_zero_bins": {
+    "count": 0,
+    "examples": []
+  },
+  "bullets": [
+    "96,832 negative readings (9.23% of 1,048,575) across 329 bins; code -116 alone 37,052 rows",
+    "Negatives peak in 2020 (39,599 rows); by-family/year table in report",
+    "11,862 stuck runs (>=6 identical valid values >48h) on 336 bins; 11,832 at non-zero values (frozen sensors)",
+    "Longest stuck run: bin 11593 at 82 for 305.6 days (34 readings)",
+    "218 spikes (+40 within 30 min) on 60 bins",
+    "39.1% of 29,714 negative runs rebound at/above pre-error level; 18,083 resume lower (possible masked emptying)",
+    "76 duplicate-timestamp rows (38 groups, 15 with conflicting fill values)",
+    "Cadence: mean readings/day 437.7 (2022) -> 1018.9 (2023); change-point months: 2020-11-01, 2023-06-01",
+    "Ceiling drift: global p99 83.0 (E1) -> 82.0 (E2) -> 84.0 (E3); E1->E2 0 bins fell >20, 1 rose >20",
+    "640 silent gaps >7d on 124 bins (~17,659 bin-days silent)",
+    "13,986 of 45,706 big drops (>=30) rebound >=20 within 6h (30.6%) - suspect false emptyings",
+    "0 bins are >=95% zero across >=100 valid readings (dead or unused sensors)"
+  ]
+}

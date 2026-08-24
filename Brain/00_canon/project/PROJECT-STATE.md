@@ -1,7 +1,7 @@
 # PROJECT-STATE — live session-state file
 
 > **Rule for every chat:** read this file at start; update it at session close and after every major deliverable. Newest entries on top. Keep it tight — details live in the linked files, not here.
-> Last updated: **2026-08-13** (session S2).
+> Last updated: **2026-08-24** (session S19).
 
 ## 1. Data map — what each dataset is and what it is for
 
@@ -9,6 +9,8 @@
 |---|---|---|
 | Driver CSV (264,817 rows, 816 containers) | `DATA/XLS/Enchimentos_com_Recolhas…` → `Brain/03_db/parquet/raw_collections.parquet` | Network-wide relative demand; glass demand; driver-vs-sensor chapter; partial route codes (92, CE=packaging/CP=paper) |
 | Sensor CSV (1,048,575 rows, 344 containers, truncated D1) | `DATA/XLS/Enchimentos_de_Sensores…` → `raw_sensors.parquet` | Fill-rate (demand) estimation; cadence 2.55/day; unit unverified (D3, ceiling 82–84); excludes glass (2 units) |
+| **Master event dataset v2 (CANONICAL for statistics)** | `Brain/03_db/parquet/master_events_w5.parquet` (Excel twin `W5/03_outputs/tables/Combined_Master_W5.xlsx`) | 307,676 events: every driver reading (by trip, tiered S/pre/I/L/P/iso, src D/DS) + 47,543 sensor drop events (confidence + rebound flag); supersedes master_events_w4 |
+| Trips v7 + fusion (current) | `W5/02_data_work/` (trips_v7_enriched, index, routed 3 m, assignments, dropped, sensor_clean/removed/drops_v2, site_travel matrix, calibration) | Clean trip world under road-legal physics; nothing silently dropped (reasons in dropped_v7 / sensor_removed) |
 | Reconciled container layer (816 pts + per-container stats) | `W2/02_data_work/containers_reconciled.geojson` | **Canonical container dataset** — demand points and candidate sites for p-median |
 | Container registry snapshot (464 bins, 193 instrumented) | `DATA/GEO DATA/gis rio.gdb` | Cross-check only; encoding damaged; other gdb layers retired (border is km smaller than CAOP) |
 | GIS_DATA library (6 GB, 52 styled QGIS layers) | `GIS_DATA/` + `GIS_DATA/README.md` | Boundaries (CAOP 2025), BGRI 2021/2011 census, COS/CRUS land use, MDT 10 m + slope, flood/fire hazard, rivers, E-REDES grid, OSM roads — covariates, constraints, network |
@@ -17,7 +19,19 @@
 
 ## 2. Chat log — sessions, main points, outputs
 
-### S18 — 2026-08-19 latest (W4 MASTER REBUILD; same chat)
+### S19 — 2026-08-24 latest (W5 THESIS-GRADE REBUILD; same chat)
+- **T0/T1 physics**: per-road-type truck-legal speed engine replaces ALL flat 60 km/h — 272-site travel matrix (legal + ceiling minutes + km) from OSM graph (`W5/02_data_work/site_travel.parquet`); calibration from 13,386 trusted stamped gaps: service_med ≈ 0 (66% of stamps are ≤5 s batch entries), slack p05 = +2.53 min → **tol = 0** (road-legal times alone fix the false exclusions; the flat-60 model was the culprit).
+- **T2 audit → rebuild v7**: 12-bullet anomaly list (dupes 868 exact/1,208 minute; 1,270 repeat stamps in-trip; 118 impossible same-minute bursts; 113 admin-split tour pairs; 3,135-km trip; 320 copy-paste kg combos; fills useless in driver stream; 7 material-mixed identifiers). Rebuild from scratch with engine physics: **11,691 trips + 1,674 phantoms (13,365 cards)**; tiers close exactly on 264,817 = S 60,477 + pre 59,638 + **I 120,813** + L 7,807 + P 10,136 + iso 1,262 + evicted 2,981 + dupes 1,703; mutual-feasibility chain validation residual = 0 (fixes #1068-type conflicts); 133 continuation pairs annotated `continues_from` (never merged); 87 flagged tracks / 90 above-legal junctions.
+- **T3 audit → sensors v2**: 12-bullet list (negatives 96,832; 11,862 frozen runs — one bin stuck at 82 for 306 d; cadence doubling Jun-2023; era ceilings stable 82–84; 640 week-long gaps). Cleaned: **791,207 of 1,048,575 kept (75.5%)**; removed by reason (STUCK 160,280 / NEG_CODE 50,620 / NEG_SMALL 46,212 / SPIKE 218 / DUP 38). Drops v2: 47,543 emptying events; **rebound rule added by orchestrator: fill rising ≥20 pts within 6 h after a drop demotes it to low confidence — 21,055 demoted (44.3%)** → high 14,864 / med 6,447 / low 26,232. Recovered-emptying claims now honest.
+- **T4 fusion**: stops 10-element (`…, sensor_pct, src`); 9,515 stamped stops sensor-corroborated (D+S, ±90 min); **38,419 sensor-only recovered emptyings attached to 6,638 trips** as diamond events (conf-split); per-trip evidence_mix; per-year cross table in ⓘ (sensor-only ≈ 37.8k events ≈ 4,541 t work never logged).
+- **T5 circuits**: 151 standing circuits (Jaccard 0.5, per-material); **headline finding: circuit coverage dissolves 59.8% (2020) → 27% → 29% → 20% → 0% (2024)** — 2020 fixed-weekday mega-rounds (71–85 sites) die by Feb-2021; compact ~8-site cores persist to 2023; by 2024 (peak sensor logging) no site set recurs — collection has become fill-driven ad-hoc. Glass never repeats. `circuits.json`, membership in explorer index (`cir`).
+- **T6 workbooks + source-of-truth**: `W5/03_outputs/tables/` — Driver_Data_W5.xlsx (clean-by-trip 260,133 + dropped 4,684 + METHOD), Sensor_Data_W5.xlsx (clean 791,207 + removed 257,368 + drops 47,543 + METHOD), Combined_Master_W5.xlsx (events 307,676 = frozen twin of **`Brain/03_db/parquet/master_events_w5.parquet`**); everything reconciles to raw totals; nothing silently dropped. Explorer ⓘ = tabbed source of truth (Overview/Trips/Sensors/Cross-check/Assumptions/Sources) fed by `info_stats.json`, each tab linking `info/methodology.html` (standalone jury-readable page).
+- **T7 routes**: 3 m tolerance, 9,908 routes (0 unroutable), playback anchors verified; depot/TS legs; flag sub-paths.
+- **T8/T9 explorer W5** (`W5/03_outputs/explorer/`, port 8767): **hybrid-neumorphic UI** (soft chrome / flat data) + **editorial.html** sample skin (paper/hairlines/serif; footer link switches); 3-way **Driver / Sensor / Combined** source views (?view= deep link; sensor view = drop-event calendar+diamond map); D / D+S source tags per stop; diamond sensor-only markers; evidence bars on chips/cards; teal evidence strips on calendar days; **animated trip playback** (timestamp-driven truck, speed readout vs per-leg legal average, red when above, pause/scrub/×5–×180); fully responsive (4K → 360 px phones; ≤920 px = drawer layout with FABs). **E2E Playwright matrix green: 6 viewports × ~25 checks + deep links, zero console errors** (`W5/01_scripts/e2e_check_w5.py`).
+- Root index.html now redirects to W5. **Vercel: user must switch project Root Directory to `W5/03_outputs/explorer`** (Pages needs nothing).
+- Next critical path: demand model on `master_events_w5.parquet` (drops as service events, active windows as denominators) → p-median instance.
+
+### S18 — 2026-08-19 (W4 MASTER REBUILD; same chat)
 - **T1** merge pass: 477 of 1,147 splits re-merged (ceiling policy); 108 carry speed_flags (117 junctions drawn DOTTED in explorer w/ tooltip); 554 multi-vehicle + 116 batch-entry stay split. Tracks 11,495 → 11,016 (+2,445 phantoms = 13,461).
 - **T2** all loose readings assigned: 85,597 'I' (p≥0.7) + 37,761 'L' low-confidence ("?" markers); leftovers 20,905.
 - **T3** phantoms: 2,445 reconstructed vehicles (≥3 stops, dotted lines, Phantom filter) absorbing 20,368 stops; 537 isolated observations remain.

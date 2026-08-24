@@ -1,0 +1,488 @@
+{
+  "meta": {
+    "rows_total": 264817,
+    "rows_stamped": 60916,
+    "identifiers": 9984,
+    "generated": "2026-08-24T22:30:28"
+  },
+  "duplicates": {
+    "same_cid_exact_ts_rows": 868,
+    "same_cid_exact_ts_groups": 429,
+    "same_cid_same_minute_rows": 1208,
+    "same_cid_same_minute_groups": 579,
+    "examples": [
+      {
+        "cid": "14387",
+        "ts": "2022-05-04 17:57:57.570000",
+        "n": 3,
+        "identifiers": [
+          "20460"
+        ]
+      },
+      {
+        "cid": "14387",
+        "ts": "2020-11-23 17:40:31",
+        "n": 3,
+        "identifiers": [
+          "7573"
+        ]
+      },
+      {
+        "cid": "10240",
+        "ts": "2022-05-05 00:11:28.871000",
+        "n": 3,
+        "identifiers": [
+          "20460"
+        ]
+      },
+      {
+        "cid": "1116",
+        "ts": "2020-09-16 12:38:24",
+        "n": 3,
+        "identifiers": [
+          "6145"
+        ]
+      },
+      {
+        "cid": "5977",
+        "ts": "2024-02-20 09:34:32.387000",
+        "n": 3,
+        "identifiers": [
+          "41576"
+        ]
+      }
+    ]
+  },
+  "same_bin_repeat_in_identifier": {
+    "bin_identifier_pairs": 1205,
+    "extra_stamps": 1270,
+    "identifiers_affected": 461,
+    "examples": [
+      {
+        "idrecolha": "19240",
+        "cid": "7473",
+        "times": 4
+      },
+      {
+        "idrecolha": "19240",
+        "cid": "1171",
+        "times": 4
+      },
+      {
+        "idrecolha": "19240",
+        "cid": "7733",
+        "times": 4
+      },
+      {
+        "idrecolha": "19357",
+        "cid": "18177",
+        "times": 4
+      },
+      {
+        "idrecolha": "19240",
+        "cid": "787",
+        "times": 4
+      }
+    ]
+  },
+  "same_minute_far_apart_bursts": {
+    "threshold_m": 500,
+    "bursts": 118,
+    "identifiers_affected": 109,
+    "examples": [
+      {
+        "idrecolha": "18313",
+        "minute": "2022-02-21 10:56:00",
+        "bins": 54,
+        "max_dist_m": 20785
+      },
+      {
+        "idrecolha": "32889",
+        "minute": "2023-07-03 10:29:00",
+        "bins": 26,
+        "max_dist_m": 18497
+      },
+      {
+        "idrecolha": "12440",
+        "minute": "2021-07-01 13:36:00",
+        "bins": 41,
+        "max_dist_m": 17316
+      },
+      {
+        "idrecolha": "32987",
+        "minute": "2023-06-30 15:07:00",
+        "bins": 16,
+        "max_dist_m": 17030
+      },
+      {
+        "idrecolha": "4808",
+        "minute": "2020-07-22 16:08:00",
+        "bins": 2,
+        "max_dist_m": 14152
+      }
+    ]
+  },
+  "consecutive_identifier_continuations": {
+    "criteria": "same date + rota prefix/material, gap<=20min, first/last bins <=3km straight-line",
+    "pairs": 113,
+    "identifiers_involved": 225,
+    "same_rota_pairs": 0,
+    "examples": [
+      {
+        "date": "2021-04-14",
+        "prefix": "CE",
+        "id_a": "10529",
+        "id_b": "10573",
+        "rota_a": "CE51",
+        "rota_b": "CE31",
+        "gap_min": 0.1,
+        "dist_m": 631
+      },
+      {
+        "date": "2020-12-09",
+        "prefix": "CP",
+        "id_a": "7905",
+        "id_b": "7904",
+        "rota_a": "CP43",
+        "rota_b": "CP28",
+        "gap_min": 0.2,
+        "dist_m": 989
+      },
+      {
+        "date": "2020-01-20",
+        "prefix": "CP",
+        "id_a": "1373",
+        "id_b": "1371",
+        "rota_a": "CP02",
+        "rota_b": "CP34",
+        "gap_min": 0.3,
+        "dist_m": 2327
+      },
+      {
+        "date": "2020-05-06",
+        "prefix": "CP",
+        "id_a": "3330",
+        "id_b": "3335",
+        "rota_a": "CP34",
+        "rota_b": "CP02",
+        "gap_min": 0.3,
+        "dist_m": 2327
+      },
+      {
+        "date": "2021-03-12",
+        "prefix": "CE",
+        "id_a": "9804",
+        "id_b": "9801",
+        "rota_a": "CE30B",
+        "rota_b": "CE07",
+        "gap_min": 0.5,
+        "dist_m": 2611
+      }
+    ]
+  },
+  "zero_duration_identifiers": {
+    "zero_duration_multibin": 59,
+    "under_2min_multibin": 38,
+    "examples": [
+      {
+        "idrecolha": "12371",
+        "bins": 43,
+        "dur_min": 0.0,
+        "date": "2021-06-29"
+      },
+      {
+        "idrecolha": "12440",
+        "bins": 41,
+        "dur_min": 0.0,
+        "date": "2021-07-01"
+      },
+      {
+        "idrecolha": "5158",
+        "bins": 6,
+        "dur_min": 1.67,
+        "date": "2020-08-03"
+      },
+      {
+        "idrecolha": "39642",
+        "bins": 4,
+        "dur_min": 0.28,
+        "date": "2023-12-27"
+      },
+      {
+        "idrecolha": "40604",
+        "bins": 4,
+        "dur_min": 0.18,
+        "date": "2024-01-24"
+      }
+    ]
+  },
+  "km_kg_zero_or_missing": {
+    "km_zero": 1,
+    "km_missing": 0,
+    "kg_zero": 1,
+    "kg_missing": 0,
+    "both_zero_or_missing": 0,
+    "km_quantiles_0_50_99_100": [
+      0.0,
+      126.0,
+      234.0,
+      3135.0
+    ],
+    "km_over_400": 2,
+    "examples": [
+      {
+        "idrecolha": "5847",
+        "km": 0.0,
+        "kg": 320.0,
+        "date": "2020-09-02",
+        "rota": "CE07"
+      },
+      {
+        "idrecolha": "34292",
+        "km": 150.0,
+        "kg": 0.0,
+        "date": "2023-08-01",
+        "rota": NaN
+      }
+    ]
+  },
+  "kg_identical_same_day": {
+    "day_kg_groups_2plus": 320,
+    "day_kg_groups_3plus": 9,
+    "identifiers_in_2plus_groups": 649,
+    "examples": [
+      {
+        "date": "2021-11-04",
+        "kg": 1760.0,
+        "identifiers": 3,
+        "ids": [
+          "15847",
+          "15849",
+          "15860"
+        ],
+        "rotas": [
+          "CE08",
+          "CE09B",
+          "CP36"
+        ]
+      },
+      {
+        "date": "2021-07-07",
+        "kg": 2800.0,
+        "identifiers": 3,
+        "ids": [
+          "12588",
+          "12589",
+          "12595"
+        ],
+        "rotas": [
+          "CE07",
+          "CE26",
+          "CP35"
+        ]
+      },
+      {
+        "date": "2020-09-09",
+        "kg": 1700.0,
+        "identifiers": 3,
+        "ids": [
+          "6003",
+          "6006",
+          "6013"
+        ],
+        "rotas": [
+          "CE11",
+          "CE39",
+          "CP02"
+        ]
+      },
+      {
+        "date": "2021-02-12",
+        "kg": 2160.0,
+        "identifiers": 3,
+        "ids": [
+          "9222",
+          "9223",
+          "9251"
+        ],
+        "rotas": [
+          "CE24",
+          "CE41B",
+          "nan"
+        ]
+      },
+      {
+        "date": "2020-05-27",
+        "kg": 2160.0,
+        "identifiers": 3,
+        "ids": [
+          "3738",
+          "3739",
+          "3743"
+        ],
+        "rotas": [
+          "CE21B",
+          "CE29",
+          "CE34"
+        ]
+      }
+    ]
+  },
+  "night_stamps_02_04": {
+    "rows": 49,
+    "identifiers": 9,
+    "hour_histogram": {
+      "0": 465,
+      "1": 136,
+      "2": 38,
+      "3": 11,
+      "4": 1,
+      "5": 293,
+      "6": 1745,
+      "7": 2868,
+      "8": 2694,
+      "9": 2467,
+      "10": 2290,
+      "11": 1493,
+      "12": 710,
+      "13": 398,
+      "14": 325,
+      "15": 1239,
+      "16": 4807,
+      "17": 7512,
+      "18": 8092,
+      "19": 7891,
+      "20": 6628,
+      "21": 4787,
+      "22": 2717,
+      "23": 1309
+    },
+    "examples": [
+      {
+        "idrecolha": "17153",
+        "cid": "5940",
+        "ts": "2021-12-29 02:06:50",
+        "rota": NaN
+      },
+      {
+        "idrecolha": "27565",
+        "cid": "10139",
+        "ts": "2022-12-28 03:43:41.237000",
+        "rota": NaN
+      },
+      {
+        "idrecolha": "17153",
+        "cid": "11992",
+        "ts": "2021-12-29 02:23:59",
+        "rota": NaN
+      },
+      {
+        "idrecolha": "17466",
+        "cid": "11556",
+        "ts": "2022-01-12 02:21:23",
+        "rota": NaN
+      },
+      {
+        "idrecolha": "17153",
+        "cid": "1459",
+        "ts": "2021-12-29 02:13:58",
+        "rota": NaN
+      }
+    ]
+  },
+  "coordinate_drift_per_cid": {
+    "criteria": "median of first half vs second half of stamps >200m (cids with >=6 stamps)",
+    "cids_flagged": 0,
+    "examples": []
+  },
+  "enchimento_minus1": {
+    "rows_all": 249,
+    "rows_stamped": 0,
+    "stamped_enchimento_values": {
+      "0": 60916
+    },
+    "note": "stamped trip rows carry Enchimento=0 uniformly; -1 rows live outside stamped trips"
+  },
+  "rota_inconsistencies": {
+    "identifiers_multiple_rotas": 0,
+    "identifiers_mixed_materials": 7,
+    "rota_missing_rows": 38242,
+    "prefix_material_crosstab": [
+      {
+        "rota_prefix": "CE",
+        "description": "Embalagens de papel e cartão",
+        "n": 1
+      },
+      {
+        "rota_prefix": "CE",
+        "description": "Mistura de embalagens",
+        "n": 12285
+      },
+      {
+        "rota_prefix": "CP",
+        "description": "Embalagens de papel e cartão",
+        "n": 10217
+      },
+      {
+        "rota_prefix": "Ób",
+        "description": "Mistura de embalagens",
+        "n": 171
+      }
+    ],
+    "examples_multi_rota": [],
+    "examples_mixed_material": [
+      {
+        "idrecolha": "29125",
+        "materials": [
+          "Embalagens de Vidro",
+          "Mistura de embalagens"
+        ]
+      },
+      {
+        "idrecolha": "36877",
+        "materials": [
+          "Embalagens de Vidro",
+          "Embalagens de papel e cartão",
+          "Mistura de embalagens"
+        ]
+      },
+      {
+        "idrecolha": "38129",
+        "materials": [
+          "Embalagens de Vidro",
+          "Embalagens de papel e cartão",
+          "Mistura de embalagens"
+        ]
+      },
+      {
+        "idrecolha": "38180",
+        "materials": [
+          "Embalagens de Vidro",
+          "Mistura de embalagens"
+        ]
+      },
+      {
+        "idrecolha": "38624",
+        "materials": [
+          "Embalagens de Vidro",
+          "Embalagens de papel e cartão",
+          "Mistura de embalagens"
+        ]
+      }
+    ]
+  },
+  "bullets": [
+    "868 rows are exact duplicates (same bin, same second); 1208 share bin+minute.",
+    "1270 extra stamps come from the same bin being stamped more than once inside one trip (461 trips affected).",
+    "118 same-minute bursts have bins >500 m apart — physically impossible, so stamps were batch-entered (109 trips).",
+    "113 identifier pairs look like one physical tour split administratively (same day/material, <=20 min gap, <=3 km apart) — always booked under two different rota codes.",
+    "59 multi-bin trips have zero duration and 38 more finish in under 2 minutes — all their bins were stamped at once.",
+    "km is zero/missing for 1 trip and kg for 1 trip (out of 9984); but km reaches an implausible 3135 km on one trip.",
+    "On 320 day+weight combinations the exact same kg was booked for 2+ different trips (copy-paste risk; 9 combinations with 3+ trips).",
+    "49 stamps fall in the 02:00-04:00 window across 9 trips — outside the normal shift pattern.",
+    "No bin shows any coordinate drift over time (0 cids move even 50 m) — positions are copied from a fixed registry, not live GPS, so bin relocations are invisible in this data.",
+    "Enchimento is 0 on every stamped trip row and -1 on 249 rows overall — the trip stream carries no usable fill signal.",
+    "0 identifiers mix more than one rota code and 7 mix materials, breaking the material-pure trip rule.",
+    "Base: 60916 stamped rows in 9984 identifiers; all counts above are read-only findings, no data was changed."
+  ]
+}

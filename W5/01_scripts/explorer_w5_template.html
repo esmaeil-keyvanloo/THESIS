@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en" data-skin="__SKIN__">
+<head>
+<meta charset="utf-8">
+<title>Rio Maior — Collection Trip Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+<link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+<style>
+/* ============ HYBRID NEUMORPHISM — soft chrome, flat data ============ */
+:root{
+ --chrome:#e7eaf1;          /* one soft base for all chrome */
+ --well:#eef0f6;            /* inset wells */
+ --data:#ffffff;            /* flat data surfaces (tables) */
+ --ink:#20242e;--ink2:#4d5364;--mut:#8a90a2;--grid:#d6dae4;
+ --shD:rgba(166,175,195,.55);--shL:rgba(255,255,255,.95);
+ --accent:#3667d0;
+ --pack:#e09600;--paper:#3667d0;--glass:#2e8b57;--phant:#8a8a93;
+ --crit:#d03b3b;--sens:#0f8f8f;--drv:#5b6376;
+ --r:12px;--rs:8px;
+ --font:"Segoe UI",system-ui,sans-serif;--fonth:"Segoe UI",system-ui,sans-serif;
+}
+[data-skin="editorial"]{
+ --chrome:#f7f4ee;--well:#f2eee6;--data:#fffdf9;
+ --ink:#191713;--ink2:#4a463d;--mut:#8d876f;--grid:#ddd6c8;
+ --shD:transparent;--shL:transparent;
+ --accent:#2456b8;
+ --pack:#a86f00;--paper:#2456b8;--glass:#226644;--phant:#7c7668;
+ --sens:#0e7d74;--drv:#5c5647;
+ --r:6px;--rs:4px;
+ --fonth:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font);background:var(--chrome);color:var(--ink);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-variant-numeric:tabular-nums}
+/* neumorphic primitives */
+.nz{background:var(--chrome);border-radius:var(--r);box-shadow:5px 5px 10px var(--shD),-5px -5px 10px var(--shL)}
+.nzs{background:var(--chrome);border-radius:var(--rs);box-shadow:3px 3px 6px var(--shD),-3px -3px 6px var(--shL)}
+.nin{background:var(--well);border-radius:var(--r);box-shadow:inset 3px 3px 7px var(--shD),inset -3px -3px 7px var(--shL)}
+[data-skin="editorial"] .nz,[data-skin="editorial"] .nzs{border:1px solid var(--grid);box-shadow:none;background:var(--data)}
+[data-skin="editorial"] .nin{border:1px solid var(--grid);box-shadow:none;background:var(--well)}
+button,select{font:inherit;color:var(--ink)}
+header{padding:10px 16px 8px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex:none}
+header h1{font-size:16.5px;font-family:var(--fonth);letter-spacing:.2px}
+header .sub{color:var(--mut);font-size:11px;margin-top:2px;max-width:860px}
+#loadstate{font-size:10.5px;color:var(--accent);font-weight:600}
+.tiles{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
+.tile{padding:5px 12px;text-align:center;min-width:64px}
+.tile b{font-size:14.5px;display:block}
+.tile span{font-size:9.5px;color:var(--mut);letter-spacing:.3px}
+#main{flex:1;display:flex;min-height:0;position:relative;padding:0 8px 8px;gap:0}
+#left{width:384px;min-width:320px;display:flex;flex-direction:column;padding:10px;overflow:hidden}
+#controls{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:11.5px;padding-bottom:9px}
+#controls select{padding:4px 9px;border:none;cursor:pointer;outline:none}
+#controls button{padding:4px 10px;border:none;cursor:pointer;border-radius:var(--rs)}
+.fbtn{color:var(--mut)}
+.fbtn.on{box-shadow:inset 2px 2px 5px var(--shD),inset -2px -2px 5px var(--shL);font-weight:600}
+[data-skin="editorial"] .fbtn{background:var(--data);border:1px solid var(--grid)}
+[data-skin="editorial"] .fbtn.on{box-shadow:none;border-color:currentColor}
+.fbtn.on[data-f="Packaging"]{color:var(--pack)}
+.fbtn.on[data-f="Paper/card"]{color:var(--paper)}
+.fbtn.on[data-f="Glass"]{color:var(--glass)}
+.fbtn.on[data-f="Phantom"]{color:var(--phant)}
+/* 3-way source view switcher */
+#viewseg{display:flex;padding:3px;gap:2px}
+#viewseg button{border:none;background:transparent;padding:3px 10px;border-radius:calc(var(--rs) - 2px);cursor:pointer;font-size:11px;color:var(--mut)}
+#viewseg button.on{background:var(--data);color:var(--ink);font-weight:600;box-shadow:2px 2px 5px var(--shD),-2px -2px 5px var(--shL)}
+[data-skin="editorial"] #viewseg button.on{box-shadow:none;outline:1px solid var(--grid)}
+#viewseg button.on[data-v="driver"]{color:var(--drv)}
+#viewseg button.on[data-v="sensor"]{color:var(--sens)}
+#heatlegend{font-size:10px;color:var(--mut);display:flex;align-items:center;gap:6px;padding:0 2px 7px}
+#heatbar{height:8px;flex:1;max-width:120px;border-radius:4px;background:linear-gradient(90deg,#ffffff,#fed976,#fc4e2a,#bd0026);border:1px solid var(--grid)}
+body.view-sensor #heatbar{background:linear-gradient(90deg,#ffffff,#a7e8e0,#27b3a4,#065f59)}
+#calwrap{flex:1;overflow-y:auto;padding:10px}
+.month{margin-bottom:12px}
+.month h3{font-size:11px;color:var(--ink2);margin-bottom:4px;font-family:var(--fonth)}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.dow{font-size:8px;color:var(--mut);text-align:center}
+/* calendar cells: FLAT data layer */
+.day{aspect-ratio:1;border-radius:4px;background:var(--data);border:1px solid var(--grid);font-size:8.5px;color:var(--mut);display:flex;align-items:center;justify-content:center;cursor:default;position:relative;overflow:hidden}
+.day.has{cursor:pointer;font-weight:600}
+.day.sel{outline:2.5px solid var(--crit);outline-offset:1px;z-index:1}
+.fstrip{position:absolute;bottom:1px;left:2px;right:2px;height:4px;display:flex;gap:1px}
+.fs{flex:1;border-radius:1px}
+.estrip{position:absolute;top:0;left:0;right:0;height:3px;background:transparent}
+.estrip i{display:block;height:100%;background:var(--sens);opacity:.9}
+body.view-driver .estrip{display:none}
+.mchip{display:inline-block;width:9px;height:9px;border-radius:2px;margin-left:5px;vertical-align:-1px;border:1px solid var(--grid)}
+#daypanel{max-height:34%;overflow-y:auto;margin-top:9px;padding:9px 10px}
+#daypanel h3{font-size:11.5px;margin-bottom:6px;font-family:var(--fonth)}
+.chip{display:flex;gap:7px;align-items:center;padding:5px 8px;margin-bottom:4px;border-radius:var(--rs);cursor:pointer;font-size:11px}
+.chip:hover{filter:brightness(.985)}
+.chip.on{box-shadow:inset 2px 2px 5px var(--shD),inset -2px -2px 5px var(--shL)}
+[data-skin="editorial"] .chip{background:var(--data);border:1px solid var(--grid)}
+[data-skin="editorial"] .chip.on{box-shadow:none;border-width:2px}
+.chip .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.chip .meta{color:var(--mut);font-size:10px;margin-left:auto;text-align:right}
+.evind{display:inline-flex;height:5px;width:34px;border-radius:2px;overflow:hidden;vertical-align:1px}
+.evind i{height:100%}
+.schip{display:flex;gap:7px;align-items:center;padding:4px 8px;margin-bottom:3px;border-radius:var(--rs);font-size:10.5px;cursor:pointer}
+[data-skin="editorial"] .schip{background:var(--data);border:1px solid var(--grid)}
+.sdiam{width:9px;height:9px;transform:rotate(45deg);flex:none;border:1.5px solid #fff;box-shadow:0 0 2px rgba(0,0,0,.4)}
+#mapwrap{flex:1;position:relative;min-width:0;border-radius:var(--r);overflow:hidden;box-shadow:inset 2px 2px 6px var(--shD)}
+[data-skin="editorial"] #mapwrap{box-shadow:none;border:1px solid var(--grid)}
+#map{position:absolute;inset:0}
+#sidebar{width:308px;overflow-y:auto;padding:10px 12px;margin-left:0}
+#left,#sidebar{margin:0}
+#sidebar h3{font-size:12px;margin:8px 0 6px;font-family:var(--fonth)}
+.tripcard{border-radius:var(--r);padding:8px 10px;margin-bottom:9px;font-size:11px;border-left:5px solid transparent;background:var(--data);box-shadow:3px 3px 8px var(--shD),-2px -2px 6px var(--shL)}
+[data-skin="editorial"] .tripcard{box-shadow:none;border:1px solid var(--grid);border-left-width:5px}
+.tripcard table{width:100%;border-collapse:collapse;font-size:10.5px;margin-top:3px}
+.tripcard td{padding:1px 0;color:var(--ink2)}
+.tripcard td:last-child{text-align:right;color:var(--ink);font-weight:600}
+.evbar{display:flex;height:6px;border-radius:3px;overflow:hidden;margin:4px 0 1px}
+.evbar i{height:100%}
+.pbtn{border:none;cursor:pointer;font-size:10.5px;padding:3px 9px;border-radius:var(--rs);color:var(--accent);margin-top:5px}
+.note{font-size:10px;color:var(--mut);margin-top:6px;line-height:1.45}
+.empty{color:var(--mut);font-size:11px}
+.lyr{display:flex;gap:6px;align-items:center;font-size:11px;padding:2px 0}
+.stopnum{background:#fff;border:2px solid #333;border-radius:50%;width:20px;height:20px;line-height:16px;text-align:center;font-size:10px;font-weight:700;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.diam{width:11px;height:11px;transform:rotate(45deg);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.45)}
+.facil{font-size:16px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.legend{border-radius:var(--rs);padding:6px 9px;font-size:10.5px;line-height:1.6;background:var(--well)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.swd{display:inline-block;width:8px;height:8px;transform:rotate(45deg);margin:0 5px 0 1px;vertical-align:-1px}
+#spark{width:100%;height:56px;margin-top:4px}
+.phandle{width:8px;cursor:col-resize;background:transparent;flex:none}
+.phandle:hover{background:var(--accent);opacity:.4;border-radius:3px}
+.coll{position:absolute;top:50%;transform:translateY(-50%);z-index:900;border:none;border-radius:6px;width:20px;height:46px;font-size:11px;cursor:pointer;padding:0}
+#collL{left:10px}
+#collR{right:10px}
+button.util{width:100%;margin-bottom:7px;padding:6px;border:none;border-radius:var(--rs);cursor:pointer;font-size:11px;color:var(--ink2)}
+button.util:hover{color:var(--accent)}
+.dtbl{width:100%;border-collapse:collapse;font-size:10px;margin-top:4px;background:var(--data)}
+.dtbl th{text-align:left;color:var(--mut);font-weight:600;padding:1px 4px;border-bottom:1px solid var(--grid)}
+.dtbl td{padding:2px 4px;border-bottom:1px solid var(--grid)}
+.dtbl tr:hover td{background:var(--well)}
+body.view-driver .senscol{display:none}
+.srctag{display:inline-block;font-size:8.5px;font-weight:700;border-radius:3px;padding:0 3px;letter-spacing:.2px}
+.srcD{color:var(--drv);background:color-mix(in srgb,var(--drv) 12%,transparent)}
+.srcDS{color:var(--sens);background:color-mix(in srgb,var(--sens) 14%,transparent)}
+/* -------- playback bar -------- */
+#playbar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:950;display:none;align-items:center;gap:9px;padding:8px 13px;font-size:11px;background:var(--chrome);border-radius:14px;box-shadow:6px 6px 14px rgba(120,130,155,.45),-4px -4px 10px var(--shL)}
+[data-skin="editorial"] #playbar{box-shadow:0 2px 10px rgba(0,0,0,.18);border:1px solid var(--grid);background:var(--data)}
+#playbar.on{display:flex}
+#pbPlay{border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:13px}
+#pbScrub{width:180px;accent-color:var(--accent)}
+#pbClock{font-weight:700;min-width:44px}
+#pbSpeed{font-weight:700;min-width:84px;text-align:right}
+#pbSpeed.over{color:var(--crit)}
+#pbSpeed small{font-weight:400;color:var(--mut)}
+#pbFac{border:none;border-radius:var(--rs);padding:2px 6px;cursor:pointer}
+#pbClose{border:none;background:transparent;cursor:pointer;color:var(--mut);font-size:13px}
+.veh{width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid #333;box-shadow:0 2px 6px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:13px}
+/* -------- info modal -------- */
+#infoModal{position:fixed;inset:0;background:rgba(40,45,60,.45);z-index:2000;display:none;align-items:center;justify-content:center}
+#infoModal.on{display:flex}
+#infoBox{width:min(780px,94vw);max-height:88vh;display:flex;flex-direction:column;background:var(--chrome);border-radius:16px;box-shadow:10px 10px 30px rgba(60,70,95,.5);overflow:hidden}
+[data-skin="editorial"] #infoBox{background:var(--data);box-shadow:0 6px 30px rgba(0,0,0,.25);border:1px solid var(--grid)}
+#infoHead{display:flex;align-items:center;gap:8px;padding:12px 16px 0}
+#infoHead h2{font-size:15px;font-family:var(--fonth);margin-right:auto}
+#infoTabs{display:flex;gap:4px;padding:9px 16px 0;flex-wrap:wrap}
+#infoTabs button{border:none;background:transparent;padding:5px 11px;border-radius:var(--rs) var(--rs) 0 0;cursor:pointer;font-size:11.5px;color:var(--mut)}
+#infoTabs button.on{background:var(--well);color:var(--ink);font-weight:600;box-shadow:inset 2px 2px 5px var(--shD)}
+[data-skin="editorial"] #infoTabs button.on{box-shadow:none;border:1px solid var(--grid);border-bottom-color:var(--well)}
+#infoBody{flex:1;overflow-y:auto;background:var(--well);margin:0 16px 12px;border-radius:0 var(--r) var(--r) var(--r);padding:13px 15px;font-size:11.5px;line-height:1.5}
+#infoBody h4{font-size:12px;margin:10px 0 4px;font-family:var(--fonth)}
+#infoBody table{width:100%;border-collapse:collapse;font-size:10.5px;background:var(--data);border-radius:6px;margin:5px 0 9px}
+#infoBody th{text-align:left;color:var(--mut);font-weight:600;padding:3px 7px;border-bottom:1px solid var(--grid)}
+#infoBody td{padding:3px 7px;border-bottom:1px solid var(--grid)}
+#infoBody td:not(:first-child),#infoBody th:not(:first-child){text-align:right}
+#infoBody .rm{display:inline-block;margin:2px 0 8px;color:var(--accent);font-size:11px;text-decoration:none;font-weight:600}
+#infoBody .rm:hover{text-decoration:underline}
+#infoFoot{padding:0 16px 12px;font-size:10px;color:var(--mut);display:flex;gap:10px}
+#infoFoot a{color:var(--mut)}
+#infoClose{border:none;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:12px}
+/* -------- responsive: monitors → laptops → tablets → phones -------- */
+.fab{display:none;position:absolute;bottom:16px;z-index:960;border:none;border-radius:50%;width:46px;height:46px;font-size:19px;cursor:pointer;box-shadow:5px 5px 12px rgba(120,130,155,.5),-3px -3px 8px var(--shL)}
+[data-skin="editorial"] .fab{box-shadow:0 2px 10px rgba(0,0,0,.25);border:1px solid var(--grid);background:var(--data)}
+#fabCal{left:14px}
+#fabTrips{right:14px}
+.drawclose{display:none;border:none;background:transparent;font-size:15px;cursor:pointer;color:var(--mut);margin-left:auto}
+@media (max-width:1180px){
+  #left{width:330px;min-width:300px}
+  #sidebar{width:272px}
+  header .sub{max-width:560px}
+}
+@media (max-width:920px){
+  header{padding:8px 12px 6px}
+  header .sub{display:none}
+  .tiles{margin-left:0;width:100%;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+  .tile{flex:none}
+  #main{padding:0 6px 6px;overflow:hidden}
+  .phandle,.coll{display:none}
+  .fab{display:block}
+  .drawclose{display:inline-block}
+  #left,#sidebar{position:absolute;top:6px;bottom:6px;z-index:1500;width:min(86vw,384px);min-width:0;transition:transform .25s ease;margin:0;max-height:none}
+  #left{left:6px;transform:translateX(calc(-100% - 20px))}
+  #sidebar{right:6px;transform:translateX(calc(100% + 20px))}
+  #left.open,#sidebar.open{transform:none;box-shadow:0 6px 30px rgba(40,45,60,.35)}
+  #mapwrap{border-radius:var(--rs)}
+  #daypanel{max-height:42%}
+  #playbar{bottom:72px;max-width:94%;flex-wrap:wrap;justify-content:center;row-gap:5px}
+  #pbScrub{width:130px}
+}
+@media (max-width:600px){
+  header h1{font-size:14px}
+  .tile b{font-size:12.5px}
+  .tile{padding:4px 8px;min-width:54px}
+  #controls{gap:5px}
+  #controls button,#controls select{padding:4px 8px;font-size:10.5px}
+  #viewseg button{padding:3px 8px;font-size:10.5px}
+  #playbar{gap:6px;padding:7px 9px;font-size:10.5px}
+  #pbScrub{width:96px}
+  #pbSpeed{min-width:64px}
+  #infoBox{width:96vw;max-height:92vh}
+  #infoBody{margin:0 8px 8px;padding:10px}
+  #infoTabs{padding:6px 8px 0}
+  #infoTabs button{padding:4px 7px;font-size:10.5px}
+  #infoHead{padding:10px 10px 0}
+  #infoFoot{flex-wrap:wrap;padding:0 10px 10px}
+}
+@media (pointer:coarse){
+  #controls button,#controls select,#viewseg button{min-height:32px}
+  .chip{padding:8px 9px}
+  .day{font-size:9.5px}
+  .dtbl td{padding:4px}
+  .fab,.drawclose{min-width:46px;min-height:30px}
+}
+</style>
+</head>
+<body class="view-combined">
+<header>
+  <div>
+    <h1>Rio Maior — Collection Trip Explorer <span style="color:var(--mut);font-size:12px">W5</span></h1>
+    <div class="sub">Road-legal per-road-type speeds throughout · <b>Combined</b> view fuses the driver logbook with the sensor emptying log — <span class="srctag srcD">D</span> driver-only stop · <span class="srctag srcDS">D+S</span> sensor-corroborated · <span class="swd" style="background:var(--sens)"></span>sensor-only recovered emptying (diamond) · dashed stop = inferred · "?" = low confidence · dotted line = reconstructed vehicle · <span style="color:var(--pack)">■</span> packaging <span style="color:var(--paper)">■</span> paper/card <span style="color:var(--glass)">■</span> glass · <span id="loadstate">loading…</span></div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</header>
+<div id="main">
+  <div id="left" class="nz">
+    <button class="drawclose" id="dcL" title="Close panel">✕ close</button>
+    <div id="controls">
+      <div id="viewseg" class="nin" title="Which source file the view draws from">
+        <button data-v="combined" class="on">Combined</button><button data-v="driver">Driver</button><button data-v="sensor">Sensor</button>
+      </div>
+      <select id="year" class="nzs"></select>
+      <button data-f="Packaging" class="fbtn nzs on">Packaging</button>
+      <button data-f="Paper/card" class="fbtn nzs on">Paper/card</button>
+      <button data-f="Glass" class="fbtn nzs on">Glass</button>
+      <button data-f="Phantom" class="fbtn nzs on">Phantom</button>
+      <select id="colormode" class="nzs" title="Line colouring">
+        <option value="frac">Colour by fraction</option>
+        <option value="trip">Colour by trip</option>
+      </select>
+      <button id="clear" class="nzs">Clear</button>
+    </div>
+    <div id="heatlegend"><span>0</span><div id="heatbar"></div><span id="heatmax"></span><span id="heatlab">kg/day collected · top strip = share of that day's evidence coming from sensors</span></div>
+    <div id="calwrap" class="nin"><div class="empty" style="padding:20px">Loading calendar…</div></div>
+    <div id="daypanel" class="nin"><h3>Pick a day</h3><div class="empty">Day colour = weight collected (darker = more). Bottom strips = materials that ran; teal top strip = sensor share of evidence. Click a day, then click trips to draw them.</div></div>
+  </div>
+  <div class="phandle" id="phL"></div>
+  <div id="mapwrap">
+    <div id="map"></div>
+    <div id="playbar">
+      <button id="pbPlay" class="nzs">▶</button>
+      <span id="pbClock">—</span>
+      <input type="range" id="pbScrub" min="0" max="1000" value="0">
+      <select id="pbFac" class="nzs"><option value="5">×5</option><option value="15" selected>×15</option><option value="60">×60</option><option value="180">×180</option></select>
+      <span id="pbSpeed">— <small>km/h</small></span>
+      <button id="pbClose" title="Stop playback">✕</button>
+    </div>
+    <button class="fab nzs" id="fabCal" title="Calendar & trips">📅</button>
+    <button class="fab nzs" id="fabTrips" title="Selected trips & layers">📋</button>
+  </div>
+  <div class="phandle" id="phR"></div>
+  <button class="coll nzs" id="collL" title="Hide/show left panel">◀</button>
+  <button class="coll nzs" id="collR" title="Hide/show right panel">▶</button>
+  <div id="sidebar" class="nz">
+    <button class="drawclose" id="dcR" title="Close panel">✕ close</button>
+    <h3>Layers</h3>
+    <label class="lyr"><input type="checkbox" id="lyrBound" checked> Municipality &amp; freguesia boundaries</label>
+    <label class="lyr"><input type="checkbox" id="lyrFacil" checked> Depot &amp; disposal sites</label>
+    <label class="lyr"><input type="checkbox" id="lyrLegs" checked> Inferred depot &amp; disposal legs (dashed)</label>
+    <label class="lyr senscol"><input type="checkbox" id="lyrDiam" checked> Sensor-only recovered emptyings (◆)</label>
+    <label class="lyr"><input type="checkbox" id="lyrBins"> Bin need-categories (all 816)</label>
+    <div class="legend" id="binlegend" style="display:none">
+      <span class="sw" style="background:var(--crit)"></span>High need &nbsp;
+      <span class="sw" style="background:#e09600"></span>Moderate &nbsp;
+      <span class="sw" style="background:#1baf7a"></span>Low &nbsp;
+      <span class="sw" style="background:#c3c2b7"></span>Too little data
+      <div id="catcounts" style="color:var(--mut)"></div>
+    </div>
+    <h3>Selected trips</h3>
+    <button id="kmzBtn" class="util nzs">⬇ Download selected trips as KMZ (Google Earth)</button>
+    <div id="cards"><div class="empty">Nothing selected.</div></div>
+    <button id="infoBtn" class="util nzs">ⓘ Source of truth — data, methods &amp; assumptions</button>
+  </div>
+</div>
+
+<div id="infoModal">
+  <div id="infoBox">
+    <div id="infoHead"><h2>ⓘ Source of truth</h2><button id="infoClose" class="nzs">✕</button></div>
+    <div id="infoTabs">
+      <button data-tab="overview" class="on">Overview</button>
+      <button data-tab="trips">Trip data</button>
+      <button data-tab="sensors">Sensor data</button>
+      <button data-tab="cross">Cross-check</button>
+      <button data-tab="assump">Assumptions</button>
+      <button data-tab="sources">Sources &amp; files</button>
+    </div>
+    <div id="infoBody"><div class="empty">Loading…</div></div>
+    <div id="infoFoot"><span>Every number traces to the files listed under Sources.</span><a href="info/methodology.html" target="_blank">Full methodology page ↗</a><a href="__OTHER_SKIN__" style="margin-left:auto">design: __OTHER_LABEL__ ↗</a></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const TRIPS = [];
+const ROUTES = {}, LEGS = {}, YEARLOADED = {}, SENSEV = {}, DAYDROPS = {};
+let BINS = [], FACIL = {}, TEMPO = {}, DAILY = {}, BOUND = {}, INFO = null;
+const FR = { "Packaging": "#e09600", "Paper/card": "#3667d0", "Glass": "#2e8b57", "Phantom": "#8a8a93" };
+const MC = { P: "#e09600", C: "#3667d0", G: "#2e8b57" };
+const MATW = { P: "Packaging", C: "Paper/card", G: "Glass" };
+const PAL = ["#3667d0","#eb6834","#1baf7a","#e09600","#e87ba4","#008300","#4a3aa7","#e34948"];
+const fmt = n => n == null ? "—" : n.toLocaleString("en-US");
+const state = { year: 2022, fr: new Set(["Packaging","Paper/card","Glass","Phantom"]), selDay: null, sel: new Map(), colormode: "frac", view: "combined" };
+const byDate = {};
+const nstops = t => t.n_bins + (t.n_inferred || 0);
+const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const med = a => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
+function visible(t){ return state.fr.has(t.frac); }
+const DATAV = "w5r1";  // bump per data rebuild: busts browser cache on lazily-fetched files
+const J = u => fetch(u + (u.includes("?") ? "&" : "?") + "v=" + DATAV, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
+const setLoad = t => { document.getElementById("loadstate").textContent = t; };
+
+/* ---------- map & static layers ---------- */
+const map = L.map("map", { zoomControl: true }).setView([39.34, -8.94], 12);
+const BASES = {
+  "Street (OSM)": L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap contributors" }),
+  "Satellite": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Esri, Maxar, Earthstar Geographics" }),
+  "Satellite hybrid": L.layerGroup([
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Esri, Maxar" }),
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 }),
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 }),
+  ]),
+  "Topography": L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "© OpenTopoMap (CC-BY-SA), © OpenStreetMap" }),
+  "Light": L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, attribution: "© CARTO, © OpenStreetMap" }),
+};
+BASES["Street (OSM)"].addTo(map);
+L.control.layers(BASES, null, { position: "topleft", collapsed: true }).addTo(map);
+
+function decodePoly(str){
+  if (!str) return null;
+  if (Array.isArray(str)) return str;
+  let i = 0, lat = 0, lon = 0; const out = [];
+  while (i < str.length){
+    for (const which of [0, 1]){
+      let sh = 0, res = 0, b;
+      do { b = str.charCodeAt(i++) - 63; res |= (b & 0x1f) << sh; sh += 5; } while (b >= 0x20);
+      const dv = (res & 1) ? ~(res >> 1) : res >> 1;
+      if (which === 0) lat += dv; else lon += dv;
+    }
+    out.push([lat / 1e5, lon / 1e5]);
+  }
+  return out;
+}
+const havKm = (a, b) => {
+  const r = Math.PI / 180, la1 = a[0]*r, la2 = b[0]*r;
+  const h = Math.sin((la2-la1)/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin((b[1]-a[1])*r/2)**2;
+  return 12742 * Math.asin(Math.sqrt(h));
+};
+
+/* ---------- year data (lazy) ---------- */
+const yearPromises = {};
+function ensureYear(y){
+  if (!yearPromises[y]){
+    yearPromises[y] = J(`data/year_${y}.json`).then(d => {
+      Object.assign(ROUTES, d.routes); Object.assign(LEGS, d.legs);
+      ROUTES.flags = Object.assign(ROUTES.flags || {}, d.flags || {});
+      Object.assign(SENSEV, d.sensev || {});
+      Object.assign(DAYDROPS, d.drops || {});
+      TRIPS.forEach(t => { if (t.date.slice(0, 4) === String(y) && d.stops[t.id]) t.stops = d.stops[t.id]; });
+      YEARLOADED[y] = true;
+    });
+  }
+  return yearPromises[y];
+}
+
+/* ---------- calendar ---------- */
+function calendar(){
+  const y = state.year, wrap = document.getElementById("calwrap");
+  wrap.innerHTML = "";
+  const sensorView = state.view === "sensor";
+  const KMAX = sensorView ? (DAILY._smax || 1) : (DAILY._max || 1);
+  const MMAX = Math.max(1, ...Object.values(DAILY._monthly || {1:1}));
+  function heat(v){
+    const t = Math.pow(Math.min(v / KMAX, 1), 0.6);
+    const ramp = sensorView
+      ? [[255,255,255],[167,232,224],[39,179,164],[6,95,89]]
+      : [[255,255,255],[254,217,118],[252,78,42],[189,0,38]];
+    const x = t * 3, i = Math.min(Math.floor(x), 2), f = x - i;
+    const c = ramp[i].map((v2, k) => Math.round(v2 + (ramp[i+1][k] - v2) * f));
+    return { bg: `rgb(${c})`, dark: t > 0.55 };
+  }
+  document.getElementById("heatmax").textContent = KMAX.toLocaleString();
+  document.getElementById("heatlab").textContent = sensorView
+    ? "sensor emptying events per day (from fill-drop detection)"
+    : (state.view === "driver" ? "kg/day collected (driver logbook)" : "kg/day collected · top strip = sensor share of that day's evidence");
+  for (let m = 0; m < 12; m++){
+    const days = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    const pad = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7;
+    const mk = `${y}-${String(m + 1).padStart(2, "0")}`;
+    const mkg = (DAILY._monthly || {})[mk] || 0;
+    let html = `<div class="month"><h3>${MN[m]} ${y} · ${(mkg / 1000).toFixed(0)} t<span class="mchip" style="background:${heat(KMAX * mkg / MMAX).bg}"></span></h3><div class="mgrid">`;
+    "MTWTFSS".split("").forEach(d => html += `<div class="dow">${d}</div>`);
+    for (let i = 0; i < pad; i++) html += "<div></div>";
+    for (let d = 1; d <= days; d++){
+      const key = `${mk}-${String(d).padStart(2, "0")}`;
+      const rec = DAILY[key] || {};
+      const list = (byDate[key] || []).filter(visible);
+      const v = sensorView ? (rec.sn || 0) : (rec.kg || 0);
+      const h = heat(v);
+      const clickable = sensorView ? (rec.sn || 0) > 0 : list.length > 0;
+      const fr = [...new Set(list.map(t => t.frac))];
+      const strip = !sensorView && fr.length ? `<div class="fstrip">${fr.map(f => `<div class="fs" style="background:${FR[f]}"></div>`).join("")}</div>` : "";
+      const es = (state.view === "combined" && rec.es) ? `<div class="estrip"><i style="width:${Math.round(rec.es * 100)}%"></i></div>` : "";
+      const tip = sensorView ? `${rec.sn || 0} sensor emptying event(s)` : `${list.length} trip(s) · ${(rec.kg || 0).toLocaleString()} kg${rec.sn ? " · " + rec.sn + " sensor events" : ""}`;
+      html += `<div class="day ${clickable ? "has" : ""} ${state.selDay === key ? "sel" : ""}" style="background:${clickable || v ? h.bg : "var(--data)"};color:${h.dark ? "#fff" : "var(--mut)"}" ${clickable ? `data-d="${key}" title="${tip}"` : ""}>${d}${strip}${es}</div>`;
+    }
+    wrap.innerHTML += html + "</div></div>";
+  }
+  wrap.querySelectorAll(".day.has").forEach(el => el.onclick = () => { state.selDay = el.dataset.d; calendar(); daypanel(); });
+}
+
+/* ---------- day panel (view-dependent) ---------- */
+let dayDropLayer = null;
+function clearDayDrops(){ if (dayDropLayer){ dayDropLayer.remove(); dayDropLayer = null; } }
+async function daypanel(){
+  const p = document.getElementById("daypanel"), key = state.selDay;
+  if (!key) return;
+  const list = (byDate[key] || []).filter(visible);
+  if (state.view === "sensor"){
+    await ensureYear(key.slice(0, 4));
+    const drops = DAYDROPS[key] || [];
+    p.innerHTML = `<h3>${key} — ${drops.length} sensor emptying event(s)</h3>
+      <div class="note" style="margin:0 0 6px">Each ◆ is a fill-level fall of ≥25 points within ≤24 h seen by the bin's sensor — the machine's own emptying log, independent of the driver logbook.</div>`;
+    clearDayDrops();
+    dayDropLayer = L.layerGroup().addTo(map);
+    const pts = [];
+    drops.forEach(dr => {
+      const [lat, lon, cid, ws, we, pct, conf, mat] = dr;
+      const c = MC[mat] || "#0f8f8f";
+      pts.push([lat, lon]);
+      L.marker([lat, lon], { icon: L.divIcon({ className: "", html: `<div class="diam" style="background:${c};opacity:${conf === "high" ? 1 : conf === "med" ? .8 : .55}"></div>`, iconSize: [11, 11], iconAnchor: [6, 6] }) })
+        .bindPopup(`<b>Sensor emptying — bin ${cid}</b><br>${MATW[mat] || ""}<br>Between ${ws} and ${we}<br>Was ${pct}% full before · confidence ${conf}`).addTo(dayDropLayer);
+      const div = document.createElement("div");
+      div.className = "schip";
+      div.innerHTML = `<span class="sdiam" style="background:${c}"></span><span><b>${cid}</b> · ${MATW[mat] || ""}</span><span class="meta" style="margin-left:auto;color:var(--mut)">${ws}–${we} · ${pct}% → conf. ${conf}</span>`;
+      div.onclick = () => map.setView([lat, lon], 17);
+      p.appendChild(div);
+    });
+    if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.2));
+    return;
+  }
+  clearDayDrops();
+  p.innerHTML = `<h3>${key} — ${list.length} trip(s)</h3>`;
+  list.forEach(t => {
+    const on = state.sel.has(t.id);
+    const div = document.createElement("div");
+    div.className = "chip" + (on ? " on" : "");
+    if (on) div.style.outline = `2px solid ${state.sel.get(t.id).color}`;
+    const ev = t.ev || {};
+    const evTot = (ev.d || 0) + (ev.ds || 0) + (ev.s || 0);
+    const evHtml = state.view === "combined" && evTot ? `<span class="evind" title="evidence: ${ev.d || 0} driver-only · ${ev.ds || 0} driver+sensor · ${ev.s || 0} sensor-only"><i style="width:${100 * (ev.d || 0) / evTot}%;background:var(--drv)"></i><i style="width:${100 * (ev.ds || 0) / evTot}%;background:var(--sens)"></i><i style="width:${100 * (ev.s || 0) / evTot}%;background:var(--sens);opacity:.45"></i></span>` : "";
+    div.innerHTML = `<span class="dot" style="background:${on ? state.sel.get(t.id).color : FR[t.frac]}"></span>
+      <span><b>#${t.id}</b> ${t.rota || t.frac}${t.part ? " · track " + t.part : ""} · ${t.start}–${t.end}</span>
+      <span class="meta">${t.merged ? (t.flagged ? "⚡" : "⇦⇨") : ""}${t.cont ? "⧉" : ""}${t.n_bins}+${(t.n_inferred || 0) + (t.n_lowconf || 0)} bins · ${t.km_rec ? t.km_rec + " km" : "—"} · ${t.kg ? fmt(t.kg) + " kg" : "—"}<br>${evHtml}</span>`;
+    div.onclick = () => toggle(t);
+    p.appendChild(div);
+  });
+}
+
+/* ---------- trip drawing ---------- */
+let colorIdx = 0;
+async function toggle(t){
+  if (state.sel.has(t.id)){
+    const e = state.sel.get(t.id);
+    e.layer.remove(); state.sel.delete(t.id);
+    if (PB.tripId === t.id) pbStop();
+    daypanel(); cards(); return;
+  }
+  await ensureYear(t.date.slice(0, 4));
+  if (!t.stops) return;
+  const color = state.colormode === "frac" ? FR[t.frac] : PAL[colorIdx++ % PAL.length];
+  const grp = L.layerGroup();
+  const routed = ROUTES[t.id];
+  const rpath = routed ? decodePoly(routed.p || routed.path) : null;
+  if (rpath && rpath.length > 1){
+    L.polyline(rpath, { color, weight: 3.5, opacity: 0.92, lineJoin: "round", lineCap: "round",
+      dashArray: t.frac === "Phantom" ? "2 7" : null }).addTo(grp);
+    ((ROUTES.flags || {})[t.id] || []).forEach(fl => {
+      const fp = decodePoly(fl.p);
+      if (fp && fp.length > 1) L.polyline(fp, { color: "#111", weight: 5, opacity: 0.85, dashArray: "1 9", lineCap: "round" })
+        .bindTooltip(`needs above-legal speed: ${fl.req} min drive in ${fl.gap} min gap`, { sticky: true }).addTo(grp);
+    });
+  } else if (t.stops.length > 1){
+    L.polyline(t.stops.map(s => [s[0], s[1]]), { color, weight: 2.5, dashArray: "6 5", opacity: 0.8 })
+      .bindTooltip("no route data — straight connector, not a road path", { sticky: true }).addTo(grp);
+  }
+  const seen = {};
+  const pos = t.stops.map(s => {
+    const k = s[0].toFixed(5) + "," + s[1].toFixed(5);
+    const n = seen[k] = (seen[k] || 0) + 1;
+    if (n === 1) return [s[0], s[1]];
+    const ang = (n - 2) * 1.0472, r = 0.00013 * (1 + Math.floor((n - 2) / 6));
+    return [s[0] + r * Math.cos(ang), s[1] + r * Math.sin(ang) / Math.cos(s[0] * Math.PI / 180)];
+  });
+  t.stops.forEach((s, i) => {
+    const typ = s[4];
+    const inf = typ === "I" || typ === "L" || typ === "P";
+    const ring = MC[s[7]] || color;
+    const extra = typ === "L" ? "opacity:.75;border-style:dashed;background:#e3e1da;color:#555;"
+                : typ === "P" ? "opacity:.8;border-style:dotted;background:#fff;"
+                : inf ? "opacity:.8;border-style:dashed;background:#f4f4f0;" : "";
+    const fillTxt = s[5] != null ? (inf ? `<br>Seen at ${s[5]}%` : `<br>Was ${s[5]}% full before emptying`) : "";
+    const srcTxt = state.view !== "driver" && s[9] === "DS" ? `<br><span style="color:#0f8f8f;font-weight:600">✓ sensor saw this emptying too</span>` : "";
+    L.marker(pos[i], { icon: L.divIcon({ className: "", html: `<div class="stopnum" style="border-color:${ring};${extra}">${typ === "L" ? (i + 1) + "?" : i + 1}</div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) })
+      .bindPopup(`<b>Stop ${i + 1} of ${t.stops.length}</b>${typ === "L" ? " · <i>assigned, LOW confidence</i>" : typ === "P" ? " · <i>reconstructed vehicle</i>" : inf ? " · <i>inferred by time+location</i>" : ""}<br>Bin ${s[2]} · ${MATW[s[7]] || t.frac} · ${s[3]}${fillTxt}${srcTxt}`).addTo(grp);
+  });
+  // sensor-only recovered emptyings attached to this trip (combined view)
+  if (state.view === "combined" && document.getElementById("lyrDiam").checked){
+    (SENSEV[t.id] || []).forEach(dr => {
+      const [lat, lon, cid, ws, we, pct, conf] = dr;
+      L.marker([lat, lon], { icon: L.divIcon({ className: "", html: `<div class="diam" style="background:#0f8f8f;opacity:${conf === "high" ? 1 : .7}"></div>`, iconSize: [11, 11], iconAnchor: [6, 6] }) })
+        .bindPopup(`<b>Sensor-only emptying — bin ${cid}</b><br>Between ${ws} and ${we} · was ${pct}% full<br><i>seen by the sensor, absent from the driver logbook</i> · confidence ${conf}`).addTo(grp);
+    });
+  }
+  const lg2 = LEGS[t.id];
+  if (lg2 && document.getElementById("lyrLegs").checked){
+    const pp = decodePoly(lg2.pre), pt = decodePoly(lg2.toTS);
+    if (pp && pp.length > 1) L.polyline(pp, { color: "#777", weight: 2, dashArray: "2 6", opacity: 0.8, lineJoin: "round" }).addTo(grp);
+    if (pt && pt.length > 1) L.polyline(pt, { color: "#c0392b", weight: 2, dashArray: "2 6", opacity: 0.85, lineJoin: "round" }).addTo(grp);
+  }
+  grp.addTo(map);
+  state.sel.set(t.id, { t, color, layer: grp, routed_km: routed ? routed.km : null, pos });
+  const all = [].concat(...[...state.sel.values()].map(x => (x.t.stops || []).map(s => [s[0], s[1]])));
+  if (all.length) map.fitBounds(L.latLngBounds(all).pad(0.18));
+  daypanel(); cards();
+}
+
+window.zoomStop = (tid, i) => {
+  const e = state.sel.get(tid);
+  if (!e) return;
+  const p = (e.pos || [])[i] || [e.t.stops[i][0], e.t.stops[i][1]];
+  map.setView(p, 18);
+};
+function cards(){
+  const c = document.getElementById("cards");
+  if (!state.sel.size){ c.innerHTML = `<div class="empty">Nothing selected.</div>`; return; }
+  c.innerHTML = "";
+  state.sel.forEach(({ t, color, routed_km }) => {
+    const kgkm = (t.kg && t.km_rec) ? (t.kg / t.km_rec).toFixed(1) : "—";
+    const ev = t.ev || {};
+    const evTot = (ev.d || 0) + (ev.ds || 0) + (ev.s || 0);
+    const el = document.createElement("div");
+    el.className = "tripcard"; el.style.borderLeftColor = color;
+    const canPlay = ROUTES[t.id] && (ROUTES[t.id].a || []).length > 1;
+    el.innerHTML = `<b>Trip #${t.id}</b> · ${t.date} · ${t.rota || t.frac}${t.part ? " · track " + t.part + " of " + t.n_parts : ""}
+      ${state.view !== "driver" && evTot ? `<div class="evbar" title="${ev.d || 0} driver-only · ${ev.ds || 0} driver+sensor · ${ev.s || 0} sensor-only"><i style="width:${100 * (ev.d || 0) / evTot}%;background:var(--drv)"></i><i style="width:${100 * (ev.ds || 0) / evTot}%;background:var(--sens)"></i><i style="width:${100 * (ev.s || 0) / evTot}%;background:var(--sens);opacity:.45"></i></div>
+      <div style="font-size:9.5px;color:var(--mut)">evidence: ${ev.d || 0} driver-only · ${ev.ds || 0} driver+sensor · ${ev.s || 0} sensor-only nearby</div>` : ""}
+      <table>
+        <tr><td>Time</td><td>${t.start}–${t.end}${t.dur_h ? " (" + t.dur_h + " h)" : ""}</td></tr>
+        <tr><td>Bins: stamped + inferred + low-conf</td><td>${t.n_bins} + ${t.n_inferred || 0} + ${t.n_lowconf || 0}</td></tr>${t.merged ? `<tr><td>Split status</td><td>${t.flagged ? "re-merged — dotted segment(s) assume above-legal speed" : "re-merged (fully legal drive)"}</td></tr>` : ""}${t.cont ? `<tr><td>Continuity</td><td>likely continues #${t.cont}</td></tr>` : ""}
+        <tr><td>Road route between bins</td><td>${routed_km ? routed_km + " km" : "n/a"}</td></tr>
+        <tr><td>Vehicle recorded${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.km_rec ? t.km_rec + " km" : "—"}</td></tr>
+        <tr><td>Load${t.n_parts > 1 ? " (whole identifier)" : ""}</td><td>${t.kg ? fmt(t.kg) + " kg" : "—"}</td></tr>
+        <tr><td>kg per recorded km</td><td>${kgkm}</td></tr>
+        ${t.est_mid != null ? `<tr><td>Est. weight — emptied bins only</td><td>${fmt(t.est_mid)} kg <span style="color:var(--mut);font-size:9px;font-weight:400">(${fmt(t.est_lo)}–${fmt(t.est_hi)})</span></td></tr>
+        <tr><td>+ observed same-material bins${t.capped ? " (capped at load)" : ""}</td><td>${t.est2_mid != null ? fmt(t.est2_mid) + " kg" : "—"}</td></tr>
+        <tr><td>Share of load explained</td><td>${t.wshare != null ? (t.wshare > 100 ? "≥100" : t.wshare) + "% / " + (t.wshare2 != null ? t.wshare2 + "%" : "—") + (t.n_parts > 1 ? " (identifier)" : "") : "—"}</td></tr>
+        ${(() => { const st = t.stops || []; const m = st.filter(x => x[8] != null && x[8] >= 0).length;
+           const gaps = st.filter(x => x[5] != null && x[8] != null && x[8] >= 0).map(x => Math.abs(x[5] - x[8])).sort((a, b) => a - b);
+           const mg = gaps.length ? gaps[Math.floor(gaps.length / 2)] : null;
+           return m ? `<tr class="senscol"><td>Sensor check</td><td>${m} of ${st.length} stops·${mg != null ? " median gap " + mg + " pts" : ""}</td></tr>` : ""; })()}` : ""}${LEGS[t.id] ? `<tr><td>Inferred depot leg / to transfer st.</td><td>${LEGS[t.id].pre_km ?? "—"} / ${LEGS[t.id].toTS_km ?? "—"} km</td></tr>` : ""}
+      </table>
+      ${canPlay ? `<button class="pbtn nzs" onclick="pbStart('${t.id}')">▶ Play this trip (animated drive)</button>` : ""}
+      <details><summary style="cursor:pointer;color:var(--accent);font-size:10.5px;margin-top:4px">Bin details — ${(t.stops || []).length} rows (click a row to zoom to that bin)</summary>
+      <table class="dtbl"><tr><th>№</th><th>Mat</th><th>Bin</th><th>Time</th><th>Type</th><th class="senscol">Src</th><th>Fill</th><th class="senscol">Sensor</th><th>Est. kg</th></tr>${(t.stops || []).map((s, i) => {
+        const mc = MC[s[7]] || "#c3c2b7";
+        const agree = (s[5] != null && s[8] != null && s[8] >= 0) ? (Math.abs(s[5] - s[8]) <= 25 ? " ✓" : " ⚠" ) : "";
+        const src = s[9] === "DS" ? `<span class="srctag srcDS">D+S</span>` : `<span class="srctag srcD">D</span>`;
+        return `<tr onclick="zoomStop('${t.id}',${i})" style="cursor:pointer"><td>${i + 1}</td><td><span class="sw" style="background:${mc};margin:0"></span></td><td>${s[2]}</td><td>${s[3]}</td><td>${{ S: "emptied", I: "inferred", L: "low conf.", P: "phantom" }[s[4]] || s[4]}</td><td class="senscol">${src}</td><td>${s[5] != null ? s[5] + "%" : "—"}</td><td class="senscol">${s[8] == null ? "—" : (s[8] < 0 ? `<span style="color:#c8c6bd">${s[8]}</span>` : s[8] + "%" + agree)}</td><td>${s[6] != null ? s[6] : "—"}</td></tr>`; }).join("")}${(state.view === "combined" ? (SENSEV[t.id] || []) : []).map(dr => `<tr><td>◆</td><td><span class="swd" style="background:${MC[dr[7]] || "#0f8f8f"}"></span></td><td>${dr[2]}</td><td>${dr[3]}–${dr[4]}</td><td>sensor-only</td><td class="senscol"><span class="srctag srcDS">S</span></td><td>${dr[5]}%</td><td class="senscol">${dr[6]}</td><td>—</td></tr>`).join("")}</table></details>`;
+    c.appendChild(el);
+  });
+}
+
+/* ---------- T9 trip playback ---------- */
+const PB = { tripId: null, segs: [], t0: 0, t1: 0, cur: 0, playing: false, fac: 15, marker: null, raf: null, last: 0 };
+function pbBuild(t){
+  const r = ROUTES[t.id];
+  const path = decodePoly(r.p || r.path);
+  const anchors = r.a || [];
+  const legsInfo = r.lg || [];
+  const stops = t.stops || [];
+  if (!path || anchors.length !== stops.length) return null;
+  const tmin = s => { const g = +s.slice(0, 2) * 60 + +s.slice(3, 5); return g; };
+  const times = [];
+  let off = 0;
+  stops.forEach((s, i) => {
+    let m = tmin(s[3]) + off;
+    if (i && m < times[i - 1] - 720){ off += 1440; m += 1440; }
+    times.push(Math.max(m, i ? times[i - 1] : m));
+  });
+  const segs = [];
+  for (let i = 0; i < stops.length - 1; i++){
+    const slice = path.slice(anchors[i], anchors[i + 1] + 1);
+    if (slice.length < 2) continue;
+    const cum = [0];
+    for (let k = 1; k < slice.length; k++) cum.push(cum[k - 1] + havKm(slice[k - 1], slice[k]));
+    const km = cum[cum.length - 1];
+    const gap = Math.max(times[i + 1] - times[i], 0.5);
+    const dwell = Math.min(0.5, gap * 0.25);
+    const drive = Math.max(gap - dwell, 0.25);
+    const legal = legsInfo[i] && legsInfo[i][1] ? km / (legsInfo[i][1] / 60) : 50;
+    segs.push({ slice, cum, km, tA: times[i] + dwell, tB: times[i + 1], kmh: km / (drive / 60), legal, iA: i });
+  }
+  if (!segs.length) return null;
+  return { segs, t0: times[0], t1: times[times.length - 1] };
+}
+window.pbStart = id => {
+  const e = state.sel.get(id);
+  if (!e) return;
+  const built = pbBuild(e.t);
+  if (!built){ alert("No playable route for this trip."); return; }
+  pbStop();
+  PB.tripId = id; PB.segs = built.segs; PB.t0 = built.t0; PB.t1 = built.t1; PB.cur = built.t0;
+  PB.marker = L.marker(PB.segs[0].slice[0], { zIndexOffset: 2000, icon: L.divIcon({ className: "", html: `<div class="veh" style="border-color:${e.color}">🚛</div>`, iconSize: [26, 26], iconAnchor: [13, 13] }) }).addTo(map);
+  document.getElementById("playbar").classList.add("on");
+  document.getElementById("pbScrub").max = String(Math.round((PB.t1 - PB.t0) * 10));
+  pbSeek(PB.t0); pbPlay(true);
+};
+function pbPos(tm){
+  const segs = PB.segs;
+  if (tm <= segs[0].tA) return { p: segs[0].slice[0], kmh: 0, legal: segs[0].legal, at: "stop " + (segs[0].iA + 1) };
+  for (const sg of segs){
+    if (tm <= sg.tA) return { p: sg.slice[0], kmh: 0, legal: sg.legal, at: "stop " + (sg.iA + 1) };
+    if (tm <= sg.tB){
+      const f = (tm - sg.tA) / (sg.tB - sg.tA);
+      const target = f * sg.km;
+      let k = 1;
+      while (k < sg.cum.length - 1 && sg.cum[k] < target) k++;
+      const seg0 = sg.cum[k - 1], seg1 = sg.cum[k];
+      const ff = seg1 > seg0 ? (target - seg0) / (seg1 - seg0) : 0;
+      const a = sg.slice[k - 1], b = sg.slice[k];
+      return { p: [a[0] + (b[0] - a[0]) * ff, a[1] + (b[1] - a[1]) * ff], kmh: sg.kmh, legal: sg.legal, at: null };
+    }
+  }
+  const last = segs[segs.length - 1];
+  return { p: last.slice[last.slice.length - 1], kmh: 0, legal: last.legal, at: "end" };
+}
+function pbSeek(tm){
+  PB.cur = Math.min(Math.max(tm, PB.t0), PB.t1);
+  const st = pbPos(PB.cur);
+  if (PB.marker) PB.marker.setLatLng(st.p);
+  const hh = String(Math.floor(PB.cur / 60) % 24).padStart(2, "0"), mm = String(Math.floor(PB.cur % 60)).padStart(2, "0");
+  document.getElementById("pbClock").textContent = `${hh}:${mm}`;
+  const sp = document.getElementById("pbSpeed");
+  if (st.kmh > 0){
+    sp.innerHTML = `${st.kmh.toFixed(0)} <small>km/h · legal ≈ ${st.legal.toFixed(0)}</small>`;
+    sp.classList.toggle("over", st.kmh > st.legal * 1.02);
+  } else {
+    sp.innerHTML = `at ${st.at || "stop"} <small></small>`; sp.classList.remove("over");
+  }
+  document.getElementById("pbScrub").value = String(Math.round((PB.cur - PB.t0) * 10));
+}
+function pbTick(ts){
+  if (!PB.playing) return;
+  const dt = PB.last ? (ts - PB.last) / 1000 : 0;
+  PB.last = ts;
+  pbSeek(PB.cur + dt * PB.fac / 60);
+  if (PB.cur >= PB.t1){ pbPlay(false); return; }
+  PB.raf = requestAnimationFrame(pbTick);
+}
+function pbPlay(on){
+  PB.playing = on; PB.last = 0;
+  document.getElementById("pbPlay").textContent = on ? "⏸" : "▶";
+  if (on) PB.raf = requestAnimationFrame(pbTick);
+  else if (PB.raf) cancelAnimationFrame(PB.raf);
+}
+function pbStop(){
+  pbPlay(false);
+  if (PB.marker){ PB.marker.remove(); PB.marker = null; }
+  PB.tripId = null;
+  document.getElementById("playbar").classList.remove("on");
+}
+document.getElementById("pbPlay").onclick = () => { if (PB.cur >= PB.t1) PB.cur = PB.t0; pbPlay(!PB.playing); };
+document.getElementById("pbClose").onclick = pbStop;
+document.getElementById("pbFac").onchange = e => PB.fac = +e.target.value;
+document.getElementById("pbScrub").oninput = e => { pbPlay(false); pbSeek(PB.t0 + (+e.target.value) / 10); };
+
+/* ---------- static layers ---------- */
+function initStatic(){
+  const boundLayer = L.layerGroup();
+  const muniPolys = (BOUND.muni || []).map(r => L.polygon(r, { color: "#1a1a19", weight: 3.4, fill: false }).bindTooltip("Rio Maior (municipality)", { sticky: true }).addTo(boundLayer));
+  const fregPolys = [];
+  (BOUND.freg || []).forEach(f => (f.rings || []).forEach(r =>
+    fregPolys.push(L.polygon(r, { color: "#6b6b66", weight: 0.9, dashArray: "4 4", fill: false })
+      .bindTooltip(f.name, { sticky: true }).addTo(boundLayer))));
+  boundLayer.addTo(map);
+  map.on("baselayerchange", ev => {
+    const dark = /Satellite/i.test(ev.name);
+    muniPolys.forEach(pl => pl.setStyle({ color: dark ? "#ffffff" : "#1a1a19", weight: dark ? 3.8 : 3.4 }));
+    fregPolys.forEach(pl => pl.setStyle({ color: dark ? "#f0ede4" : "#6b6b66" }));
+  });
+  document.getElementById("lyrBound").onchange = e => e.target.checked ? boundLayer.addTo(map) : boundLayer.remove();
+
+  const facilLayer = L.layerGroup();
+  const fl = (FACIL.local || []).concat(FACIL.regional || [], FACIL.depot ? [Object.assign({ type: "depot" }, FACIL.depot)] : []);
+  fl.forEach(f => {
+    const nm = (f.name || "") + " " + (f.type || "");
+    const icon = /depot|estaleiro/i.test(nm) ? "🚚" : /transfer|aterro|landfill|tratamento|central/i.test(nm) ? "🏭" : "♻️";
+    L.marker([f.lat, f.lon], { icon: L.divIcon({ className: "", html: `<div class="facil">${icon}</div>`, iconSize: [20, 20], iconAnchor: [10, 10] }) })
+      .bindPopup(`<b>${f.name}</b><br>${f.type || ""}${f.source ? "<br><small>" + f.source + "</small>" : ""}`).addTo(facilLayer);
+  });
+  facilLayer.addTo(map);
+  document.getElementById("lyrFacil").onchange = e => e.target.checked ? facilLayer.addTo(map) : facilLayer.remove();
+
+  const CATC = { H: "#d03b3b", M: "#e09600", L: "#1baf7a", U: "#c3c2b7" };
+  const binLayer = L.layerGroup();
+  BINS.forEach(bn => {
+    L.circleMarker([bn.lat, bn.lon], { radius: bn.cat === "H" ? 6 : 4, color: "#fff", weight: 1, fillColor: CATC[bn.cat] || "#c3c2b7", fillOpacity: 0.85 })
+      .bindPopup(`<b>Bin ${bn.cid}</b> (${MATW[bn.frac] || ""})<br>Collections: ${bn.ev}<br>Arrived ≥75% full: ${(bn.pfull * 100).toFixed(0)}%<br>Arrived ≤25% full: ${(bn.plow * 100).toFixed(0)}%<br>Category: <b>${{ H: "High need", M: "Moderate", L: "Low need", U: "Too little data" }[bn.cat]}</b>`).addTo(binLayer);
+  });
+  document.getElementById("lyrBins").onchange = e => {
+    document.getElementById("binlegend").style.display = e.target.checked ? "" : "none";
+    e.target.checked ? binLayer.addTo(map) : binLayer.remove();
+  };
+  const cc = { H: 0, M: 0, L: 0, U: 0 }; BINS.forEach(bn => cc[bn.cat] = (cc[bn.cat] || 0) + 1);
+  document.getElementById("catcounts").textContent = `high ${cc.H} · moderate ${cc.M} · low ${cc.L} · little data ${cc.U}`;
+  document.getElementById("lyrDiam").onchange = () => { const sel = [...state.sel.values()].map(x => x.t); sel.forEach(t => toggle(t)); sel.forEach(t => toggle(t)); };
+}
+
+/* ---------- trips index init ---------- */
+function initTrips(){
+  TRIPS.forEach(t => { if (nstops(t) >= 2) (byDate[t.date] = byDate[t.date] || []).push(t); });
+  const multi = TRIPS.filter(t => nstops(t) >= 2);
+  const recov = TRIPS.reduce((a, t) => a + ((t.ev || {}).s || 0), 0);
+  document.getElementById("tiles").innerHTML = [
+    [fmt(multi.length), "vehicle tracks"], [fmt(Object.keys(byDate).length), "active days"],
+    [med(multi.map(t => t.n_bins)), "median bins"], [med(multi.filter(t => t.dur_h).map(t => t.dur_h)).toFixed(1) + " h", "median duration"],
+    [fmt(med(multi.filter(t => t.km_rec).map(t => t.km_rec))) + " km", "median recorded"],
+    [fmt(med(multi.filter(t => t.kg).map(t => t.kg))) + " kg", "median load"],
+    [fmt(recov), "sensor-only emptyings on trips"],
+  ].map(([v, l]) => `<div class="tile nzs"><b>${v}</b><span>${l}</span></div>`).join("");
+  const years = [...new Set(multi.map(t => t.date.slice(0, 4)))].sort();
+  const ysel = document.getElementById("year");
+  years.forEach(y => ysel.add(new Option(y, y)));
+  ysel.value = years.includes("2022") ? "2022" : years[0];
+  state.year = +ysel.value;
+  ysel.onchange = () => { state.year = +ysel.value; calendar(); ensureYear(state.year); };
+  calendar();
+  return years;
+}
+
+/* ---------- controls ---------- */
+document.querySelectorAll(".fbtn").forEach(bt => bt.onclick = () => {
+  bt.classList.toggle("on");
+  bt.classList.contains("on") ? state.fr.add(bt.dataset.f) : state.fr.delete(bt.dataset.f);
+  calendar(); daypanel();
+});
+document.getElementById("colormode").onchange = e => state.colormode = e.target.value;
+function setView(v){
+  state.view = v;
+  document.body.className = "view-" + v;
+  document.querySelectorAll("#viewseg button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  if (v !== "sensor") clearDayDrops();
+  // redraw selected trips so per-view layers (diamonds, tags) refresh
+  const sel = [...state.sel.values()].map(x => x.t);
+  sel.forEach(t => toggle(t));
+  calendar(); daypanel();
+  (async () => { for (const t of sel) await toggle(t); })();
+  const qp = new URLSearchParams(location.search);
+  v === "combined" ? qp.delete("view") : qp.set("view", v);
+  history.replaceState(null, "", location.pathname + (qp.toString() ? "?" + qp : ""));
+}
+document.querySelectorAll("#viewseg button").forEach(b => b.onclick = () => setView(b.dataset.v));
+
+/* ---------- info modal (source of truth) ---------- */
+const IT = {};
+IT.overview = i => `
+  <h4>What this explorer shows</h4>
+  <p>Every record of the operator's two files — the <b>driver logbook</b> (${fmt(i.totals.driver_rows)} rows) and the <b>bin fill sensors</b> (${fmt(i.totals.sensor_rows)} readings) — classified, cleaned and fused into ${fmt(i.totals.tracks)} vehicle tracks over ${i.period}. Nothing was silently discarded: every dropped row sits in the companion Excel workbooks with its reason.</p>
+  <h4>Evidence tiers</h4>
+  <table><tr><th>Tier</th><th>Rows</th><th>Meaning</th></tr>${i.tiers.map(r => `<tr><td>${r[0]}</td><td>${fmt(r[1])}</td><td style="text-align:left;color:var(--mut)">${r[2]}</td></tr>`).join("")}</table>
+  <h4>Monthly collected weight</h4><canvas id="spark"></canvas><div class="note" id="sparknote"></div>
+  <a class="rm" href="info/methodology.html#overview" target="_blank">Read more — full methodology ↗</a>`;
+IT.trips = i => `
+  <h4>From raw rows to trips</h4>
+  <p>${i.trips_story}</p>
+  <table><tr><th>Step</th><th>Count</th></tr>${i.trip_steps.map(r => `<tr><td style="text-align:left">${r[0]}</td><td>${fmt(r[1])}</td></tr>`).join("")}</table>
+  <h4>Reading a trip</h4>
+  <p class="note" style="font-size:10.5px">${i.reading_note}</p>
+  <a class="rm" href="info/methodology.html#trips" target="_blank">Read more — trip rebuild rules ↗</a>`;
+IT.sensors = i => `
+  <h4>The sensor fleet, year by year</h4>
+  <table><tr><th>Year</th><th>Active</th><th>Added</th><th>Went silent</th><th>Readings kept</th><th>Removed</th><th>Emptying events</th></tr>${i.sensor_years.map(r => `<tr>${r.map(x => `<td>${fmt(x)}</td>`).join("")}</tr>`).join("")}</table>
+  <p class="note">${i.sensor_note}</p>
+  <a class="rm" href="info/methodology.html#sensors" target="_blank">Read more — sensor cleaning rules ↗</a>`;
+IT.cross = i => `
+  <h4>Driver vs sensor, per year</h4>
+  <table><tr><th>Year</th><th>Driver-only</th><th>Both agree (D+S)</th><th>Sensor-only recovered</th></tr>${i.cross_years.map(r => `<tr>${r.map(x => `<td>${fmt(x)}</td>`).join("")}</tr>`).join("")}</table>
+  <p class="note">${i.cross_note}</p>
+  <a class="rm" href="info/methodology.html#cross" target="_blank">Read more — cross-check method ↗</a>`;
+IT.assump = i => `
+  <h4>Assumption register</h4>
+  <p class="note">Every rule that shapes a number in this explorer, with its value and why.</p>
+  <table><tr><th style="text-align:left">Rule</th><th>Value</th><th style="text-align:left">Why</th></tr>${i.assumptions.map(r => `<tr><td style="text-align:left">${r[0]}</td><td>${r[1]}</td><td style="text-align:left;color:var(--mut)">${r[2]}</td></tr>`).join("")}</table>
+  <a class="rm" href="info/methodology.html#assumptions" target="_blank">Read more — justification per rule ↗</a>`;
+IT.sources = i => `
+  <h4>Exact sources</h4>
+  <table><tr><th style="text-align:left">File</th><th style="text-align:left">Role</th></tr>${i.sources.map(r => `<tr><td style="text-align:left"><code>${r[0]}</code></td><td style="text-align:left;color:var(--mut)">${r[1]}</td></tr>`).join("")}</table>
+  <p class="note">${i.sources_note || ""}</p>
+  <a class="rm" href="info/methodology.html#sources" target="_blank">Read more — file-by-file lineage ↗</a>`;
+let infoTab = "overview";
+async function renderInfo(){
+  const body = document.getElementById("infoBody");
+  if (!INFO){
+    try { INFO = await J("data/info_stats.json"); }
+    catch (e){ body.innerHTML = `<div class="empty">info_stats.json not available (${e.message})</div>`; return; }
+  }
+  document.querySelectorAll("#infoTabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === infoTab));
+  try { body.innerHTML = IT[infoTab](INFO); }
+  catch (e){ body.innerHTML = `<div class="empty">tab data missing: ${e.message}</div>`; }
+  if (infoTab === "overview") drawSpark();
+}
+document.querySelectorAll("#infoTabs button").forEach(b => b.onclick = () => { infoTab = b.dataset.tab; renderInfo(); });
+document.getElementById("infoBtn").onclick = () => { document.getElementById("infoModal").classList.add("on"); renderInfo(); };
+document.getElementById("infoClose").onclick = () => document.getElementById("infoModal").classList.remove("on");
+document.getElementById("infoModal").onclick = e => { if (e.target.id === "infoModal") document.getElementById("infoModal").classList.remove("on"); };
+function drawSpark(){
+  const cv = document.getElementById("spark"), m = TEMPO.months || [];
+  if (!cv || !m.length) return;
+  const kg = TEMPO.kg, ctx = cv.getContext("2d");
+  const Wc = cv.width = cv.offsetWidth * 2, Hc = cv.height = 112;
+  const mx = Math.max(...kg);
+  ctx.fillStyle = "#9ec5f4";
+  kg.forEach((v, i) => { const bw = Wc / kg.length; ctx.fillRect(i * bw + 1, Hc - v / mx * (Hc - 8), bw - 2, v / mx * (Hc - 8)); });
+  ctx.fillStyle = "#52514e"; ctx.font = "20px Segoe UI";
+  ctx.fillText(m[0].slice(0, 4), 4, 20); ctx.fillText(m[m.length - 1], Wc - 110, 20);
+  document.getElementById("sparknote").textContent = `Total collected weight per month, ${m[0]} to ${m[m.length - 1]} (2024 partial). Peak ${fmt(mx)} kg.`;
+}
+
+/* ---------- KMZ export ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(name, data){
+  const enc = new TextEncoder(), nameB = enc.encode(name), crc = crc32(data), sz = data.length;
+  const lh = new Uint8Array(30 + nameB.length), dv = new DataView(lh.buffer);
+  dv.setUint32(0, 0x04034b50, true); dv.setUint16(4, 20, true); dv.setUint16(8, 0, true);
+  dv.setUint32(14, crc, true); dv.setUint32(18, sz, true); dv.setUint32(22, sz, true);
+  dv.setUint16(26, nameB.length, true); lh.set(nameB, 30);
+  const cd = new Uint8Array(46 + nameB.length), dc = new DataView(cd.buffer);
+  dc.setUint32(0, 0x02014b50, true); dc.setUint16(4, 20, true); dc.setUint16(6, 20, true);
+  dc.setUint32(16, crc, true); dc.setUint32(20, sz, true); dc.setUint32(24, sz, true);
+  dc.setUint16(28, nameB.length, true); cd.set(nameB, 46);
+  const eo = new Uint8Array(22), de = new DataView(eo.buffer);
+  de.setUint32(0, 0x06054b50, true); de.setUint16(8, 1, true); de.setUint16(10, 1, true);
+  de.setUint32(12, cd.length, true); de.setUint32(16, lh.length + sz, true);
+  const out = new Uint8Array(lh.length + sz + cd.length + eo.length);
+  let o = 0; for (const part of [lh, data, cd, eo]){ out.set(part, o); o += part.length; }
+  return out;
+}
+const kesc = t => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const kcol = hex => "ff" + hex.slice(5, 7) + hex.slice(3, 5) + hex.slice(1, 3);
+function coordStr(path){ return path.map(p => p[1] + "," + p[0] + ",0").join(" "); }
+function buildKML(){
+  let k = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Rio Maior selected trips</name>\n';
+  for (const m of ["P", "C", "G"]){
+    k += `<Style id="pt${m}"><IconStyle><color>${kcol(MC[m])}</color><scale>0.9</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle><LabelStyle><scale>0.9</scale></LabelStyle></Style>\n`;
+  }
+  k += `<Style id="ptSE"><IconStyle><color>ff8f8f0f</color><scale>0.9</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/open-diamond.png</href></Icon></IconStyle></Style>\n`;
+  state.sel.forEach(({ t, color, pos, routed_km }) => {
+    k += `<Folder><name>Trip #${kesc(t.id)} · ${kesc(t.frac)} · ${kesc(t.date)}</name>\n`;
+    const routed = ROUTES[t.id];
+    const rpath = routed ? decodePoly(routed.p || routed.path) : null;
+    k += `<Folder><name>Route (line)</name>`;
+    if (rpath && rpath.length > 1){
+      k += `<Placemark><name>Route #${kesc(t.id)}</name><description><![CDATA[<table border="1" cellpadding="3">
+<tr><td>Trip ID</td><td>${kesc(t.id)}</td></tr><tr><td>Material</td><td>${kesc(t.frac)}</td></tr>
+<tr><td>Date</td><td>${kesc(t.date)} ${kesc(t.start)}–${kesc(t.end)}</td></tr>
+<tr><td>Bins stamped + inferred</td><td>${t.n_bins} + ${t.n_inferred || 0}</td></tr>
+<tr><td>Road route between bins</td><td>${routed_km ?? "—"} km</td></tr>
+<tr><td>Vehicle recorded</td><td>${t.km_rec ?? "—"} km</td></tr><tr><td>Load (weighbridge)</td><td>${t.kg ?? "—"} kg</td></tr></table>]]></description>
+<Style><LineStyle><color>${kcol(color)}</color><width>4</width></LineStyle></Style>
+<LineString><tessellate>1</tessellate><coordinates>${coordStr(rpath)}</coordinates></LineString></Placemark>`;
+    }
+    k += `</Folder>\n<Folder><name>Stops (points)</name>\n`;
+    (t.stops || []).forEach((st, i) => {
+      const p = (pos || [])[i] || [st[0], st[1]];
+      const inf = st[4] === "I";
+      k += `<Placemark><name>${i + 1}</name><styleUrl>#pt${st[7] || "P"}</styleUrl><description><![CDATA[<table border="1" cellpadding="3">
+<tr><td>Stop</td><td>${i + 1} of ${t.stops.length}</td></tr><tr><td>Trip</td><td>#${kesc(t.id)}</td></tr>
+<tr><td>Bin</td><td>${kesc(st[2])}</td></tr><tr><td>Bin material</td><td>${MATW[st[7]] || ""}</td></tr>
+<tr><td>Time</td><td>${kesc(t.date)} ${kesc(st[3])}</td></tr><tr><td>Type</td><td>${inf ? "inferred (observed)" : "emptying record"}</td></tr>
+<tr><td>Source</td><td>${st[9] === "DS" ? "driver + sensor" : "driver logbook"}</td></tr>
+<tr><td>Fill</td><td>${st[5] != null ? st[5] + "%" : "—"}</td></tr><tr><td>Sensor</td><td>${st[8] != null ? (st[8] < 0 ? st[8] + " (error code)" : st[8] + "%") : "—"}</td></tr>
+<tr><td>Est. kg</td><td>${st[6] ?? "—"}</td></tr></table>]]></description>
+<Point><coordinates>${p[1]},${p[0]},0</coordinates></Point></Placemark>\n`;
+    });
+    k += `</Folder>\n`;
+    const sev = SENSEV[t.id] || [];
+    if (sev.length){
+      k += `<Folder><name>Sensor-only recovered emptyings (diamonds)</name>`;
+      sev.forEach(dr => {
+        k += `<Placemark><name>◆ ${kesc(dr[2])}</name><styleUrl>#ptSE</styleUrl><description><![CDATA[Sensor-only emptying: bin ${kesc(dr[2])}, between ${kesc(dr[3])} and ${kesc(dr[4])}, was ${dr[5]}% full. Confidence ${kesc(dr[6])}. Absent from the driver logbook.]]></description><Point><coordinates>${dr[1]},${dr[0]},0</coordinates></Point></Placemark>`;
+      });
+      k += `</Folder>\n`;
+    }
+    const lg = LEGS[t.id];
+    if (lg){
+      k += `<Folder><name>Depot &amp; disposal legs (lines, inferred)</name>`;
+      const pp = decodePoly(lg.pre), pt2 = decodePoly(lg.toTS);
+      if (pp && pp.length > 1) k += `<Placemark><name>Depot → first stop (${lg.pre_km ?? "?"} km)</name><Style><LineStyle><color>ff777777</color><width>2</width></LineStyle></Style><LineString><tessellate>1</tessellate><coordinates>${coordStr(pp)}</coordinates></LineString></Placemark>`;
+      if (pt2 && pt2.length > 1) k += `<Placemark><name>Last stop → transfer station (${lg.toTS_km ?? "?"} km)</name><Style><LineStyle><color>ff2b39c0</color><width>2</width></LineStyle></Style><LineString><tessellate>1</tessellate><coordinates>${coordStr(pt2)}</coordinates></LineString></Placemark>`;
+      k += `</Folder>\n`;
+    }
+    k += `</Folder>\n`;
+  });
+  k += "</Document></kml>";
+  return k;
+}
+document.getElementById("kmzBtn").onclick = () => {
+  if (!state.sel.size){ alert("Select at least one trip first."); return; }
+  const kml = buildKML();
+  const zip = makeZip("doc.kml", new TextEncoder().encode(kml));
+  const blob = new Blob([zip], { type: "application/vnd.google-earth.kmz" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  const ids = [...state.sel.keys()].slice(0, 3).join("_");
+  a.download = `RioMaior_trips_${ids}${state.sel.size > 3 ? "_etc" : ""}.kmz`;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+};
+
+document.getElementById("clear").onclick = () => { state.sel.forEach(x => x.layer.remove()); state.sel.clear(); colorIdx = 0; pbStop(); clearDayDrops(); daypanel(); cards(); };
+document.getElementById("collL").onclick = () => {
+  const el = document.getElementById("left"), ph = document.getElementById("phL");
+  const hide = el.style.display !== "none";
+  el.style.display = hide ? "none" : "flex"; ph.style.display = hide ? "none" : "";
+  document.getElementById("collL").textContent = hide ? "▶" : "◀";
+  setTimeout(() => map.invalidateSize(), 60);
+};
+document.getElementById("collR").onclick = () => {
+  const el = document.getElementById("sidebar"), ph = document.getElementById("phR");
+  const hide = el.style.display !== "none";
+  el.style.display = hide ? "none" : "block"; ph.style.display = hide ? "none" : "";
+  document.getElementById("collR").textContent = hide ? "◀" : "▶";
+  setTimeout(() => map.invalidateSize(), 60);
+};
+function dragify(handle, panel, fromLeft){
+  handle.addEventListener("mousedown", e => {
+    e.preventDefault();
+    const startX = e.clientX, startW = panel.offsetWidth;
+    const move = ev => {
+      const w = Math.max(200, Math.min(700, startW + (fromLeft ? ev.clientX - startX : startX - ev.clientX)));
+      panel.style.width = w + "px"; panel.style.minWidth = w + "px";
+      map.invalidateSize();
+    };
+    const up = () => { document.removeEventListener("mousemove", move); document.removeEventListener("mouseup", up); };
+    document.addEventListener("mousemove", move); document.addEventListener("mouseup", up);
+  });
+}
+dragify(document.getElementById("phL"), document.getElementById("left"), true);
+dragify(document.getElementById("phR"), document.getElementById("sidebar"), false);
+
+/* ---------- responsive drawers (tablet / phone) ---------- */
+const isNarrow = () => window.matchMedia("(max-width: 920px)").matches;
+function drawer(id, open){
+  const el = document.getElementById(id);
+  el.classList.toggle("open", open === undefined ? !el.classList.contains("open") : open);
+  if (el.classList.contains("open") && isNarrow()){
+    const other = id === "left" ? "sidebar" : "left";
+    document.getElementById(other).classList.remove("open");
+  }
+  setTimeout(() => map.invalidateSize(), 280);
+}
+document.getElementById("fabCal").onclick = () => drawer("left");
+document.getElementById("fabTrips").onclick = () => drawer("sidebar");
+document.getElementById("dcL").onclick = () => drawer("left", false);
+document.getElementById("dcR").onclick = () => drawer("sidebar", false);
+// picking a trip on a narrow screen closes the calendar drawer so the map is visible
+const _toggleOrig = toggle;
+toggle = async function(t){ await _toggleOrig(t); if (isNarrow()) drawer("left", false); };
+// leaving narrow mode resets any drawer state; entering it resets desktop collapse state
+let wasNarrow = isNarrow();
+window.addEventListener("resize", () => {
+  const n = isNarrow();
+  if (n !== wasNarrow){
+    wasNarrow = n;
+    ["left", "sidebar"].forEach(i => { const el = document.getElementById(i); el.classList.remove("open"); el.style.display = ""; el.style.width = ""; el.style.minWidth = ""; });
+    ["phL", "phR"].forEach(i => document.getElementById(i).style.display = "");
+    document.getElementById("collL").textContent = "◀"; document.getElementById("collR").textContent = "▶";
+  }
+  setTimeout(() => map.invalidateSize(), 120);
+});
+
+/* ---------- bootstrap ---------- */
+(async () => {
+  try {
+    setLoad("loading map data…");
+    const [bound, daily, facil, bins, tempo] = await Promise.all([
+      J("data/boundaries.json"), J("data/daily_kg.json"), J("data/facilities.json"),
+      J("data/bins.json"), J("data/tempo.json"),
+    ]);
+    BOUND = bound; DAILY = daily; FACIL = facil; BINS = bins; TEMPO = tempo;
+    initStatic();
+    setLoad("loading trips…");
+    const idx = await J("data/trips_index.json");
+    TRIPS.push(...idx);
+    const years = initTrips();
+    setLoad("loading routes…");
+    await ensureYear(state.year);
+    setLoad("");
+    // deep links: ?trip=17242b,18001 &view=driver|sensor|combined &day=YYYY-MM-DD
+    const qp = new URLSearchParams(location.search);
+    if (qp.get("view") && ["driver", "sensor", "combined"].includes(qp.get("view"))) setView(qp.get("view"));
+    if (qp.get("day")){
+      const d = qp.get("day");
+      state.year = +d.slice(0, 4);
+      document.getElementById("year").value = String(state.year);
+      state.selDay = d; calendar(); await daypanel();
+    }
+    if (qp.get("trip")){
+      for (const id of qp.get("trip").split(",")){
+        const t = TRIPS.find(x => String(x.id) === id.trim());
+        if (t){
+          state.year = +t.date.slice(0, 4);
+          document.getElementById("year").value = String(state.year);
+          state.selDay = t.date; calendar(); daypanel();
+          await ensureYear(state.year);
+          await toggle(t);
+        }
+      }
+    }
+    // polite prefetch: other years only after 12 s of idle, one at a time
+    setTimeout(async () => {
+      for (const y of years){ if (!YEARLOADED[y]) { await ensureYear(y); await new Promise(r => setTimeout(r, 3000)); } }
+    }, 12000);
+  } catch (e){
+    setLoad("load failed: " + e.message);
+  }
+})();
+</script>
+</body>
+</html>

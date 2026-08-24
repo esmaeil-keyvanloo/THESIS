@@ -21,7 +21,8 @@ comparison.
 | `W1/` | Working round 1: plans, scripts, models, outputs, logs | Disposable; verified results promoted to `Brain/` |
 | `W2/` | Working round 2: driver–sensor reconciliation (scripts, reconciled layer, maps, report R2-01) | Same rule |
 | `W3/` | Working round 3: fast split Trip Explorer (superseded by W4) | Read-only history |
-| `W4/` | Working round 4: merged/flagged trips, all-readings assignment, phantom tracks, sensor drop-log, master dataset; explorer live at esmaeil-keyvanloo.github.io/THESIS | Current round |
+| `W4/` | Working round 4: merged/flagged trips, all-readings assignment, phantom tracks, sensor drop-log, master dataset | Read-only history |
+| `W5/` | Working round 5: road-legal speed engine + calibrated tolerances, audited & rebuilt trips v7, cleaned sensors v2 (rebound-aware drop log), driver–sensor fusion with source tags, circuit-dissolution finding, three reconciled Excel workbooks, responsive two-skin explorer (hybrid neumorph / editorial) with playback — live at esmaeil-keyvanloo.github.io/THESIS | Current round |
 | `.claude/skills/` | Project skills (e.g. `human-writing` — de-AI style linter for deliverables) | |
 
 Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.md)
@@ -34,7 +35,7 @@ Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.
 - **Operational parameters (public sources)** — `Brain/02_notes/literature/valorsul-operations-lopes-2014.md` (Valorsul CTRO depot, fleet, 82 circuits, shift times)
 - **Maps** — `W1/04_outputs/maps/` (container network, population, sensor coverage)
 
-## Status (2026-08-19)
+## Status (2026-08-24)
 
 | Stage | State |
 |---|---|
@@ -48,8 +49,9 @@ Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.
 | Trip-sorted driver workbook — 3 tiers, 75% of loose readings assigned (`W2/03_outputs/tables/Driver_Trips_Sorted.xlsx`) | ✅ delivered 2026-08-17 |
 | Fleet story: waste-facility map, dump-leg km audit (recorded km ≈ 3× logged-stop route), Explorer v4 | ✅ delivered 2026-08-17 |
 | Glass-inclusive rebuild (597 glass tracks recovered), Explorer v5: heat calendar, fraction strips, CAOP boundaries | ✅ delivered 2026-08-17 |
-| W4 master rebuild: 477 splits re-merged (108 speed-flagged), all readings assigned (85.6k + 37.8k low-conf), 2,445 phantom tracks, 47k sensor drop events (30.5k recovered emptyings ≈ 1,678 t), master dataset frozen in Brain/03_db | ✅ delivered 2026-08-19 |
-| Demand model rebuild (sensor fill rates) | ⏭ next — critical path |
+| W4 master rebuild: 477 splits re-merged (108 speed-flagged), all readings assigned (85.6k + 37.8k low-conf), 2,445 phantom tracks, 47k sensor drop events, master dataset frozen in Brain/03_db | ✅ delivered 2026-08-19 |
+| W5 thesis-grade rebuild: per-road-type legal-speed engine (272-site matrix) + data-calibrated tolerances; full trip & sensor audits (12+12 findings); trips v7 (11,691 + 1,674 phantoms; I 120.8k, L 7.8k, evictions resolved); sensors v2 (75.5% kept; 47.5k drops, 44% rebound-demoted); fusion with D/DS/S source tags (9.5k corroborated stops, 38.4k sensor-only events on trips); 151 standing circuits — coverage dissolves 59.8% (2020) → 0% (2024); 3 m routes with playback anchors; three reconciled Excel workbooks + master_events_w5; responsive two-skin explorer (hybrid neumorph + editorial) with 3-way source views, ⓘ source-of-truth tabs, methodology page, animated trip playback — E2E-tested on 6 viewport sizes | ✅ delivered 2026-08-24 |
+| Demand model rebuild (sensor fill rates, on master_events_w5) | ⏭ next — critical path |
 | Container ID reconciliation (D6), BGRI fix (D7) | ⏭ next |
 | Real p-median instance (OSM network distances) | pending demand rebuild |
 
