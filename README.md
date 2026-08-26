@@ -33,6 +33,7 @@ Full navigation: [Brain/README.md](Brain/README.md) · [W1/README.md](W1/README.
 - **Data dictionary & rulings** — `Brain/00_canon/data/data-dictionary.md`
 - **Scope decision log** — `Brain/00_canon/decisions/ADR-001-scope-and-methodology.md`
 - **Operational parameters (public sources)** — `Brain/02_notes/literature/valorsul-operations-lopes-2014.md` (Valorsul CTRO depot, fleet, 82 circuits, shift times)
+- **Data-request sheets (municipality + Valorsul, PT/EN)** — `W5/03_outputs/reports/Data_Request_Sheets.docx`
 - **Maps** — `W1/04_outputs/maps/` (container network, population, sensor coverage)
 
 ## Status (2026-08-24)
